@@ -7,6 +7,7 @@ import Lyrics from '../pages/lyrics';
 import Queue from '../pages/queue';
 import Search from '../pages/search';
 import UserPage from '../pages/user/user-page';
+import Login from '@/pages/login';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +22,7 @@ export const router = createBrowserRouter(
           <Route element={<UserPage />} path="trknell" />
         </Route>
       </Route>
+      <Route element={<Login />} path="login" />
 
       <Route element={<div>Not Found</div>} path="*" />
     </>,
