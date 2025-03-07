@@ -5,6 +5,8 @@ import { Playlist } from '@/types/types';
 // Import component `PlaylistCardsContainer` từ file `playlist-cards-container`.
 // Đây là component dùng để hiển thị danh sách playlist dưới dạng thẻ.
 import PlaylistCardsContainer from './playlist-cards-container';
+import { useEffect, useState } from 'react';
+import { convertPlaylistFromBackend, getPlayList } from '@/services/playlistAPI';
 
 // Khai báo một danh sách `Playlists` có kiểu `Playlist[]` (mảng các playlist).
 const Playlists: Playlist[] = [
@@ -94,15 +96,25 @@ const Playlists: Playlist[] = [
 // Định nghĩa component `Home` là một React component.
 // Component này trả về giao diện chứa danh sách các playlist.
 export default function Home(): React.ReactNode {
+  const [playlists, setPlayLists] = useState<Playlist[]>(Playlists);
+
+  useEffect(() => {
+    getPlayList()
+      .then((data) => {
+        setPlayLists(data);
+      })
+      .catch(error => console.error(error))
+  }, [])
+
   return (
     // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
     <div className="flex flex-col px-3">
       {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
-      <PlaylistCardsContainer title="First Playlist Bundle" items={Playlists} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={Playlists} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={Playlists} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={Playlists} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={Playlists} />
+      <PlaylistCardsContainer title="First Playlist Bundle" items={playlists} />
+      <PlaylistCardsContainer title="Second Playlist Bundle" items={playlists} />
+      <PlaylistCardsContainer title="Third Playlist Bundle" items={playlists} />
+      <PlaylistCardsContainer title="Fourth Playlist Bundle" items={playlists} />
+      <PlaylistCardsContainer title="Fifth Playlist Bundle" items={playlists} />
     </div>
   );
 }
