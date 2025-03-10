@@ -1,6 +1,7 @@
 // Import kiểu `Playlist` từ file `@/types`.
 // `Playlist` có thể là một interface hoặc type định nghĩa cấu trúc của playlist.
 import { Playlist } from '@/types/types';
+import { Song } from '@/types/types';
 
 // Import component `PlaylistCardsContainer` từ file `playlist-cards-container`.
 // Đây là component dùng để hiển thị danh sách playlist dưới dạng thẻ.
@@ -97,6 +98,7 @@ const Playlists: Playlist[] = [
 // Component này trả về giao diện chứa danh sách các playlist.
 export default function Home(): React.ReactNode {
   const [playlists, setPlayLists] = useState<Playlist[]>(Playlists);
+  const [currentSong, setCurrentSong] = useState<Song | null>(null);
 
   useEffect(() => {
     getPlayList()
@@ -105,6 +107,20 @@ export default function Home(): React.ReactNode {
       })
       .catch(error => console.error(error))
   }, [])
+
+  useEffect(() => {
+    // Giả sử bạn lấy playlist từ API
+    getPlayList()
+      .then((data) => {
+        setPlayLists(data);
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  // Hàm thay đổi bài hát khi nhấn vào một bài hát trong playlist
+  const changeSong = (song: Song) => {
+    setCurrentSong(song);
+  };
 
   return (
     // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.

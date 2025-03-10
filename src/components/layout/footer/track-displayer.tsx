@@ -1,5 +1,6 @@
 // Import biểu tượng trái tim từ thư viện `lucide-react` để hiển thị nút "yêu thích"
 import { HeartIcon } from 'lucide-react';
+import { Song } from '@/types/types';
 
 // Import hook `useState` từ React để quản lý trạng thái
 import { useState } from 'react';
@@ -21,8 +22,15 @@ const currentSong = {
 // Gọi hàm `getIconSize` với tham số `'l'` để lấy thuộc tính kích thước của icon
 const iconProperty = getIconSize('l');
 
+interface TrackDisplayerProps {
+  song: Song | null; // Định nghĩa props song
+}
+
 // Định nghĩa component `TrackDisplayer`
-export default function TrackDisplayer() {
+const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
+  if (!song) {
+    return <div>Không có bài hát nào được chọn</div>; // Nếu không có bài hát, hiển thị thông báo
+  }
   // State `isLiked` lưu trạng thái bài hát có được yêu thích không (mặc định là `false`)
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
@@ -79,6 +87,8 @@ export default function TrackDisplayer() {
   );
 }
 
+
+export default TrackDisplayer;
 
 // Cách hoạt động
 // Người dùng mở giao diện, thấy ảnh bìa, tên bài hát, tên nghệ sĩ và icon trái tim.

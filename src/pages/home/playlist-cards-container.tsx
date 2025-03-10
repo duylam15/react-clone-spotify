@@ -9,16 +9,38 @@ import ItemCard from '@/components/ui/item-card';
 // Import kiểu dữ liệu `Playlist` từ `@/types`.
 // `Playlist` có thể là một type hoặc interface định nghĩa cấu trúc dữ liệu của một playlist.
 import { Playlist } from '@/types/types';
+import { Song } from '@/types/types';
 
 // Định nghĩa component `PlaylistCardsContainer` nhận vào hai props:
 // - `title`: Chuỗi tiêu đề của danh sách playlist.
 // - `items`: Mảng các playlist có kiểu `Playlist[]`.
-export default function PlaylistCardsContainer({ title, items }: { title: string; items: Playlist[] }) {
+interface PlaylistCardsContainerProps {
+  title: string;
+  items: Playlist[];
+}
+
+export default function PlaylistCardsContainer({ title, items }: PlaylistCardsContainerProps) {
   return (
     // Trả về component `DynamicGrid`, truyền vào các props sau:
     // - `title`: Tiêu đề của danh sách playlist.
     // - `items`: Danh sách các playlist cần hiển thị.
     // - `Component`: Component `ItemCard` để hiển thị từng phần tử trong danh sách.
-    <DynamicGrid<Playlist> title={title} items={items} Component={ItemCard} />
+    <div>
+      <h3>{title}</h3>
+      {/* Render các playlist */}
+      <DynamicGrid<Playlist> title={title} items={items} Component={ItemCard} />
+      
+      
+      {items.map((playlist) => (
+        <div key={playlist.id} onClick={() => {
+          
+          // if (playlist.songs[0]) {
+          //   onSongSelect(playlist.songs[0]); // Gọi hàm onSongSelect nếu bài hát tồn tại
+          // }
+        }}>
+          <h4>{playlist.title}</h4> {/* Render tên của playlist */}
+        </div>
+      ))}
+    </div>
   );
 }
