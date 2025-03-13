@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "./register.css"
 import { ScrollArea, ScrollBar } from '../components/ui/scroll-area';
 
 export default function Register() {
@@ -24,7 +23,7 @@ export default function Register() {
 
 
 	return (
-		<div className='bg-black h-[100%] overflow-y-auto flex items-center justify-center' >
+		<div className='bg-black h-[100vh] overflow-y-auto flex items-center justify-center' >
 			<div className='w-[734px]  p-5 bg-black flex flex-col items-center justify-between '>
 				<div className='flex flex-col items-center justify-center'>
 					<img className='w-10 h-10 rounded-full' src="/public/sporify.png" alt="" />
