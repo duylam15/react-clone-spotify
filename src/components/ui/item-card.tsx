@@ -6,11 +6,13 @@ import { useCallback, useState } from 'react';
 
 // Import `PlayButton` từ thư mục components/ui, có thể là nút phát nhạc.
 import PlayButton from '@/components/ui/play-button';
+import { useNavigate } from 'react-router-dom';
 
 // Định nghĩa kiểu dữ liệu `Properties` cho component `ItemCard`.
 interface Properties {
-  image?: string; // Ảnh hiển thị trên card (tùy chọn).
-  title: string; // Tiêu đề.
+  danh_sach_phat_id?: number;
+  anh_danh_sach?: string; // Ảnh hiển thị trên card (tùy chọn).
+  ten_danh_sach: string; // Tiêu đề.
   followers?: string | number; // Số lượng người theo dõi (tùy chọn).
   description?: string; // Mô tả (tùy chọn).
   isArtist?: boolean; // Có phải nghệ sĩ hay không (tùy chọn).
@@ -43,7 +45,7 @@ const truncateStyle: React.CSSProperties = {
 };
 
 // Component `ItemCard` để hiển thị một mục (có thể là album, playlist, nghệ sĩ...).
-export default function ItemCard({ image, title, description, isArtist }: Properties): React.ReactNode {
+export default function ItemCard({ anh_danh_sach, ten_danh_sach, description, isArtist, danh_sach_phat_id }: Properties): React.ReactNode {
   // State lưu trữ kích thước ảnh (dùng để tính toán vị trí nút play).
   const [imageSize, setImageSize] = useState<number>(0);
 
@@ -59,14 +61,21 @@ export default function ItemCard({ image, title, description, isArtist }: Proper
     resizeObserver.observe(node); // Bắt đầu theo dõi ảnh.
   }, []);
 
+  console.log("danh_sach_phat_id", danh_sach_phat_id)
+
+  const navigate = useNavigate();
+  const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate("/") : navigate(path));
+  const openSong = () => ifSameGoBackElseNavigate(`/playlist/${danh_sach_phat_id}`);
+
+
   return (
     // Container của card, có hiệu ứng thay đổi màu nền khi hover.
-    <div className="group relative flex flex-col rounded-lg bg-transparent p-3 hover:cursor-pointer hover:bg-white/10">
+    <div className="group relative flex flex-col rounded-lg bg-transparent p-3 hover:cursor-pointer hover:bg-white/10" onClick={openSong}>
       {/* Ảnh hiển thị với class tùy biến theo `isArtist`. Nếu không có ảnh thì dùng ảnh mặc định */}
       <img
         ref={imageReference} // Gán ref để theo dõi kích thước ảnh.
         className={imageVariants({ isArtist })} // Tạo class động dựa trên `isArtist`.
-        src={image ?? 'https://via.placeholder.com/256'} // Nếu không có ảnh thì dùng ảnh placeholder.
+        src={'/public/uifaces-popular-image (2).jpg'} // Nếu không có ảnh thì dùng ảnh placeholder.
         height={256} // Chiều cao ảnh.
         width={256} // Chiều rộng ảnh.
         alt="playlist" // Văn bản thay thế cho ảnh.
@@ -78,7 +87,7 @@ export default function ItemCard({ image, title, description, isArtist }: Proper
       </div>
 
       {/* Tiêu đề của card, sử dụng `truncate` để tránh tràn văn bản */}
-      <p className="max-w-full truncate pb-2 ps-2 pt-3 leading-none text-white">{title}</p>
+      <p className="max-w-full truncate pb-2 ps-2 pt-3 leading-none text-white">{ten_danh_sach}</p>
 
       {/* Nếu có mô tả thì hiển thị với style `truncateStyle`, ngược lại tạo khoảng trắng trống */}
       {description ? (

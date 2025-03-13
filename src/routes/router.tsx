@@ -8,6 +8,9 @@ import Queue from '../pages/queue';
 import Search from '../pages/search';
 import UserPage from '../pages/user/user-page';
 import Login from '@/pages/login';
+import PlayList from '@/pages/playlist';
+import Track from '@/pages/track';
+import Register from '@/pages/register';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,12 +21,14 @@ export const router = createBrowserRouter(
         <Route element={<Lyrics />} path="lyrics" />
         <Route element={<Queue />} path="queue" />
         <Route element={<Feed />} path="feed" />
+        <Route element={<PlayList />} path="playlist/:id" />
+        <Route element={<Track />} path="track/:id" />
         <Route path="user">
           <Route element={<UserPage />} path="trknell" />
         </Route>
       </Route>
       <Route element={<Login />} path="login" />
-
+      <Route element={<Register />} path="register" />
       <Route element={<div>Not Found</div>} path="*" />
     </>,
   ),

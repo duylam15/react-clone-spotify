@@ -9,113 +9,54 @@ import PlaylistCardsContainer from './playlist-cards-container';
 import { useEffect, useState } from 'react';
 import { convertPlaylistFromBackend, getPlayList } from '@/services/playlistAPI';
 
-// Khai báo một danh sách `Playlists` có kiểu `Playlist[]` (mảng các playlist).
-const Playlists: Playlist[] = [
-  {
-    id: '1', // ID của playlist.
-    order: 1, // Thứ tự của playlist.
-    image: 'uifaces-popular-image (1).jpg', // Ảnh đại diện cho playlist.
-    title: 'A very long playlist name that going to be truncated', // Tiêu đề của playlist.
-    description: 'Very very long description to see look of second row this text', // Mô tả của playlist.
-    followers: 100, // Số lượng người theo dõi playlist.
-  },
-  {
-    id: '2',
-    order: 2,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 2',
-    description: 'Description 2',
-    followers: 100,
-  },
+import axios from "axios";
 
-  {
-    id: '3',
-    order: 3,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 3',
-    description: 'Description 3',
-    followers: 100,
-  },
-  {
-    id: '4',
-    order: 4,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 4',
-    description: 'Description 4',
-    followers: 100,
-  },
-  {
-    id: '5',
-    order: 5,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 5',
-    description: 'Description 5',
-    followers: 100,
-  },
-  {
-    id: '6',
-    order: 6,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 6',
-    description: 'Description 6',
-    followers: 100,
-  },
-  {
-    id: '7',
-    order: 7,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 7',
-    description: 'Description 7',
-    followers: 100,
-  },
-  {
-    id: '8',
-    order: 8,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 8',
-    description: 'Description 8',
-    followers: 100,
-  },
-  {
-    id: '9',
-    order: 9,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 9',
-    description: 'Description 9',
-    followers: 100,
-  },
-  {
-    id: '10',
-    order: 10,
-    image: 'uifaces-popular-image (1).jpg',
-    title: 'Playlist 2',
-    description: 'Description 2',
-    followers: 100,
-  },
-];
+// Khai báo một danh sách `Playlists` có kiểu `Playlist[]` (mảng các playlist).
 
 // Định nghĩa component `Home` là một React component.
 // Component này trả về giao diện chứa danh sách các playlist.
 export default function Home(): React.ReactNode {
-  const [playlists, setPlayLists] = useState<Playlist[]>(Playlists);
+  // const [playlists, setPlayLists] = useState<Playlist[]>(Playlists);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
 
-  useEffect(() => {
-    getPlayList()
-      .then((data) => {
-        setPlayLists(data);
-      })
-      .catch(error => console.error(error))
-  }, [])
+
+  const [danhSachPhat, setDanhSachPhat] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Giả sử bạn lấy playlist từ API
-    getPlayList()
-      .then((data) => {
-        setPlayLists(data);
-      })
-      .catch(error => console.error(error))
-  }, [])
+    const fetchDanhSachPhat = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/danhsachphat/");
+        setDanhSachPhat(response.data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDanhSachPhat();
+  }, []);
+
+  console.log("danhSachPhat", danhSachPhat)
+
+  // useEffect(() => {
+  //   getPlayList()
+  //     .then((data) => {
+  //       setPlayLists(data);
+  //     })
+  //     .catch(error => console.error(error))
+  // }, [])
+
+  // useEffect(() => {
+  //   // Giả sử bạn lấy playlist từ API
+  //   getPlayList()
+  //     .then((data) => {
+  //       setPlayLists(data);
+  //     })
+  //     .catch(error => console.error(error))
+  // }, [])
 
   // Hàm thay đổi bài hát khi nhấn vào một bài hát trong playlist
   const changeSong = (song: Song) => {
@@ -126,11 +67,11 @@ export default function Home(): React.ReactNode {
     // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
     <div className="flex flex-col px-3">
       {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
-      <PlaylistCardsContainer title="First Playlist Bundle" items={playlists} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={playlists} />
-      <PlaylistCardsContainer title="Third Playlist Bundle" items={playlists} />
-      <PlaylistCardsContainer title="Fourth Playlist Bundle" items={playlists} />
-      <PlaylistCardsContainer title="Fifth Playlist Bundle" items={playlists} />
+      <PlaylistCardsContainer title="First Playlist Bundle" items={danhSachPhat} />
+      <PlaylistCardsContainer title="Second Playlist Bundle" items={danhSachPhat} />
+      <PlaylistCardsContainer title="Third Playlist Bundle" items={danhSachPhat} />
+      <PlaylistCardsContainer title="Fourth Playlist Bundle" items={danhSachPhat} />
+      <PlaylistCardsContainer title="Fifth Playlist Bundle" items={danhSachPhat} />
     </div>
   );
 }

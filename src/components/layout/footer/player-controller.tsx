@@ -1,26 +1,26 @@
 // Import hook `useState` từ React để quản lý trạng thái của thời gian hiện tại trong trình phát nhạc
-import { useState } from 'react';
+import { useState } from 'react'
 
 // Import các thành phần con của trình phát nhạc
-import ButtonGroup from './player-controller/button-group'; // Nhóm các nút điều khiển nhạc (phát, tạm dừng, chuyển bài,...)
-import ControllerSlider from './player-controller/controller-slider'; // Thanh trượt để điều chỉnh tiến trình phát nhạc
-import TimeDisplay from './player-controller/time-display'; // Hiển thị thời gian của bài hát
+import ButtonGroup from './player-controller/button-group' // Nhóm các nút điều khiển nhạc (phát, tạm dừng, chuyển bài,...)
+import ControllerSlider from './player-controller/controller-slider' // Thanh trượt để điều chỉnh tiến trình phát nhạc
+import TimeDisplay from './player-controller/time-display' // Hiển thị thời gian của bài hát
 
 // Định nghĩa component `PlayerController`, trả về một React Node
 export default function PlayerController(): React.ReactNode {
   // State lưu trữ thời gian hiện tại của bài hát (tính theo giây)
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number>(0)
 
   // Lấy phần tử audio từ DOM bằng cách truy vấn theo `id="audio-player"`
-  const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player');
+  const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player')
 
   // Lắng nghe sự kiện "timeupdate" trên trình phát nhạc, cập nhật `currentTime` mỗi giây
   audioPlayer?.addEventListener('timeupdate', () => {
-    setTimeout(() => setCurrentTime(audioPlayer.currentTime), 1000);
-  });
+    setTimeout(() => setCurrentTime(audioPlayer.currentTime), 1000)
+  })
 
   // Lấy tổng thời gian của bài hát, nếu `audioPlayer` không tồn tại thì giá trị mặc định là 0
-  const duration = audioPlayer?.duration ?? 0;
+  const duration = audioPlayer?.duration ?? 0
 
   return (
     // Container chính cho trình phát nhạc
@@ -38,7 +38,7 @@ export default function PlayerController(): React.ReactNode {
         <TimeDisplay totalSeconds={duration} />
       </div>
     </div>
-  );
+  )
 }
 
 // Ví dụ về cách hoạt động

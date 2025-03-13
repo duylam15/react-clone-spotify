@@ -2,26 +2,26 @@
 // Tắt cảnh báo của ESLint về việc thiếu phụ đề trong phần tử <audio>.
 
 // Import các component con trong phần footer.
-import React, {  useEffect, useState } from 'react';
-import { Song } from '@/types/types';
-import TrackDisplayer from './footer/track-displayer'; // Hiển thị thông tin bài hát đang phát
-import PlayerController from './footer/player-controller'; // Bộ điều khiển chính
-import OtherControls from './footer/other-controls'; // Các điều khiển khác như âm lượng, chế độ phát nhạc, v.v.
+import React, { useEffect, useState } from 'react'
+import { Song } from '@/types/types'
+import TrackDisplayer from './footer/track-displayer' // Hiển thị thông tin bài hát đang phát
+import PlayerController from './footer/player-controller' // Bộ điều khiển chính
+import OtherControls from './footer/other-controls' // Các điều khiển khác như âm lượng, chế độ phát nhạc, v.v.
 
 interface FooterProps {
-  currentSong: Song | null;
+  currentSong: Song | null
 }
 
 const Footer: React.FC<FooterProps> = ({ currentSong }) => {
-  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null)
 
 
   useEffect(() => {
     if (audioPlayer && currentSong) {
-      audioPlayer.src = currentSong.duong_dan;
-      audioPlayer.play(); // Play the song when it's updated
+      audioPlayer.src = currentSong.duong_dan
+      audioPlayer.play() // Play the song when it's updated
     }
-  }, [currentSong, audioPlayer]);
+  }, [currentSong, audioPlayer])
 
   return (
     <div className="flex flex-row items-center justify-between p-2 pb-3">
@@ -29,7 +29,7 @@ const Footer: React.FC<FooterProps> = ({ currentSong }) => {
       <TrackDisplayer song={currentSong} />
 
       {/* Điều khiển phát nhạc (play, pause, next, previous) */}
-      <PlayerController/>
+      <PlayerController />
 
       {/* Các nút điều khiển bổ sung (âm lượng, lặp lại, shuffle, v.v.) */}
       <OtherControls />
@@ -42,7 +42,7 @@ const Footer: React.FC<FooterProps> = ({ currentSong }) => {
         ref={(audio) => setAudioPlayer(audio)}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

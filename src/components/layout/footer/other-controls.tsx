@@ -1,30 +1,30 @@
 // Import các icon từ thư viện `lucide-react` để sử dụng trong giao diện điều khiển
-import { ListMusicIcon, Mic2Icon, MonitorSpeaker, PlaySquareIcon } from 'lucide-react';
+import { ListMusicIcon, Mic2Icon, MonitorSpeaker, PlaySquareIcon } from 'lucide-react'
 // Import `useNavigate` từ `react-router-dom` để xử lý điều hướng trang
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 // Import component `ControlButton` để sử dụng cho các nút điều khiển
-import ControlButton from '@/components/ui/control-button';
+import ControlButton from '@/components/ui/control-button'
 // Import `useAppControllerStore` để quản lý trạng thái ứng dụng (sử dụng Zustand hoặc một thư viện state management tương tự)
-import { useAppControllerStore } from '@/features/appControllerStore';
+import { useAppControllerStore } from '@/features/appControllerStore'
 
 // Import component điều khiển âm lượng
-import VolumeController from './volume-controller';
+import VolumeController from './volume-controller'
 
 // Định nghĩa component `OtherControls`
 export default function OtherControls(): React.ReactNode {
   // Lấy hàm `toggleDetails` từ `useAppControllerStore`, có thể dùng để mở/đóng chế độ xem chi tiết bài hát
-  const toggleDetails = useAppControllerStore((state) => state.toggleDetails);
+  const toggleDetails = useAppControllerStore((state) => state.toggleDetails)
   // Khởi tạo hook `useNavigate` để xử lý điều hướng trang
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   // Hàm điều hướng: nếu đang ở cùng một đường dẫn thì quay lại trang trước, nếu không thì điều hướng đến đường dẫn mới
-  const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate(-1) : navigate(path));
+  const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate("/") : navigate(path))
 
   // Hàm mở trang hiển thị lời bài hát (`/lyrics`)
-  const openLyrics = () => ifSameGoBackElseNavigate('/lyrics');
+  const openLyrics = () => ifSameGoBackElseNavigate('/lyrics')
   // Hàm mở trang danh sách phát (`/queue`)
-  const openQueue = () => ifSameGoBackElseNavigate('/queue');
+  const openQueue = () => ifSameGoBackElseNavigate('/queue')
 
   return (
     // Hiển thị danh sách nút điều khiển trong một hàng ngang
@@ -40,7 +40,7 @@ export default function OtherControls(): React.ReactNode {
       {/* Thành phần điều chỉnh âm lượng */}
       <VolumeController />
     </div>
-  );
+  )
 }
 
 // Giải thích chi tiết về chức năng của OtherControls

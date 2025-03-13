@@ -1,13 +1,13 @@
 // Import các thành phần từ React
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react'
 
 // Định nghĩa component `LibraryCardImage` nhận vào một prop `image`
 export default function LibraryCardImage({ image }: { image?: string | undefined }) {
 
   // Sử dụng `useMemo` để tối ưu hiệu suất, chỉ tính toán lại khi `image` thay đổi
   const style = useMemo<CSSProperties>(() => {
-    return { backgroundImage: `url(${image})` }; // Định nghĩa `backgroundImage` với đường dẫn ảnh
-  }, [image]);
+    return { backgroundImage: `url(${image})` } // Định nghĩa `backgroundImage` với đường dẫn ảnh
+  }, [image])
 
   // Nếu `image` không được cung cấp (`undefined`), hiển thị một div màu xám (chưa có ảnh)
   return image === undefined ? (
@@ -15,7 +15,7 @@ export default function LibraryCardImage({ image }: { image?: string | undefined
   ) : (
     // Nếu có `image`, hiển thị div với ảnh nền
     <div className="size-12 shrink-0 rounded bg-s-gray" style={style} />
-  );
+  )
 }
 
 // Tóm lại

@@ -40,7 +40,7 @@ export default function DynamicGrid<T>({
 
   // Tính số cột có thể hiển thị dựa vào chiều rộng hiện tại.
   const columnCount = Math.floor(width / cardSizePx);
-
+  console.log("items from grid", items)
   return (
     <div>
       {/* Thanh tiêu đề với tiêu đề và nút "Show all" */}

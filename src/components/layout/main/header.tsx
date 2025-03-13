@@ -1,31 +1,31 @@
 // Import các icon cần sử dụng từ thư viện `lucide-react`
-import { BellIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { BellIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
 // Import `useMemo` từ React để tối ưu hóa hiệu suất tính toán lại giá trị
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
 // Import `Link` và `useNavigate` từ `react-router-dom` để điều hướng trang
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'
 
 // Import component TooltipWrapper để hiển thị tooltip khi hover vào các nút
-import TooltipWrapper from '@/components/ui/tooltip-wrapper';
+import TooltipWrapper from '@/components/ui/tooltip-wrapper'
 
 // Import custom hook `useAppControllerStore` để lấy dữ liệu `mainWidth` từ state của app
-import { useAppControllerStore } from '@/features/appControllerStore';
+import { useAppControllerStore } from '@/features/appControllerStore'
 
 // Định nghĩa component Header
 export default function Header(): React.ReactNode {
   // Sử dụng hook `useNavigate` để điều hướng trang
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   // Lấy giá trị chiều rộng của header từ `useAppControllerStore`
-  const width = useAppControllerStore((state) => state.mainWidth);
+  const width = useAppControllerStore((state) => state.mainWidth)
 
   // Dùng `useMemo` để tránh render lại không cần thiết khi `width` không thay đổi
-  const memoizedWidth = useMemo(() => ({ width }), [width]);
+  const memoizedWidth = useMemo(() => ({ width }), [width])
 
   // Gán username cố định (có thể thay bằng giá trị động trong thực tế)
-  const username = 'Emre Can';
+  const username = 'Emre Can'
 
   return (
     // Áp dụng width được memoized vào `div`, thiết lập lớp CSS giúp header luôn hiển thị trên cùng
@@ -91,7 +91,7 @@ export default function Header(): React.ReactNode {
 
       </div>
     </div>
-  );
+  )
 }
 
 

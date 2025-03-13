@@ -52,7 +52,7 @@ export default function Layout() {
 
   // Lấy giá trị `isDetailsOpen` từ store để kiểm tra panel chi tiết có mở hay không.
   const { isDetailsOpen } = useAppControllerStore((state) => ({ isDetailsOpen: state.isDetailsOpen }));
-
+  const currentSong = null
   return (
     // Thẻ div cha chứa toàn bộ layout của ứng dụng.
     <div className="flex h-screen w-full flex-col gap-2 bg-black p-2">
@@ -115,7 +115,7 @@ export default function Layout() {
 
       {/* Footer ở cuối trang, chiều cao cố định 72px. */}
       <div className="h-[72px] shrink-0 self-stretch">
-        <Footer />
+        <Footer currentSong={currentSong} />;
       </div>
     </div>
   );

@@ -20,6 +20,8 @@ interface PlaylistCardsContainerProps {
 }
 
 export default function PlaylistCardsContainer({ title, items }: PlaylistCardsContainerProps) {
+  console.log("items", items)
+  console.log("title", title)
   return (
     // Trả về component `DynamicGrid`, truyền vào các props sau:
     // - `title`: Tiêu đề của danh sách playlist.
@@ -29,16 +31,16 @@ export default function PlaylistCardsContainer({ title, items }: PlaylistCardsCo
       <h3>{title}</h3>
       {/* Render các playlist */}
       <DynamicGrid<Playlist> title={title} items={items} Component={ItemCard} />
-      
-      
+
+
       {items.map((playlist) => (
         <div key={playlist.id} onClick={() => {
-          
+          console.log("playlist", playlist)
           // if (playlist.songs[0]) {
           //   onSongSelect(playlist.songs[0]); // Gọi hàm onSongSelect nếu bài hát tồn tại
           // }
         }}>
-          <h4>{playlist.title}</h4> {/* Render tên của playlist */}
+          <h4>{playlist.anh_danh_sach}</h4> {/* Render tên của playlist */}
         </div>
       ))}
     </div>

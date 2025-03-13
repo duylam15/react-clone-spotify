@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const navigate = useNavigate()
 
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
@@ -61,7 +63,7 @@ export default function Login() {
 
 				<div className='flex flex-col items-center justify-center'>
 					<div className='text-white mt-4 cursor-pointer hover:underline'>Forgot your password?</div>
-					<div className='text-white mt-2 cursor-pointer hover:underline'>
+					<div className='text-white mt-2 cursor-pointer hover:underline' onClick={() => navigate(`/register`)}>
 						Don't have an account? <span className='text-green-400'>Sign up for Spotify</span>
 					</div>
 				</div>

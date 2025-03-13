@@ -1,17 +1,17 @@
 // Import biểu tượng `LibraryBig` từ thư viện `lucide-react` để hiển thị icon thư viện lớn.
-import { LibraryBig } from 'lucide-react';
+import { LibraryBig } from 'lucide-react'
 
 // Import `ScrollArea` - một component hỗ trợ cuộn nội dung trong UI.
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 // Import `TooltipWrapper` - component hiển thị tooltip khi hover vào phần tử.
-import TooltipWrapper from '@/components/ui/tooltip-wrapper';
+import TooltipWrapper from '@/components/ui/tooltip-wrapper'
 
 // Import hàm `getIconSize` để lấy kích thước icon.
-import getIconSize from '@/utils/get-icon-size';
+import getIconSize from '@/utils/get-icon-size'
 
 // Import `LibraryCard` - component hiển thị thông tin một thư viện cụ thể.
-import LibraryCard from './library-card/library-card';
+import LibraryCard from './library-card/library-card'
 
 // Danh sách các thư viện nhạc có sẵn trong sidebar.
 const libraries = [
@@ -28,10 +28,10 @@ const libraries = [
   { name: 'Black Metal', songCount: 76 }, // Playlist Black Metal.
   { name: 'R&B', songCount: 12 }, // Playlist R&B.
   { name: 'Indie Rock', songCount: 16 }, // Playlist Indie Rock.
-];
+]
 
 // Gọi hàm `getIconSize` để lấy kích thước icon lớn (`'l'`) và lưu vào `iconProperties`.
-const iconProperties = getIconSize('l', true);
+const iconProperties = getIconSize('l', true)
 
 // Định nghĩa component `SidebarLibraryExplorer`, hiển thị thư viện nhạc trong sidebar.
 export default function SidebarLibraryExplorer() {
@@ -61,5 +61,5 @@ export default function SidebarLibraryExplorer() {
         ))}
       </ScrollArea>
     </div>
-  );
+  )
 }

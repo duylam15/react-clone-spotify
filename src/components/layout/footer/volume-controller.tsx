@@ -1,58 +1,58 @@
 // Import các icon biểu tượng âm lượng từ thư viện 'lucide-react'
-import { Volume1Icon, Volume2Icon, VolumeIcon, VolumeXIcon } from 'lucide-react';
+import { Volume1Icon, Volume2Icon, VolumeIcon, VolumeXIcon } from 'lucide-react'
 
 // Import các hooks cần thiết từ React
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react'
 
 // Import component ControlButton (nút điều khiển) từ thư mục components/ui
-import ControlButton from '@/components/ui/control-button';
+import ControlButton from '@/components/ui/control-button'
 
 // Import Slider (thanh trượt chỉnh âm lượng) từ thư mục components/ui
-import { Slider } from '@/components/ui/slider';
+import { Slider } from '@/components/ui/slider'
 
 // Định nghĩa và xuất component VolumeController
 export default function VolumeController(): React.ReactNode {
   // State quản lý mức âm lượng, mặc định là 0.5 (50%)
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0.5)
 
   // State kiểm tra xem âm thanh có bị tắt tiếng không, mặc định là false (không tắt)
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false)
 
   // Lấy phần tử audio từ DOM (thẻ có id="audio-player")
-  const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player');
+  const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player')
 
   // Tính toán giá trị mặc định cho thanh trượt âm lượng (lưu trữ dưới dạng mảng)
-  const defaultVolume = useMemo(() => [volume * 100], [volume]);
+  const defaultVolume = useMemo(() => [volume * 100], [volume])
 
   // Xác định giá trị hiện tại của thanh trượt âm lượng, nếu isMuted thì giá trị là 0
-  const volumeValue = useMemo(() => [isMuted ? 0 : volume * 100], [isMuted, volume]);
+  const volumeValue = useMemo(() => [isMuted ? 0 : volume * 100], [isMuted, volume])
 
   // Hàm xử lý khi thay đổi giá trị thanh trượt âm lượng
   const onValueChange = useCallback(
     (value: number[]) => {
       // Nếu không có giá trị hoặc không tìm thấy audioPlayer thì thoát
-      if (value[0] === undefined || !audioPlayer) return;
+      if (value[0] === undefined || !audioPlayer) return
 
       // Cập nhật state volume theo giá trị mới của thanh trượt
-      setVolume(value[0] / 100);
+      setVolume(value[0] / 100)
 
       // Cập nhật âm lượng của audioPlayer
-      audioPlayer.volume = value[0] / 100;
+      audioPlayer.volume = value[0] / 100
     },
     [audioPlayer], // useCallback sẽ chỉ tạo lại hàm khi audioPlayer thay đổi
-  );
+  )
 
   // Hàm xử lý khi bấm vào nút tắt/mở âm lượng
   const onMuteClick = useCallback(() => {
     // Nếu không tìm thấy audioPlayer thì thoát
-    if (!audioPlayer) return;
+    if (!audioPlayer) return
 
     // Cập nhật trạng thái tắt/mở âm thanh
-    setIsMuted((previous) => !previous);
+    setIsMuted((previous) => !previous)
 
     // Cập nhật thuộc tính muted của audioPlayer
-    audioPlayer.muted = !isMuted;
-  }, [audioPlayer, isMuted]); // useCallback sẽ chỉ tạo lại hàm khi audioPlayer hoặc isMuted thay đổi
+    audioPlayer.muted = !isMuted
+  }, [audioPlayer, isMuted]) // useCallback sẽ chỉ tạo lại hàm khi audioPlayer hoặc isMuted thay đổi
 
   return (
     <div className="group flex w-32 flex-row items-center">
@@ -83,7 +83,7 @@ export default function VolumeController(): React.ReactNode {
         value={volumeValue} // Giá trị hiện tại của thanh trượt
       />
     </div>
-  );
+  )
 }
 
 // Tổng kết:

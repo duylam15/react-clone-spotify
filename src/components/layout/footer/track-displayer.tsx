@@ -1,15 +1,15 @@
 // Import biểu tượng trái tim từ thư viện `lucide-react` để hiển thị nút "yêu thích"
-import { HeartIcon } from 'lucide-react';
-import { Song } from '@/types/types';
+import { HeartIcon } from 'lucide-react'
+import { Song } from '@/types/types'
 
 // Import hook `useState` từ React để quản lý trạng thái
-import { useState } from 'react';
+import { useState } from 'react'
 
 // Import các thành phần `Tooltip` từ thư mục `@/components/ui/tooltip` để hiển thị chú thích khi hover
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Import hàm `getIconSize` để lấy kích thước của icon
-import getIconSize from '@/utils/get-icon-size';
+import getIconSize from '@/utils/get-icon-size'
 
 // Đối tượng `currentSong` chứa thông tin về bài hát hiện tại
 const currentSong = {
@@ -17,25 +17,25 @@ const currentSong = {
   albumCover: 'https://picsum.photos/200', // Ảnh bìa album (sử dụng hình ảnh ngẫu nhiên)
   artist: 'Artist Name', // Tên nghệ sĩ
   name: 'Song Name', // Tên bài hát
-};
+}
 
 // Gọi hàm `getIconSize` với tham số `'l'` để lấy thuộc tính kích thước của icon
-const iconProperty = getIconSize('l');
+const iconProperty = getIconSize('l')
 
 interface TrackDisplayerProps {
-  song: Song | null; // Định nghĩa props song
+  song: Song | null // Định nghĩa props song
 }
 
 // Định nghĩa component `TrackDisplayer`
 const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
   if (!song) {
-    return <div>Không có bài hát nào được chọn</div>; // Nếu không có bài hát, hiển thị thông báo
+    return <div>Không có bài hát nào được chọn</div> // Nếu không có bài hát, hiển thị thông báo
   }
   // State `isLiked` lưu trạng thái bài hát có được yêu thích không (mặc định là `false`)
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isLiked, setIsLiked] = useState<boolean>(false)
 
   // State `effects` lưu trạng thái hiệu ứng rung khi người dùng bấm vào biểu tượng trái tim
-  const [effects, setEffects] = useState<boolean>(false);
+  const [effects, setEffects] = useState<boolean>(false)
 
   return (
     // Container chính chứa thông tin bài hát, ảnh bìa, và nút yêu thích
@@ -71,8 +71,8 @@ const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
             `}
             onAnimationEnd={() => setEffects(false)} // Khi hiệu ứng kết thúc, đặt `effects` về `false`
             onClick={() => {
-              setIsLiked(!isLiked); // Đảo ngược trạng thái `isLiked`
-              setEffects(true); // Kích hoạt hiệu ứng rung
+              setIsLiked(!isLiked) // Đảo ngược trạng thái `isLiked`
+              setEffects(true) // Kích hoạt hiệu ứng rung
             }}
             {...iconProperty} // Thêm thuộc tính kích thước của icon
           />
@@ -84,11 +84,11 @@ const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
         </TooltipContent>
       </Tooltip>
     </div>
-  );
+  )
 }
 
 
-export default TrackDisplayer;
+export default TrackDisplayer
 
 // Cách hoạt động
 // Người dùng mở giao diện, thấy ảnh bìa, tên bài hát, tên nghệ sĩ và icon trái tim.
