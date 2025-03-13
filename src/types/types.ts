@@ -1,5 +1,5 @@
 export interface Playlist {
-  danh_sach_phat_id: string;
+  danh_sach_phat_id: number;
   order: number;
   ten_danh_sach: string;
   anh_danh_sach: string;

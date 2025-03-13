@@ -1,13 +1,13 @@
 // Import biểu tượng `GripVertical` từ thư viện `lucide-react`.
 // `GripVertical` là một icon gồm 6 chấm dọc, thường dùng làm biểu tượng kéo thả.
-import { GripVertical } from 'lucide-react';
+import { GripVertical } from 'lucide-react'
 
 // Import toàn bộ module `react-resizable-panels` vào `ResizablePrimitive`.
 // Thư viện này cung cấp các thành phần giúp tạo layout có thể thay đổi kích thước bằng cách kéo thả.
-import * as ResizablePrimitive from 'react-resizable-panels';
+import * as ResizablePrimitive from 'react-resizable-panels'
 
 // Import hàm `cn` từ thư viện utils để kết hợp nhiều class lại với nhau một cách linh hoạt.
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Component `ResizablePanelGroup` để tạo một nhóm panel có thể thay đổi kích thước.
 const ResizablePanelGroup = ({
@@ -19,14 +19,14 @@ const ResizablePanelGroup = ({
     className={cn('flex h-full w-full data-[panel-group-direction=vertical]:flex-col', className)}
     {...properties} // Truyền tất cả thuộc tính còn lại cho `PanelGroup`.
   />
-);
+)
 
 // Component `ResizablePanel` dùng để tạo từng panel riêng lẻ.
 // Chỉ là một alias (định danh lại) cho `ResizablePrimitive.Panel` để dễ sử dụng.
-const ResizablePanel = ResizablePrimitive.Panel;
+const ResizablePanel = ResizablePrimitive.Panel
 
 // Định nghĩa kiểu dữ liệu `IResizablePanel`, dùng cho các tham chiếu điều khiển Panel.
-export type IResizablePanel = ResizablePrimitive.ImperativePanelHandle;
+export type IResizablePanel = ResizablePrimitive.ImperativePanelHandle
 
 // Component `ResizableHandle` là thanh kéo để thay đổi kích thước giữa các panel.
 const ResizableHandle = ({
@@ -34,7 +34,7 @@ const ResizableHandle = ({
   withHandle, // Biến `withHandle` xác định có hiển thị icon kéo thả không.
   ...properties // Spread tất cả thuộc tính còn lại để đảm bảo component hoạt động như `PanelResizeHandle`.
 }: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-  withHandle?: boolean; // `withHandle` là một boolean tuỳ chọn, mặc định là `false`.
+  withHandle?: boolean // `withHandle` là một boolean tuỳ chọn, mặc định là `false`.
 }) => (
   <ResizablePrimitive.PanelResizeHandle
     // Kết hợp class mặc định với `className` truyền vào.
@@ -56,7 +56,7 @@ const ResizableHandle = ({
       </div>
     )}
   </ResizablePrimitive.PanelResizeHandle>
-);
+)
 
 // Xuất các component để sử dụng ở nơi khác trong ứng dụng.
-export { ResizableHandle, ResizablePanel, ResizablePanelGroup };
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup }

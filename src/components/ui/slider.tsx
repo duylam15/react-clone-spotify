@@ -1,12 +1,12 @@
 // Import tất cả các thành phần của slider từ thư viện `@radix-ui/react-slider`.
 // Thư viện này giúp tạo slider tùy chỉnh với các tính năng nâng cao.
-import * as SliderPrimitive from '@radix-ui/react-slider';
+import * as SliderPrimitive from '@radix-ui/react-slider'
 
 // Import React để sử dụng forwardRef và các kiểu dữ liệu.
-import * as React from 'react';
+import * as React from 'react'
 
 // Import hàm `cn` từ thư viện utils để kết hợp nhiều class lại với nhau một cách linh hoạt.
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Tạo component `Slider` sử dụng `forwardRef` để cho phép truyền ref vào component.
 const Slider = React.forwardRef<
@@ -36,10 +36,10 @@ const Slider = React.forwardRef<
       dark:border-s-white dark:bg-s-gray-darkest dark:ring-offset-s-gray-darkest dark:focus-visible:ring-s-gray-lighter
     " />
   </SliderPrimitive.Root>
-));
+))
 
 // Đặt `displayName` cho component `Slider` để hỗ trợ debug trong DevTools.
-Slider.displayName = SliderPrimitive.Root.displayName;
+Slider.displayName = SliderPrimitive.Root.displayName
 
 // Xuất component `Slider` để sử dụng ở nơi khác trong ứng dụng.
-export { Slider };
+export { Slider }

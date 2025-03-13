@@ -32,9 +32,8 @@ export default function PlaylistCardsContainer({ title, items }: PlaylistCardsCo
       {/* Render các playlist */}
       <DynamicGrid<Playlist> title={title} items={items} Component={ItemCard} />
 
-
       {items.map((playlist) => (
-        <div key={playlist.id} onClick={() => {
+        <div key={playlist.danh_sach_phat_id} onClick={() => {
           console.log("playlist", playlist)
           // if (playlist.songs[0]) {
           //   onSongSelect(playlist.songs[0]); // Gọi hàm onSongSelect nếu bài hát tồn tại

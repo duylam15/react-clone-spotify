@@ -1,32 +1,32 @@
 // Import toàn bộ các thành phần từ thư viện `@radix-ui/react-dropdown-menu` với tên `DropdownMenuPrimitive`
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 
 // Import các icon từ thư viện `lucide-react`
-import { Check, ChevronRight, Circle } from 'lucide-react';
+import { Check, ChevronRight, Circle } from 'lucide-react'
 
 // Import React để sử dụng các tính năng như `forwardRef`
-import * as React from 'react';
+import * as React from 'react'
 
 // Import hàm `cn` từ thư mục `utils`, có thể là hàm giúp xử lý className
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Định nghĩa `DropdownMenu` là gốc của menu dropdown từ thư viện `@radix-ui/react-dropdown-menu`
-const DropdownMenu = DropdownMenuPrimitive.Root;
+const DropdownMenu = DropdownMenuPrimitive.Root
 
 // Định nghĩa `DropdownMenuTrigger`, phần tử kích hoạt menu
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
 // Định nghĩa `DropdownMenuGroup`, giúp nhóm các mục trong menu
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
+const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
 // Định nghĩa `DropdownMenuPortal`, giúp hiển thị menu trong một cổng riêng biệt (portal)
-const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
+const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 
 // Định nghĩa `DropdownMenuSub`, đại diện cho một menu con bên trong menu chính
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
+const DropdownMenuSub = DropdownMenuPrimitive.Sub
 
 // Định nghĩa `DropdownMenuRadioGroup`, giúp tạo nhóm các mục kiểu radio trong menu
-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 // Định nghĩa `DropdownMenuSubTrigger`, là phần tử kích hoạt cho menu con
 const DropdownMenuSubTrigger = React.forwardRef<
@@ -45,8 +45,8 @@ const DropdownMenuSubTrigger = React.forwardRef<
     {children}
     <ChevronRight className="ml-auto size-4" /> {/* Hiển thị icon mũi tên bên phải */}
   </DropdownMenuPrimitive.SubTrigger>
-));
-DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
+))
+DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
 
 // Định nghĩa `DropdownMenuSubContent`, là nội dung của menu con
 const DropdownMenuSubContent = React.forwardRef<
@@ -61,8 +61,8 @@ const DropdownMenuSubContent = React.forwardRef<
     )}
     {...properties}
   />
-));
-DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName;
+))
+DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName
 
 // Định nghĩa `DropdownMenuContent`, là nội dung chính của dropdown menu
 const DropdownMenuContent = React.forwardRef<
@@ -80,8 +80,8 @@ const DropdownMenuContent = React.forwardRef<
       {...properties}
     />
   </DropdownMenuPrimitive.Portal>
-));
-DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
+))
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 // Định nghĩa `DropdownMenuItem`, là các mục trong menu
 const DropdownMenuItem = React.forwardRef<
@@ -97,8 +97,8 @@ const DropdownMenuItem = React.forwardRef<
     )}
     {...properties}
   />
-));
-DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+))
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
 // Định nghĩa `DropdownMenuCheckboxItem`, là mục dạng checkbox trong menu
 const DropdownMenuCheckboxItem = React.forwardRef<
@@ -121,8 +121,8 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     </span>
     {children}
   </DropdownMenuPrimitive.CheckboxItem>
-));
-DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName;
+))
+DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName
 
 // Định nghĩa `DropdownMenuRadioItem`, là mục dạng radio trong menu
 const DropdownMenuRadioItem = React.forwardRef<
@@ -144,8 +144,8 @@ const DropdownMenuRadioItem = React.forwardRef<
     </span>
     {children}
   </DropdownMenuPrimitive.RadioItem>
-));
-DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
+))
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
 
 // Định nghĩa `DropdownMenuLabel`, là tiêu đề hoặc nhãn trong menu
 const DropdownMenuLabel = React.forwardRef<
@@ -157,8 +157,8 @@ const DropdownMenuLabel = React.forwardRef<
     className={cn('px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
     {...properties}
   />
-));
-DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
+))
+DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
 
 // Định nghĩa `DropdownMenuSeparator`, là đường kẻ phân cách trong menu
 const DropdownMenuSeparator = React.forwardRef<
@@ -170,14 +170,14 @@ const DropdownMenuSeparator = React.forwardRef<
     className={cn('-mx-1 my-1 h-px bg-zinc-100 dark:bg-zinc-800', className)}
     {...properties}
   />
-));
-DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
+))
+DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
 // Định nghĩa `DropdownMenuShortcut`, giúp hiển thị phím tắt trong menu
 const DropdownMenuShortcut = ({ className, ...properties }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...properties} />;
-};
-DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
+  return <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...properties} />
+}
+DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
 
 export {
   DropdownMenu,
@@ -195,4 +195,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-};
+}

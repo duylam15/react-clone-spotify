@@ -1,12 +1,12 @@
 // Import `cva` từ thư viện `class-variance-authority` để tạo class CSS động theo biến thể (variants).
 // Import `VariantProps` để hỗ trợ kiểu dữ liệu cho các biến thể.
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority'
 
 // Import `PlayIcon` từ thư viện `lucide-react`, đây là một icon hình nút Play.
-import { PlayIcon } from 'lucide-react';
+import { PlayIcon } from 'lucide-react'
 
 // Import hàm `cn` từ thư viện utils để kết hợp nhiều class lại với nhau một cách linh hoạt.
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Định nghĩa biến `buttonVariants` để tùy chỉnh class CSS cho nút PlayButton.
 const buttonVariants = cva(
@@ -26,12 +26,12 @@ const buttonVariants = cva(
       size: 'md', // Mặc định kích thước là `md` (48px).
     },
   },
-);
+)
 
 // Định nghĩa interface `ButtonProperties`, mở rộng từ thuộc tính của `<button>`.
 // `VariantProps<typeof buttonVariants>` để hỗ trợ kiểu dữ liệu cho `size` (sm, md, lg).
 interface ButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
-  asChild?: boolean; // Nếu là `true`, component sẽ hiển thị dưới dạng `children`.
+  asChild?: boolean // Nếu là `true`, component sẽ hiển thị dưới dạng `children`.
 }
 
 // Component `PlayButton` hiển thị một nút hình tròn chứa icon Play.
@@ -42,5 +42,5 @@ export default function PlayButton({ className, size, ...properties }: ButtonPro
       {/* Icon Play có kích thước cố định là 24px */}
       <PlayIcon size={24} color="black" />
     </button>
-  );
+  )
 }

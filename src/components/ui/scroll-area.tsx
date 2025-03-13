@@ -1,11 +1,11 @@
 // Import các thành phần từ thư viện `@radix-ui/react-scroll-area` để tạo vùng cuộn tùy chỉnh.
-import { Corner, Root, ScrollAreaScrollbar, ScrollAreaThumb, Viewport } from '@radix-ui/react-scroll-area';
+import { Corner, Root, ScrollAreaScrollbar, ScrollAreaThumb, Viewport } from '@radix-ui/react-scroll-area'
 
 // Import các kiểu dữ liệu từ React để làm việc với component và forwardRef.
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react';
+import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
 
 // Import hàm `cn` từ thư viện utils để kết hợp nhiều class lại với nhau một cách linh hoạt.
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Component `ScrollArea` dùng để tạo vùng cuộn có thể tùy chỉnh.
 // Sử dụng `forwardRef` để cho phép truyền ref vào component.
@@ -23,10 +23,10 @@ const ScrollArea = forwardRef<ElementRef<typeof Root>, ComponentPropsWithoutRef<
       <Corner />
     </Root>
   ),
-);
+)
 
 // Đặt `displayName` cho component để giúp debug tốt hơn trong DevTools.
-ScrollArea.displayName = Root.displayName;
+ScrollArea.displayName = Root.displayName
 
 // Component `ScrollBar` để tạo thanh cuộn dọc hoặc ngang.
 const ScrollBar = forwardRef<
@@ -47,10 +47,10 @@ const ScrollBar = forwardRef<
     {/* `ScrollAreaThumb` là phần hiển thị của thanh cuộn mà người dùng có thể kéo */}
     <ScrollAreaThumb className="relative flex-1 rounded-full bg-s-gray-lighter/50 hover:bg-s-gray-light/50 dark:bg-zinc-800" />
   </ScrollAreaScrollbar>
-));
+))
 
 // Đặt `displayName` cho component `ScrollBar` để giúp debug tốt hơn.
-ScrollBar.displayName = ScrollAreaScrollbar.displayName;
+ScrollBar.displayName = ScrollAreaScrollbar.displayName
 
 // Xuất các component để sử dụng ở nơi khác trong ứng dụng.
-export { ScrollArea, ScrollBar };
+export { ScrollArea, ScrollBar }

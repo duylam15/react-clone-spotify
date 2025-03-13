@@ -1,21 +1,21 @@
 // Import `useMemo` từ React để tối ưu hóa hiệu suất bằng cách ghi nhớ giá trị tính toán.
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
 // Import các thành phần Tooltip từ thư mục `components/ui/tooltip`.
 // `Tooltip` là thành phần chính để hiển thị tooltip.
 // `TooltipTrigger` là phần tử kích hoạt tooltip (thường là nút hoặc văn bản).
 // `TooltipContent` là nội dung hiển thị trong tooltip.
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Xác định kiểu dữ liệu cho vị trí hiển thị tooltip (top, bottom, left, right).
-type TooltipSide = 'bottom' | 'left' | 'right' | 'top';
+type TooltipSide = 'bottom' | 'left' | 'right' | 'top'
 
 // Định nghĩa interface `Properties` để xác định các props có thể truyền vào `TooltipWrapper`.
 interface Properties {
-  children: React.ReactNode; // Nội dung con (thành phần sẽ hiển thị tooltip khi hover).
-  side?: TooltipSide; // Xác định vị trí của tooltip (mặc định là 'top').
-  sideOffset?: number; // Khoảng cách giữa tooltip và phần tử kích hoạt (mặc định là 8px).
-  tooltipContent?: React.ReactNode | string | undefined; // Nội dung của tooltip, có thể là chuỗi hoặc component React.
+  children: React.ReactNode // Nội dung con (thành phần sẽ hiển thị tooltip khi hover).
+  side?: TooltipSide // Xác định vị trí của tooltip (mặc định là 'top').
+  sideOffset?: number // Khoảng cách giữa tooltip và phần tử kích hoạt (mặc định là 8px).
+  tooltipContent?: React.ReactNode | string | undefined // Nội dung của tooltip, có thể là chuỗi hoặc component React.
 }
 
 // Định nghĩa component `TooltipWrapper`, xuất mặc định để có thể import từ file khác.
@@ -28,9 +28,9 @@ export default function TooltipWrapper({
 
   // Dùng `useMemo` để ghi nhớ nội dung của tooltip và tránh tính toán lại không cần thiết.
   const memoizedContent = useMemo(() => {
-    if (tooltipContent == undefined) return; // Nếu không có nội dung tooltip, trả về `undefined`.
-    return tooltipContent; // Trả về nội dung tooltip nếu có.
-  }, [tooltipContent]); // Chỉ cập nhật giá trị khi `tooltipContent` thay đổi.
+    if (tooltipContent == undefined) return // Nếu không có nội dung tooltip, trả về `undefined`.
+    return tooltipContent // Trả về nội dung tooltip nếu có.
+  }, [tooltipContent]) // Chỉ cập nhật giá trị khi `tooltipContent` thay đổi.
 
   // Nếu `tooltipContent` không được truyền vào, chỉ hiển thị `children` mà không có tooltip.
   return tooltipContent == undefined ? (
@@ -50,5 +50,5 @@ export default function TooltipWrapper({
         {memoizedContent} {/* Hiển thị nội dung tooltip đã được ghi nhớ. */}
       </TooltipContent>
     </Tooltip>
-  );
+  )
 }

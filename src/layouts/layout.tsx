@@ -115,7 +115,7 @@ export default function Layout() {
 
       {/* Footer ở cuối trang, chiều cao cố định 72px. */}
       <div className="h-[72px] shrink-0 self-stretch">
-        <Footer currentSong={currentSong} />;
+        <Footer currentSong={currentSong} />
       </div>
     </div>
   );

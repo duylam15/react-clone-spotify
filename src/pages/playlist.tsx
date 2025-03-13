@@ -1,100 +1,100 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Playlist } from "@/types/types";
-import { useNavigate, useParams } from "react-router-dom";
-import PlayButton from "@/components/ui/play-button";
-import { getSongById, getSongFromPlayList } from "@/services/playlistAPI";
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { Playlist } from "@/types/types"
+import { useNavigate, useParams } from "react-router-dom"
+import PlayButton from "@/components/ui/play-button"
+import { getSongById, getSongFromPlayList } from "@/services/playlistAPI"
 
-const API_BASE_URL = "http://127.0.0.1:8000"; // Cấu hình API base URL
+const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
 export default function PlayList(): React.ReactNode {
-  const [playlist, setPlaylist] = useState<Playlist | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const { id } = useParams(); // Lấy giá trị của tham số id từ URL
-  const [songs, setSongs] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const playlistId = id ? Number(id) : Number(id);
-  const navigate = useNavigate(); // Hook điều hướng
+  const [playlist, setPlaylist] = useState<Playlist | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { id } = useParams() // Lấy giá trị của tham số id từ URL
+  const [songs, setSongs] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const playlistId = id ? Number(id) : Number(id)
+  const navigate = useNavigate() // Hook điều hướng
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/danhsachphat/${id}/`);
-        setPlaylist(response.data);
+        const response = await axios.get(`${API_BASE_URL}/danhsachphat/${id}/`)
+        setPlaylist(response.data)
       } catch (err: any) {
-        console.error("Error fetching playlist:", err);
-        setError(err);
+        console.error("Error fetching playlist:", err)
+        setError(err)
       }
-    };
+    }
 
-    fetchPlaylist();
-  }, []);
+    fetchPlaylist()
+  }, [])
 
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        setLoading(true);
-        const data = await getSongFromPlayList(playlistId);
-        const songIds = data.danh_sach_bai_hat.map((item: any) => item.bai_hat); // Lấy danh sách ID bài hát
+        setLoading(true)
+        const data = await getSongFromPlayList(playlistId)
+        const songIds = data.danh_sach_bai_hat.map((item: any) => item.bai_hat) // Lấy danh sách ID bài hát
         const songDetails = await Promise.all(
           songIds.map(async (songId: number) => {
-            const response = await getSongById(songId);
-            return response;
+            const response = await getSongById(songId)
+            return response
           })
-        );
-        setSongs(songDetails);
+        )
+        setSongs(songDetails)
       } catch (err) {
-        setError("Không thể tải danh sách bài hát.");
+        setError("Không thể tải danh sách bài hát.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchSongs();
-  }, [playlistId]);
+    fetchSongs()
+  }, [playlistId])
 
 
-  const [activeSongId, setActiveSongId] = useState<number | null>(null);
-  const [clickCount, setClickCount] = useState(0);
+  const [activeSongId, setActiveSongId] = useState<number | null>(null)
+  const [clickCount, setClickCount] = useState(0)
 
 
   const handleClick = (songId: number) => {
-    console.log("activeSongId", activeSongId);
-    console.log("songId", songId);
+    console.log("activeSongId", activeSongId)
+    console.log("songId", songId)
 
     // Kiểm tra xem bài hát được click có phải là bài đang active hay không
     if (activeSongId === songId) {
       // Nếu người dùng đã click vào bài hát này 1 lần trước đó
       console.log("clickCount", clickCount)
       if (clickCount === 1) {
-        activeSong(songId); // Gọi hàm phát nhạc
-        setClickCount(0); // Reset số lần click để chuẩn bị cho lần click mới
+        activeSong(songId) // Gọi hàm phát nhạc
+        setClickCount(0) // Reset số lần click để chuẩn bị cho lần click mới
       } else {
-        setClickCount(1); // Đánh dấu rằng người dùng đã click 1 lần
+        setClickCount(1) // Đánh dấu rằng người dùng đã click 1 lần
         // Nếu sau 300ms không có lần click thứ 2, reset clickCount
-        setTimeout(() => setClickCount(0), 300);
+        setTimeout(() => setClickCount(0), 300)
       }
     } else {
       // Nếu người dùng click vào một bài hát khác, cập nhật bài hát mới
-      setActiveSongId(songId);
+      setActiveSongId(songId)
       // Kiểm tra xem lần click này có phải là lần thứ 2 hay không
       if (clickCount === 1) {
-        activeSong(songId); // Nếu là lần thứ 2, phát nhạc luôn
-        setClickCount(0); // Reset lại bộ đếm
+        activeSong(songId) // Nếu là lần thứ 2, phát nhạc luôn
+        setClickCount(0) // Reset lại bộ đếm
       } else {
-        setClickCount(1); // Nếu là lần đầu, tăng bộ đếm click lên 1
-        setTimeout(() => setClickCount(0), 300); // Reset sau 300ms nếu không có click tiếp theo
+        setClickCount(1) // Nếu là lần đầu, tăng bộ đếm click lên 1
+        setTimeout(() => setClickCount(0), 300) // Reset sau 300ms nếu không có click tiếp theo
       }
     }
 
-  };
+  }
 
   const activeSong = (songId: number) => {
-    console.log(`Bài hát ID ${songId} đang phát!`);
-  };
+    console.log(`Bài hát ID ${songId} đang phát!`)
+  }
 
 
-  if (error) return <div className="text-red-500">Lỗi khi tải danh sách phát</div>;
-  if (!playlist) return <div className="text-gray-500">Đang tải...</div>;
+  if (error) return <div className="text-red-500">Lỗi khi tải danh sách phát</div>
+  if (!playlist) return <div className="text-gray-500">Đang tải...</div>
 
   return (
     <div className="flex flex-col w-full ">
@@ -166,5 +166,5 @@ export default function PlayList(): React.ReactNode {
       </div>
 
     </div>
-  );
+  )
 }

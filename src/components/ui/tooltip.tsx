@@ -1,13 +1,13 @@
 // Import `Content` từ thư viện `@radix-ui/react-tooltip`, đây là phần hiển thị nội dung của tooltip.
-import { Content } from '@radix-ui/react-tooltip';
+import { Content } from '@radix-ui/react-tooltip'
 
 // Import các kiểu dữ liệu `ComponentPropsWithoutRef` và `ElementRef` từ React.
 // `ComponentPropsWithoutRef`: Lấy tất cả các props của một component trừ `ref`.
 // `ElementRef`: Lấy kiểu của phần tử DOM từ một component.
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 
 // Import hàm `cn` từ thư viện nội bộ (`@/lib/utils`) để xử lý lớp CSS động.
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/utils'
 
 // Định nghĩa component `TooltipContent` sử dụng `forwardRef` để chuyển tiếp `ref` đến phần tử DOM thực tế.
 const TooltipContent = forwardRef<
@@ -31,13 +31,13 @@ const TooltipContent = forwardRef<
     sideOffset={sideOffset} // Định nghĩa khoảng cách giữa tooltip và phần tử kích hoạt, mặc định là 4px.
     {...properties} // Truyền tất cả các props còn lại.
   />
-));
+))
 
 // Đặt tên hiển thị cho component, giúp dễ dàng debug hơn trong React DevTools.
-TooltipContent.displayName = Content.displayName;
+TooltipContent.displayName = Content.displayName
 
 // Xuất `TooltipContent` để có thể sử dụng trong các file khác.
-export { TooltipContent };
+export { TooltipContent }
 
 // Xuất các thành phần quan trọng từ `@radix-ui/react-tooltip` để sử dụng trong tooltip.
-export { Root as Tooltip, Provider as TooltipProvider, Trigger as TooltipTrigger } from '@radix-ui/react-tooltip';
+export { Root as Tooltip, Provider as TooltipProvider, Trigger as TooltipTrigger } from '@radix-ui/react-tooltip'

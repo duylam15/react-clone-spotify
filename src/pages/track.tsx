@@ -1,26 +1,26 @@
-import { useEffect, useState } from "react";
-import { Playlist } from "@/types/types";
-import { useParams } from "react-router-dom";
-import { getSongById, } from "@/services/playlistAPI";
+import { useEffect, useState } from "react"
+import { Playlist } from "@/types/types"
+import { useParams } from "react-router-dom"
+import { getSongById, } from "@/services/playlistAPI"
 
 export default function Track(): React.ReactNode {
-  const [song, setSong] = useState<any | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const { id } = useParams(); // Lấy giá trị của tham số id từ URL
-  const playlistId = id ? Number(id) : Number(id);
+  const [song, setSong] = useState<any | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { id } = useParams() // Lấy giá trị của tham số id từ URL
+  const playlistId = id ? Number(id) : Number(id)
 
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const response = await getSongById(playlistId);
-        setSong(response);
+        const response = await getSongById(playlistId)
+        setSong(response)
       } catch (err: any) {
-        console.error("Error fetching playlist:", err);
-        setError(err);
+        console.error("Error fetching playlist:", err)
+        setError(err)
       }
-    };
-    fetchPlaylist();
-  }, []);
+    }
+    fetchPlaylist()
+  }, [])
 
   console.log(song)
 
@@ -73,6 +73,6 @@ export default function Track(): React.ReactNode {
         </div>
       </div>
     </div>
-  );
+  )
 }
 

@@ -1,22 +1,20 @@
 // Import `cva` từ thư viện `class-variance-authority` để tạo class CSS động theo biến thể (variants).
-import { cva } from 'class-variance-authority';
+import { cva } from 'class-variance-authority'
 
 // Import `useCallback` và `useState` từ React.
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react'
 
 // Import `PlayButton` từ thư mục components/ui, có thể là nút phát nhạc.
-import PlayButton from '@/components/ui/play-button';
-import { useNavigate } from 'react-router-dom';
+import PlayButton from '@/components/ui/play-button'
+import { useNavigate } from 'react-router-dom'
 
 // Định nghĩa kiểu dữ liệu `Properties` cho component `ItemCard`.
 interface Properties {
-  danh_sach_phat_id?: number;
-  anh_danh_sach?: string; // Ảnh hiển thị trên card (tùy chọn).
-  ten_danh_sach: string; // Tiêu đề.
-  followers?: string | number; // Số lượng người theo dõi (tùy chọn).
-  description?: string; // Mô tả (tùy chọn).
-  isArtist?: boolean; // Có phải nghệ sĩ hay không (tùy chọn).
-  showFollowers?: boolean; // Có hiển thị số người theo dõi không (tùy chọn).
+  danh_sach_phat_id: number
+  anh_danh_sach?: string // Ảnh hiển thị trên card (tùy chọn).
+  ten_danh_sach: string // Tiêu đề.
+  description?: string // Mô tả (tùy chọn).
+  isArtist?: boolean // Có phải nghệ sĩ hay không (tùy chọn).
 }
 
 // Định nghĩa class động `imageVariants` để tùy chỉnh style của ảnh.
@@ -32,7 +30,7 @@ const imageVariants = cva('aspect-square w-full object-cover shadow-lg shadow-bl
   defaultVariants: {
     isArtist: false,
   },
-});
+})
 
 // Định nghĩa style `truncateStyle` để giới hạn mô tả chỉ hiển thị 2 dòng,
 // nếu dài hơn sẽ bị cắt bớt với dấu `...`.
@@ -42,30 +40,31 @@ const truncateStyle: React.CSSProperties = {
   WebkitBoxOrient: 'vertical', // Xếp nội dung theo chiều dọc.
   overflow: 'hidden', // Ẩn nội dung vượt quá kích thước box.
   textOverflow: 'ellipsis', // Thêm dấu `...` nếu nội dung bị cắt.
-};
+}
 
 // Component `ItemCard` để hiển thị một mục (có thể là album, playlist, nghệ sĩ...).
-export default function ItemCard({ anh_danh_sach, ten_danh_sach, description, isArtist, danh_sach_phat_id }: Properties): React.ReactNode {
+export default function ItemCard({ danh_sach_phat_id, anh_danh_sach, ten_danh_sach, description, isArtist }: Properties): React.ReactNode {
   // State lưu trữ kích thước ảnh (dùng để tính toán vị trí nút play).
-  const [imageSize, setImageSize] = useState<number>(0);
+  const [imageSize, setImageSize] = useState<number>(0)
 
   // `useCallback` tạo một hàm callback tối ưu khi thay đổi kích thước ảnh.
   const imageReference = useCallback(function sizeChangeHandler(node: HTMLImageElement) {
-    if (!node) return; // Nếu `node` không tồn tại thì không làm gì.
+    if (!node) return // Nếu `node` không tồn tại thì không làm gì.
 
     // Sử dụng `ResizeObserver` để theo dõi sự thay đổi kích thước của ảnh.
     const resizeObserver = new ResizeObserver(() => {
-      setImageSize(node.clientWidth); // Cập nhật `imageSize` với chiều rộng của ảnh.
-    });
+      setImageSize(node.clientWidth) // Cập nhật `imageSize` với chiều rộng của ảnh.
+    })
 
-    resizeObserver.observe(node); // Bắt đầu theo dõi ảnh.
-  }, []);
+    resizeObserver.observe(node) // Bắt đầu theo dõi ảnh.
+  }, [])
 
   console.log("danh_sach_phat_id", danh_sach_phat_id)
+  console.log("anh_danh_sach", anh_danh_sach)
 
-  const navigate = useNavigate();
-  const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate("/") : navigate(path));
-  const openSong = () => ifSameGoBackElseNavigate(`/playlist/${danh_sach_phat_id}`);
+  const navigate = useNavigate()
+  const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate("/") : navigate(path))
+  const openSong = () => ifSameGoBackElseNavigate(`/playlist/${danh_sach_phat_id}`)
 
 
   return (
@@ -98,14 +97,14 @@ export default function ItemCard({ anh_danh_sach, ten_danh_sach, description, is
         <div className="h-5"></div> // Thêm khoảng trống nếu không có mô tả.
       )}
     </div>
-  );
+  )
 }
 
 // Hàm `getButtonPositionStyle` tính toán vị trí của nút PlayButton dựa vào kích thước ảnh.
 function getButtonPositionStyle(imageSize: number): React.CSSProperties {
-  const buttonSizePx = 48; // Kích thước của nút PlayButton.
+  const buttonSizePx = 48 // Kích thước của nút PlayButton.
   return {
     top: `calc(${imageSize}px - ${buttonSizePx - 4}px)`, // Vị trí nút theo chiều dọc (gần góc phải dưới ảnh).
     left: `calc(${imageSize}px - ${buttonSizePx - 4}px)`, // Vị trí nút theo chiều ngang (gần góc phải dưới ảnh).
-  };
+  }
 }
