@@ -1,15 +1,44 @@
-import React, { useState } from 'react';
+import { loginUser } from '@/services/login';
+import {  getUserInfo } from '@/services/user';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [errors, setErrors] = useState<any>({}); // Lưu lỗi từ backend
 	const navigate = useNavigate()
 
-	const handleSubmit = (e: any) => {
+
+	const handleFetchUser = async () => {
+		try {
+			const user = await getUserInfo();
+			console.log("User info:", user);
+		} catch (error) {
+			console.error("Lỗi khi lấy user info:", error);
+		}
+	};
+
+
+
+	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		console.log('Username:', username);
 		console.log('Password:', password);
+
+		const userData = {
+			email: username,
+			password: password,
+		};
+
+		try {
+			const response = await loginUser(userData);
+			console.log("Đăng nhập thành công:", response);
+			alert("chào mừng bạn đã quay trời lại");
+			navigate("/");
+		} catch (error: any) {
+			setErrors(error); // Lưu lỗi từ response backend
+		}
 	};
 
 	return (
@@ -36,6 +65,7 @@ export default function Login() {
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
 							/>
+							{errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
 						</div>
 					</div>
 
@@ -50,6 +80,7 @@ export default function Login() {
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 							/>
+							{errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
 						</div>
 					</div>
 
@@ -57,6 +88,15 @@ export default function Login() {
 						<button type='submit' className='bg-green-500 hover:bg-green-600 
 						 text-white p-2  w-[324px] h-[48px] rounded-full text-lg font-medium text-center'>
 							Login
+						</button>
+					</div>
+
+					<div className='flex items-center justify-center mt-3'>
+						<button type='button'
+							onClick={handleFetchUser}
+							className='bg-blue-500 hover:bg-blue-600 text-white p-2 
+        w-[324px] h-[48px] rounded-full text-lg font-medium text-center'>
+							User infor
 						</button>
 					</div>
 				</form>

@@ -1,4 +1,5 @@
 // Import component `ArtistCardsContainer` để hiển thị danh sách các nghệ sĩ hàng đầu.
+import { useEffect, useState } from 'react';
 import ArtistCardsContainer from './artist-cards-container';
 
 // Import component `PlaylistCardsContainer` để hiển thị danh sách playlist công khai của người dùng.
@@ -6,16 +7,12 @@ import PlaylistCardsContainer from './playlist-cards-container';
 
 // Import component `UserHeader` để hiển thị thông tin của người dùng như ảnh đại diện, tên, số playlist, số followers, số following.
 import UserHeader from './user-header';
+import { getUserInfo } from '@/services/user';
+import { logoutUser } from '@/services/login';
+import { useNavigate } from 'react-router-dom';
 
 // Định nghĩa object `data` chứa thông tin của user và danh sách playlist công khai.
 const data = {
-  user: { // Thông tin người dùng
-    name: 'Emre Can', // Tên người dùng
-    image: "/public/uifaces-popular-image (1).jpg", // Đường dẫn ảnh đại diện của user
-    playlistCount: 10, // Số lượng playlist công khai
-    followers: 68, // Số người theo dõi user
-    following: 68, // Số người mà user đang theo dõi
-  },
   publicPlaylists: [ // Mảng chứa danh sách các playlist công khai của user
     {
       order: 1, // Thứ tự của playlist
@@ -64,12 +61,51 @@ const data = {
 
 // Định nghĩa component `UserPage` để hiển thị trang cá nhân của người dùng.
 export default function UserPage() {
+
+  const [name, setName] = useState("No Name");
+    const navigate = useNavigate()
+
+  const user = { // Thông tin người dùng
+    name: name, // Tên người dùng
+    image: "/public/uifaces-popular-image (1).jpg", // Đường dẫn ảnh đại diện của user
+    playlistCount: 99999, // Số lượng playlist công khai
+    followers: 99999, // Số người theo dõi user
+    following: 99999, // Số người mà user đang theo dõi
+  }
+
+  useEffect(() => {
+
+    const fetchUser = async () => {
+      const dataresponse = await getUserInfo();
+      setName(dataresponse?.ten_hien_thi);
+      console.log(dataresponse)
+    };
+    fetchUser()
+  }, [])
+
+
+  const handleLogout = async () => {
+            try {
+              const response = await logoutUser();
+              console.log("Đăng xuất thành công:", response);
+              navigate("/");
+            } catch (error: any) {
+              
+            }
+  };
+
   return (
     // Thẻ div cha chứa toàn bộ nội dung trang, sử dụng flexbox để hiển thị theo chiều dọc.
     <div className="flex flex-col pt-4 *:w-full">
 
+      <button
+        onClick={handleLogout}
+        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+      >
+        Đăng xuất
+      </button>
       {/* Hiển thị header của user với thông tin từ `data.user` */}
-      <UserHeader {...data.user} />
+      <UserHeader {...user} />
 
       {/* Container chứa các phần danh sách nghệ sĩ và playlist */}
       <div className="flex flex-col px-1">
@@ -85,7 +121,7 @@ export default function UserPage() {
         <PlaylistCardsContainer
           title="Public Playlists" // Tiêu đề danh sách playlist công khai
           items={data.publicPlaylists} // Danh sách playlist công khai
-          name={data.user.name} // Truyền tên user để hiển thị trong phần mô tả playlist
+          name={name} // Truyền tên user để hiển thị trong phần mô tả playlist
         />
       </div>
     </div>
