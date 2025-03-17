@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { convertPlaylistFromBackend, getPlayList } from '@/services/playlistAPI'
 
 import axios from "axios"
+import { getUserInfo } from '@/services/user'
 
 // Khai báo một danh sách `Playlists` có kiểu `Playlist[]` (mảng các playlist).
 
