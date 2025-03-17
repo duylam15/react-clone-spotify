@@ -17,8 +17,6 @@ import axios from "axios"
 // Component này trả về giao diện chứa danh sách các playlist.
 export default function Home(): React.ReactNode {
   // const [playlists, setPlayLists] = useState<Playlist[]>(Playlists)
-  const [currentSong, setCurrentSong] = useState<Song | null>(null)
-
 
   const [danhSachPhat, setDanhSachPhat] = useState([])
   const [loading, setLoading] = useState(true)
@@ -40,28 +38,6 @@ export default function Home(): React.ReactNode {
   }, [])
 
   console.log("danhSachPhatdanhSachPhatdanhSachPhatdanhSachPhatdanhSachPhat", danhSachPhat)
-
-  // useEffect(() => {
-  //   getPlayList()
-  //     .then((data) => {
-  //       setPlayLists(data)
-  //     })
-  //     .catch(error => console.error(error))
-  // }, [])
-
-  // useEffect(() => {
-  //   // Giả sử bạn lấy playlist từ API
-  //   getPlayList()
-  //     .then((data) => {
-  //       setPlayLists(data)
-  //     })
-  //     .catch(error => console.error(error))
-  // }, [])
-
-  // Hàm thay đổi bài hát khi nhấn vào một bài hát trong playlist
-  const changeSong = (song: Song) => {
-    setCurrentSong(song)
-  }
 
   return (
     // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.

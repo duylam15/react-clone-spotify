@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Playlist } from "@/types/types"
+import { Playlist, Song } from "@/types/types"
 import { useNavigate, useParams } from "react-router-dom"
 import PlayButton from "@/components/ui/play-button"
 import { getSongById, getSongFromPlayList } from "@/services/playlistAPI"
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentSong } from "@/stores/playlist/playerSlice"
+import { RootState } from "@/stores/playlist"
 
 const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
@@ -52,14 +55,11 @@ export default function PlayList(): React.ReactNode {
     fetchSongs()
   }, [playlistId])
 
-
   const [activeSongId, setActiveSongId] = useState<number | null>(null)
   const [clickCount, setClickCount] = useState(0)
+  const dispatch = useDispatch();
 
-
-  const handleClick = (songId: number) => {
-    console.log("activeSongId", activeSongId)
-    console.log("songId", songId)
+  const handleClick = (songId: number, song: Song) => {
 
     // Kiểm tra xem bài hát được click có phải là bài đang active hay không
     if (activeSongId === songId) {
@@ -67,6 +67,7 @@ export default function PlayList(): React.ReactNode {
       console.log("clickCount", clickCount)
       if (clickCount === 1) {
         activeSong(songId) // Gọi hàm phát nhạc
+        dispatch(setCurrentSong(song));
         setClickCount(0) // Reset số lần click để chuẩn bị cho lần click mới
       } else {
         setClickCount(1) // Đánh dấu rằng người dùng đã click 1 lần
@@ -142,10 +143,10 @@ export default function PlayList(): React.ReactNode {
         </div>
       </div>
       <div>
-        {songs.map((song) => (
+        {songs.map((song: Song) => (
           <div
             key={song?.bai_hat_id}
-            onClick={() => handleClick(song?.bai_hat_id)}
+            onClick={() => handleClick(song?.bai_hat_id, song)}
             className={`grid grid-cols-[1%_40%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] 
             ${activeSongId === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}>
             <div>{song?.bai_hat_id}</div>
