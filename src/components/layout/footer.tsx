@@ -8,6 +8,7 @@ import PlayerController from './footer/player-controller'; // Bộ điều khi�
 import TrackDisplayer from './footer/track-displayer'; // Hiển thị thông tin bài hát đang phát.
 import { RootState } from '@/stores/playlist';
 
+
 // URL nguồn của file nhạc mẫu.
 
 
@@ -27,7 +28,6 @@ export default function Footer(): React.ReactNode {
 
       {/* Các nút điều khiển bổ sung (âm lượng, lặp lại, shuffle, v.v.). */}
       <OtherControls />
-
 
       {/* Thẻ <audio> để phát nhạc, ẩn đi vì chỉ điều khiển bằng các nút bấm. */}
       <audio id="audio-player" preload="auto" src={currentSong?.duong_dan} hidden />
