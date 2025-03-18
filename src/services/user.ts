@@ -56,20 +56,11 @@ export const forgotPassword = async (sendData : any) => {
         const response = await axios.post(
             `${API_BASE_URL}/nguoidung/api/forgot-password`, 
             sendData,
-            // {
-            //     // headers: {
-            //     //     "Content-Type": "application/json",
-            //     // },
-            //     withCredentials: true, // 🚀 Quan trọng để gửi và nhận cookie
-            // },
-
         );
 
-        const data = await response;
-
-        return await data; // Trả về dữ liệu JSON
-    } catch (error) {
+        return await response; // Trả về dữ liệu JSON
+    } catch (error : any) {
         console.error("Lỗi khi lấy thông tin người dùng:", error);
-        return null; // Xử lý lỗi
+        return error.response; // Xử lý lỗi
     }
 };

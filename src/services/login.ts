@@ -16,9 +16,9 @@ export const loginUser = async (userData: any) => {
             }
         );
         return response.data; // Trả về dữ liệu từ server
-    } catch (error) {
-        console.error("Đăng nhập thất bại:", error);
-        throw error;
+    } catch (error : any) {
+        // console.error("Đăng nhập thất bại:", error);
+        return error.response.data;
     }
 };
 
@@ -40,7 +40,7 @@ export const logoutUser = async () => {
         return response.data; // Trả về dữ liệu từ server
     } catch (error) {
         console.error("Đăng xuất thất bại:", error);
-        throw error;
+        return error
     }
 };
 

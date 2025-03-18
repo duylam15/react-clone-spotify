@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function ForgotPassword() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [errors, setErrors] = useState<any>({}); // Lưu lỗi từ backend
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -16,8 +17,8 @@ export default function ForgotPassword() {
             const sendData =  {email : email}
 
             const response = await forgotPassword(sendData)
-            alert(response?.data.message) ;
-
+            console.log(response);
+            setErrors(response);
             
         } catch (error) {
             setMessage('Đã có lỗi xảy ra. Vui lòng thử lại!');
@@ -41,6 +42,8 @@ export default function ForgotPassword() {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
+                    {errors.status != 200 && <p className="text-red-500 text-sm mt-1">{errors?.data?.message}</p>}
+                    {errors.status == 200 && <p className="text-green-400 text-sm mt-1">{errors?.data?.message}</p>}
                     <button type="submit"
                         className='bg-green-500 hover:bg-green-600 text-white p-2 w-full rounded mt-3'>
                         Send Reset Link

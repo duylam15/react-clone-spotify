@@ -33,9 +33,16 @@ export default function Login() {
 
 		try {
 			const response = await loginUser(userData);
-			console.log("Đăng nhập thành công:", response);
-			alert("chào mừng " + response.ten_hien_thi + " đã quay trời lại");
-			navigate("/");
+			if(response.ten_hien_thi != null)
+			{
+				console.log("Đăng nhập thành công:", response);
+				alert("chào mừng " + response.ten_hien_thi + " đã quay trời lại");
+				navigate("/");
+			}
+			else {
+				console.log("Đăng nhập thất bại:", response);
+				setErrors(response);
+			}
 		} catch (error: any) {
 			setErrors(error); // Lưu lỗi từ response backend
 		}
