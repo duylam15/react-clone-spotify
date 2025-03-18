@@ -2,7 +2,7 @@
 import { PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from 'lucide-react'
 
 // Import các hooks của React để sử dụng state và callback tối ưu
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 // Import các component UI tùy chỉnh để sử dụng làm nút điều khiển
 import ControlButton from '@/components/ui/control-button'
@@ -10,6 +10,9 @@ import ControlSwitch from '@/components/ui/control-switch'
 
 // Import hook để lấy trạng thái và hành động từ store quản lý trình phát nhạc
 import { usePlayerControllerStore } from '@/features/playerControllerStore'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/stores/playlist'
+import { togglePlayPause } from '@/stores/playlist/playerSlice'
 
 // Định nghĩa component ButtonGroup, có nhiệm vụ hiển thị các nút điều khiển nhạc
 export default function ButtonGroup(): React.ReactNode {
@@ -22,19 +25,29 @@ export default function ButtonGroup(): React.ReactNode {
   }))
 
   // State để kiểm soát trạng thái phát/dừng nhạc
-  const [isPaused, setIsPaused] = useState<boolean>(true)
+  const dispatch = useDispatch();
 
-  // Lấy phần tử audio từ DOM (có id là 'audio-player')
-  const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player')
-
+  const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
+  console.log("isPaused", isPaused)
+  const audioPlayer: any = document.querySelector<HTMLAudioElement>('#audio-player')
+  console.log("audioPlayeraudioPlayeraudioPlayeraudioPlayer", audioPlayer)
+  useEffect(() => {
+    if (audioPlayer?.paused) {
+      audioPlayer.play();
+    }
+  }, [currentSong]);
   // Hàm xử lý sự kiện nhấn nút Play/Pause
   const onClickPlay = useCallback(() => {
-    if (!audioPlayer) return // Nếu không tìm thấy phần tử audio thì dừng
-
-    if (audioPlayer.paused) void audioPlayer.play() // Nếu nhạc đang dừng thì phát
+    if (!audioPlayer) {
+      return
+    } // Nếu không tìm thấy phần tử audio thì dừng
+    console.log("audioPlayeraudioPlayeraudioPlayer", audioPlayer)
+    console.log("audioPlayeraudioPlayer", audioPlayer?.paused)
+    if (audioPlayer.paused) {
+      void audioPlayer.play()
+    }// Nếu nhạc đang dừng thì phát
     else void audioPlayer.pause() // Nếu nhạc đang phát thì dừng
-
-    setIsPaused(audioPlayer.paused) // Cập nhật trạng thái phát/dừng
+    dispatch(togglePlayPause());
   }, [audioPlayer])
 
   // Gán trực tiếp hàm toggleShuffle vào onShuffle để tối ưu hiệu suất
@@ -48,7 +61,7 @@ export default function ButtonGroup(): React.ReactNode {
     if (!audioPlayer) return // Nếu không tìm thấy phần tử audio thì dừng
 
     // Đặt lại src của audioPlayer để phát bài hát trước
-    audioPlayer.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+    audioPlayer.src = 'https://vnso-zn-15-tf-a128-z3.zmdcdn.me/31cb17656c5146f10de0247036f2772d?authen=exp=1742375199~acl=/31cb17656c5146f10de0247036f2772d*~hmac=f404961c1d5ba880c4378c0049517c26'
     audioPlayer.load() // Tải lại bài hát mới
     void audioPlayer.play() // Phát bài hát
   }, [audioPlayer])
@@ -58,7 +71,7 @@ export default function ButtonGroup(): React.ReactNode {
     if (!audioPlayer) return // Nếu không tìm thấy phần tử audio thì dừng
 
     // Đặt lại src của audioPlayer để phát bài hát tiếp theo
-    audioPlayer.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+    audioPlayer.src = 'https://vnso-pt-7-tf-a128-z3.zmdcdn.me/6365d747214750e70ab2baf07187b007?authen=exp=1742375416~acl=/6365d747214750e70ab2baf07187b007*~hmac=daa2dd4a00cce6c34571c163d3462e33'
     audioPlayer.load() // Tải lại bài hát mới
     void audioPlayer.play() // Phát bài hát
   }, [audioPlayer])

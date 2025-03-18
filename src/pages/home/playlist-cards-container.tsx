@@ -14,12 +14,9 @@ import { Song } from '@/types/types';
 // Định nghĩa component `PlaylistCardsContainer` nhận vào hai props:
 // - `title`: Chuỗi tiêu đề của danh sách playlist.
 // - `items`: Mảng các playlist có kiểu `Playlist[]`.
-interface PlaylistCardsContainerProps {
-  title: string;
-  items: Playlist[];
-}
 
-export default function PlaylistCardsContainer({ title, items }: PlaylistCardsContainerProps) {
+
+export default function PlaylistCardsContainer({ title, items }: { title: string; items: Playlist[] }) {
   console.log("items", items)
   console.log("title", title)
   return (

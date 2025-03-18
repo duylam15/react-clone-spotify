@@ -4,9 +4,13 @@ import { RouterProvider } from 'react-router-dom';
 
 import { TooltipProvider } from './components/ui/tooltip.tsx';
 import { router } from './routes/router.tsx';
+import { Provider } from 'react-redux';
+import store from './stores/playlist/index.ts';
 
 createRoot(document.querySelector('#root')!).render(
-  <TooltipProvider>
-    <RouterProvider router={router} />
-  </TooltipProvider>
+  <Provider store={store}>
+    <TooltipProvider>
+      <RouterProvider router={router} />
+    </TooltipProvider>
+  </Provider>
 );

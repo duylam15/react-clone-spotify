@@ -22,7 +22,7 @@ export default function Track(): React.ReactNode {
     fetchPlaylist()
   }, [])
 
-  console.log(song)
+  console.log("songsongsong", song)
 
   return (
     <div className="flex flex-col w-full ">

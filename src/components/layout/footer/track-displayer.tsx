@@ -27,10 +27,8 @@ interface TrackDisplayerProps {
 }
 
 // Định nghĩa component `TrackDisplayer`
-const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
-  if (!song) {
-    return <div>Không có bài hát nào được chọn</div> // Nếu không có bài hát, hiển thị thông báo
-  }
+export default function TrackDisplayer() {
+
   // State `isLiked` lưu trạng thái bài hát có được yêu thích không (mặc định là `false`)
   const [isLiked, setIsLiked] = useState<boolean>(false)
 
@@ -87,8 +85,6 @@ const TrackDisplayer: React.FC<TrackDisplayerProps> = ({ song }) => {
   )
 }
 
-
-export default TrackDisplayer
 
 // Cách hoạt động
 // Người dùng mở giao diện, thấy ảnh bìa, tên bài hát, tên nghệ sĩ và icon trái tim.
