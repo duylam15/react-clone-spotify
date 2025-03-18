@@ -1,5 +1,5 @@
 import { loginUser } from '@/services/login';
-import {  getUserInfo } from '@/services/user';
+import { getUserInfo } from '@/services/user';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,7 +34,7 @@ export default function Login() {
 		try {
 			const response = await loginUser(userData);
 			console.log("Đăng nhập thành công:", response);
-			alert("chào mừng bạn đã quay trời lại");
+			alert("chào mừng " + response.ten_hien_thi + " đã quay trời lại");
 			navigate("/");
 		} catch (error: any) {
 			setErrors(error); // Lưu lỗi từ response backend
@@ -102,7 +102,10 @@ export default function Login() {
 				</form>
 
 				<div className='flex flex-col items-center justify-center'>
-					<div className='text-white mt-4 cursor-pointer hover:underline'>Forgot your password?</div>
+					<div className='text-white mt-4 cursor-pointer hover:underline'
+						onClick={() => navigate('/forgot-password')}>
+						Forgot your password?
+					</div>
 					<div className='text-white mt-2 cursor-pointer hover:underline' onClick={() => navigate(`/register`)}>
 						Don't have an account? <span className='text-green-400'>Sign up for Spotify</span>
 					</div>

@@ -11,6 +11,8 @@ import Login from '@/pages/login';
 import PlayList from '@/pages/playlist';
 import Track from '@/pages/track';
 import Register from '@/pages/register';
+import ForgotPassword from '@/pages/forgot-password';
+import ResetPassword from '@/pages/reset-password';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +31,8 @@ export const router = createBrowserRouter(
       </Route>
       <Route element={<Login />} path="login" />
       <Route element={<Register />} path="register" />
+      <Route element={<ForgotPassword />} path="forgot-password" />
+      <Route element={<ResetPassword />} path="reset-password/:uid/:token" />
       <Route element={<div>Not Found</div>} path="*" />
     </>,
   ),
