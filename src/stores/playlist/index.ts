@@ -1,6 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import playerReducer from './playerSlice';
 import { createSlice } from '@reduxjs/toolkit';
+import playerReducer from './playerSlice';
+import songReducer from './songSlice';
+import artistReducer from './artistSlice';
+import currentSongSlice from './actions';
 
 const initialState = {
   sidebarShow: true,
@@ -23,6 +26,7 @@ const store = configureStore({
   reducer: {
     player: playerReducer,
     ui: uiSlice.reducer,
+    songs: songReducer,
   },
 });
 

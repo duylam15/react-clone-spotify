@@ -194,7 +194,6 @@ export default function ButtonGroup(): React.ReactNode {
         const nextIndex = currentIndex + 1;
 
         if (nextIndex < listAudio.length) {
-          // Nếu chưa phải bài cuối, phát bài tiếp theo
           onNext(listAudio, currentIndex);
         } else {
           if (isShuffle) {

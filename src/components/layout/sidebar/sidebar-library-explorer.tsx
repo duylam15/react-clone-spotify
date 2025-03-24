@@ -54,7 +54,7 @@ export default function SidebarLibraryExplorer() {
       }
     }
     fetchPlaylist()
-  }, [playlists])
+  }, [])
 
   console.log("playlistxxxx", playlists)
 

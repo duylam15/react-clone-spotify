@@ -32,7 +32,7 @@ export default function Footer(): React.ReactNode {
     }
 
     fetchArtist()
-  }, [currentSong])
+  }, [])
 
   console.log("artistartistartistartist", artist)
 
