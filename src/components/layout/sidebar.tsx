@@ -18,10 +18,8 @@ const Sidebar = forwardRef<HTMLDivElement, unknown>(function Sidebar(
 
       {/* Phần trên của Sidebar (chứa các biểu tượng như Home, Search). */}
       <SidebarTop />
-
       {/* Phần dưới của Sidebar (chứa danh sách thư viện nhạc). */}
       <SidebarLibraryExplorer />
-
     </div>
   )
 })

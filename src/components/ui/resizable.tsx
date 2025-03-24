@@ -39,7 +39,7 @@ const ResizableHandle = ({
   <ResizablePrimitive.PanelResizeHandle
     // Kết hợp class mặc định với `className` truyền vào.
     className={cn(
-      'relative flex w-px items-center justify-center hover:bg-zinc-500 ' + // Thanh kéo có chiều rộng 1px và đổi màu khi hover.
+      'relative flex w-[2px] items-center justify-center hover:bg-zinc-500 ' + // Thanh kéo có chiều rộng 1px và đổi màu khi hover.
       'after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 ' + // Thanh phụ trợ để căn chỉnh vị trí chính xác.
       'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:ring-offset-1 ' + // Hiển thị đường viền khi focus bằng bàn phím.
       'data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full ' + // Khi nhóm panel ở dạng dọc, đổi chiều ngang thành dọc.

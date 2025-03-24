@@ -1,40 +1,62 @@
 // Import biểu tượng trái tim từ thư viện `lucide-react` để hiển thị nút "yêu thích"
 import { HeartIcon } from 'lucide-react'
-import { Song } from '@/types/types'
+import { Album, Artist, Song } from '@/types/types'
 
 // Import hook `useState` từ React để quản lý trạng thái
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Import các thành phần `Tooltip` từ thư mục `@/components/ui/tooltip` để hiển thị chú thích khi hover
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Import hàm `getIconSize` để lấy kích thước của icon
 import getIconSize from '@/utils/get-icon-size'
+import axios from 'axios'
 
 // Đối tượng `currentSong` chứa thông tin về bài hát hiện tại
-const currentSong = {
-  album: 'Album Name', // Tên album chứa bài hát
-  albumCover: 'https://picsum.photos/200', // Ảnh bìa album (sử dụng hình ảnh ngẫu nhiên)
-  artist: 'Artist Name', // Tên nghệ sĩ
-  name: 'Song Name', // Tên bài hát
-}
+
 
 // Gọi hàm `getIconSize` với tham số `'l'` để lấy thuộc tính kích thước của icon
 const iconProperty = getIconSize('l')
-
-interface TrackDisplayerProps {
-  song: Song | null // Định nghĩa props song
-}
-
 // Định nghĩa component `TrackDisplayer`
-export default function TrackDisplayer() {
+type TrackDisplayerProps = {
+  song: Song | null // Định nghĩa props song
+  artist: Artist;
+};
+
+export default function TrackDisplayer({ artist, song }: TrackDisplayerProps) {
 
   // State `isLiked` lưu trạng thái bài hát có được yêu thích không (mặc định là `false`)
   const [isLiked, setIsLiked] = useState<boolean>(false)
 
-  // State `effects` lưu trạng thái hiệu ứng rung khi người dùng bấm vào biểu tượng trái tim
   const [effects, setEffects] = useState<boolean>(false)
 
+  const [album, setAlbum] = useState<Album | null>(null);
+
+  console.log("songsongsongsongsongsong", song)
+
+  useEffect(() => {
+    const fetchAlbum = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/album/${song?.album_id}/`)
+
+        console.log("responseresponseresponseresponseresponse", response)
+        setAlbum(response.data)
+      } catch (err: any) {
+        console.error("Error fetching playlist:", err)
+      }
+    }
+
+    fetchAlbum()
+  }, [artist])
+
+  console.log("artistartistartistartist", artist?.ten_nghe_si)
+
+  const currentSong = {
+    album: album?.ten_album, // Tên album chứa bài hát
+    albumCover: album?.anh_bia, // Ảnh bìa album (sử dụng hình ảnh ngẫu nhiên)
+    artist: artist?.ten_nghe_si, // Tên nghệ sĩ
+    name: song?.ten_bai_hat, // Tên bài hát
+  }
   return (
     // Container chính chứa thông tin bài hát, ảnh bìa, và nút yêu thích
     <div className="flex min-w-[30vw] flex-row items-center gap-2 lg:min-w-[13vw]">

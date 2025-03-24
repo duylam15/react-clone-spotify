@@ -14,7 +14,9 @@ export default function LibraryCardImage({ image }: { image?: string | undefined
     <div className="size-12 shrink-0 rounded bg-s-green"></div>
   ) : (
     // Nếu có `image`, hiển thị div với ảnh nền
-    <div className="size-12 shrink-0 rounded bg-s-gray" style={style} />
+    <div>
+      <img src={image} alt="" className="size-12 shrink-0 rounded " />
+    </div>
   )
 }
 

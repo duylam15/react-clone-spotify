@@ -1,8 +1,10 @@
 // Import các icon từ thư viện lucide-react để sử dụng trong giao diện điều khiển nhạc
 import { PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from 'lucide-react'
 
+import _ from "lodash";
+
 // Import các hooks của React để sử dụng state và callback tối ưu
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // Import các component UI tùy chỉnh để sử dụng làm nút điều khiển
 import ControlButton from '@/components/ui/control-button'
@@ -12,7 +14,7 @@ import ControlSwitch from '@/components/ui/control-switch'
 import { usePlayerControllerStore } from '@/features/playerControllerStore'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/stores/playlist'
-import { togglePlayPause } from '@/stores/playlist/playerSlice'
+import { setCurrentSong, togglePlayPause } from '@/stores/playlist/playerSlice'
 
 // Định nghĩa component ButtonGroup, có nhiệm vụ hiển thị các nút điều khiển nhạc
 export default function ButtonGroup(): React.ReactNode {
@@ -24,18 +26,24 @@ export default function ButtonGroup(): React.ReactNode {
     toggleShuffle: state.toggleShuffle, // Hàm chuyển đổi chế độ ngẫu nhiên
   }))
 
+  console.log("isRepeat, , , ", isRepeat,)
+  console.log(", isShuffle, , ", isShuffle)
+
   // State để kiểm soát trạng thái phát/dừng nhạc
   const dispatch = useDispatch();
-
+  console.log("setCurrentSongsetCurrentSongsetCurrentSongsetCurrentSong", setCurrentSong)
   const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
   console.log("isPaused", isPaused)
-  const audioPlayer: any = document.querySelector<HTMLAudioElement>('#audio-player')
-  console.log("audioPlayeraudioPlayeraudioPlayeraudioPlayer", audioPlayer)
+  const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
+
   useEffect(() => {
     if (audioPlayer?.paused) {
       audioPlayer.play();
     }
   }, [currentSong]);
+
+  console.log("currentSongcurrentSongcurrentSongcurrentSong", currentSong?.bai_hat_id)
+
   // Hàm xử lý sự kiện nhấn nút Play/Pause
   const onClickPlay = useCallback(() => {
     if (!audioPlayer) {
@@ -50,40 +58,217 @@ export default function ButtonGroup(): React.ReactNode {
     dispatch(togglePlayPause());
   }, [audioPlayer])
 
-  // Gán trực tiếp hàm toggleShuffle vào onShuffle để tối ưu hiệu suất
-  const onShuffle = useCallback(toggleShuffle, [toggleShuffle])
+  const listAudio: any = useSelector((state: RootState) => state.songs.songs);
+  console.log("songssongssongssongssongssongsxxxx", listAudio)
+
+
+  const [shuffledList, setShuffledList] = useState([...listAudio]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+
+  console.log("currentIndexcurrentIndex", currentIndex)
+
+  let currentShuffledId: number = shuffledList.find(song => song?.bai_hat_id === currentSong?.bai_hat_id)?.idShuffledList;
+
+
+
+  console.log("xxxxxxxxxx22", currentShuffledId);
+
+  const shuffleArray = (array: any) => {
+    let shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const onShuffle = () => {
+    toggleShuffle(); // Đảo trạng thái shuffle trong Zustand
+
+    if (!isShuffle) {
+      const newList = shuffleArray(listAudio).map((song, index) => ({
+        ...song,
+        idShuffledList: index, // Gán idShuffledList từ 0 đến length - 1
+      }));
+      setShuffledList(newList);
+      setCurrentIndex(0); // Reset về bài đầu tiên
+    } else {
+      const originalList = listAudio.map((song: any, index: any) => ({
+        ...song,
+        idShuffledList: index, // Đặt lại idShuffledList theo danh sách gốc
+      }));
+      setShuffledList(originalList);
+      setCurrentIndex(0);
+    }
+  };
+
+  console.log("shuffledListshuffledListshuffledListshuffledList", shuffledList)
+
+
+  useEffect(() => {
+    if (currentSong?.bai_hat_id !== undefined) {
+      setCurrentIndex(currentSong.bai_hat_id - 1);
+    }
+  }, [currentSong]); // Cập nhật currentIndex khi currentSong thay đổi
+
+  console.log("currentSongcurrentSongcurrentSongcurrentSong", currentSong?.bai_hat_id);
+  console.log("currentSongcurrentSongcurrentSongcurrentSong", currentIndex);
+
+  const playAudio = (bai_hat_id: number) => {
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
+    console.log("aaaaaaaaaa")
+    if (!audioPlayer) return;
+
+    console.log("🔎 Danh sách shuffledList:", shuffledList);
+    console.log("songssoxxxxngssongssongssongssongsxxxx", listAudio);
+    console.log("bai_hat_idbxxai_hat_id", bai_hat_id);
+
+    console.log("bai_hat_idbài", shuffledList[bai_hat_id])
+    dispatch(setCurrentSong(shuffledList[bai_hat_id]))
+    // Tìm vị trí của bài hát trong shuffledList
+    const songIndex = shuffledList.findIndex(song => song?.bai_hat_id === bai_hat_id);
+    console.log("🔢 Kết quả tìm kiếm index:", songIndex);
+
+    setCurrentIndex(shuffledList[bai_hat_id]?.bai_hat_id)
+    console.log("bai_hat_idbai_hat_idbai_hat_id", shuffledList[bai_hat_id]?.bai_hat_id)
+    console.log("currentSongcurrentSoxxxxngcurrentSongcurrentSong", currentSong)
+
+    // Cập nhật currentIndex và phát bài hát
+    console.log("isShuffleisShuffleisShuffle", isShuffle)
+    console.log("isShuffleisShuffleisShuffle", listAudio)
+    if (isShuffle) {
+      audioPlayer.src = shuffledList[bai_hat_id]?.duong_dan;
+    }
+    audioPlayer.load();
+    audioPlayer.play();
+  };
+
+
+  const playAudioNoShuffle = (bai_hat_id: number, listAudio: any) => {
+    if (!listAudio || listAudio.length === 0) {
+      console.log("⚠ listAudio chưa có dữ liệu, chờ tải...");
+      return;
+    }
+
+    console.log("bai_hat_idxxxbai_hat_id", bai_hat_id)
+
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
+    if (!audioPlayer) return;
+
+    console.log("🎶 listAudio có dữ liệu:", listAudio[bai_hat_id]);
+    dispatch(setCurrentSong(listAudio[bai_hat_id]))
+
+    audioPlayer.src = listAudio[bai_hat_id]?.duong_dan;
+    audioPlayer.load();
+    audioPlayer.play();
+  };
+
+  const onPrevious = useCallback((listAudio: any, currentIndex: any) => {
+    if (isShuffle) {
+      playAudio(currentShuffledId - 1);
+      currentShuffledId -= 1;
+    } else {
+      playAudioNoShuffle(currentIndex - 1, listAudio);
+      setCurrentIndex(currentIndex - 1);
+    }
+  }, [isShuffle, currentShuffledId]);
+
+  useEffect(() => {
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
+    const stateRepeat = usePlayerControllerStore.getState().isRepeat;
+
+    if (!audioPlayer) return;
+
+    if (stateRepeat === "one") {
+      console.log("Đã bật Repeat One");
+      // Lắng nghe sự kiện khi bài hát kết thúc
+      audioPlayer.onended = () => {
+        audioPlayer.currentTime = 0; // Quay lại đầu bài
+        audioPlayer.play(); // Phát lại bài hát
+      };
+    } else if (stateRepeat === "all") {
+      console.log("Đã bật Repeat All");
+
+      audioPlayer.onended = () => {
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < listAudio.length) {
+          // Nếu chưa phải bài cuối, phát bài tiếp theo
+          onNext(listAudio, currentIndex);
+        } else {
+          if (isShuffle) {
+            console.log("xxxxxxxx222xxxxx")
+            console.log("xxxxxxxx222xxxxx", currentShuffledId)
+            playAudio(0)
+          } else {
+            playAudioNoShuffle(0, listAudio);
+            setCurrentIndex(0);
+          }
+        }
+      };
+    } else {
+      // Khi bài hát kết thúc, tự động chuyển sang bài tiếp theo
+      audioPlayer.onended = () => {
+        console.log("🎵 Bài hát đã kết thúc, chuyển sang bài tiếp theo...");
+        onNext(listAudio, currentIndex);
+      };
+    }
+
+    // Cleanup: Xóa sự kiện khi component unmount hoặc `currentSong` thay đổi
+    return () => {
+      audioPlayer.onended = null;
+    };
+  }, [currentSong, listAudio, currentIndex, isShuffle, isRepeat]);
+
+
+  const onNext = useCallback((listAudio: any, currentIndex: any) => {
+    console.log("aaaaaaaaa")
+    console.log("listAudio", listAudio)
+
+    if (isShuffle) {
+      playAudio(currentShuffledId + 1);
+      currentShuffledId += 1;
+
+    } else {
+      console.log("listAudio", listAudio)
+      console.log("currentIndexcurrentIndexcurrentIndexxxx", currentIndex)
+      playAudioNoShuffle(currentIndex + 1, listAudio);
+      setCurrentIndex(currentIndex + 1);
+    }
+  }, [isShuffle, currentShuffledId]);
+
 
   // Gán trực tiếp hàm toggleRepeat vào onRepeat để tối ưu hiệu suất
-  const onRepeat = useCallback(toggleRepeat, [toggleRepeat])
+  const onRepeat = useCallback(() => {
+    toggleRepeat();
+    const stateRepeat = usePlayerControllerStore.getState().isRepeat;
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
 
-  // Hàm xử lý sự kiện khi nhấn nút quay lại bài hát trước
-  const onPrevious = useCallback(() => {
-    if (!audioPlayer) return // Nếu không tìm thấy phần tử audio thì dừng
+    if (!audioPlayer) return; // Kiểm tra nếu không tìm thấy thẻ audio
 
-    // Đặt lại src của audioPlayer để phát bài hát trước
-    audioPlayer.src = 'https://vnso-zn-15-tf-a128-z3.zmdcdn.me/31cb17656c5146f10de0247036f2772d?authen=exp=1742375199~acl=/31cb17656c5146f10de0247036f2772d*~hmac=f404961c1d5ba880c4378c0049517c26'
-    audioPlayer.load() // Tải lại bài hát mới
-    void audioPlayer.play() // Phát bài hát
-  }, [audioPlayer])
+    console.log("Trạng thái Repeat:", stateRepeat);
+    if (stateRepeat === "one") {
+      console.log("Đã bật Repeat One");
 
-  // Hàm xử lý sự kiện khi nhấn nút chuyển sang bài hát tiếp theo
-  const onNext = useCallback(() => {
-    if (!audioPlayer) return // Nếu không tìm thấy phần tử audio thì dừng
+      // Lắng nghe sự kiện khi bài hát kết thúc
+      audioPlayer.onended = () => {
+        audioPlayer.currentTime = 0; // Quay lại đầu bài
+        audioPlayer.play(); // Phát lại bài hát
+      };
+    } else {
+      // Nếu không phải "one", xóa sự kiện `onended` để không phát lại
+      audioPlayer.onended = null;
+    }
+  }, [toggleRepeat]);
 
-    // Đặt lại src của audioPlayer để phát bài hát tiếp theo
-    audioPlayer.src = 'https://vnso-pt-7-tf-a128-z3.zmdcdn.me/6365d747214750e70ab2baf07187b007?authen=exp=1742375416~acl=/6365d747214750e70ab2baf07187b007*~hmac=daa2dd4a00cce6c34571c163d3462e33'
-    audioPlayer.load() // Tải lại bài hát mới
-    void audioPlayer.play() // Phát bài hát
-  }, [audioPlayer])
-
-  // Trả về giao diện điều khiển trình phát nhạc
   return (
     <div className="flex flex-row justify-center gap-3 pb-1">
       {/* Nút bật/tắt phát nhạc ngẫu nhiên */}
       <ControlSwitch Icon={ShuffleIcon} size={17} onClick={onShuffle} switchControl={isShuffle} />
 
       {/* Nút quay lại bài hát trước */}
-      <ControlButton Icon={SkipBackIcon} onClick={onPrevious} button />
+      <ControlButton Icon={SkipBackIcon} onClick={() => onPrevious(listAudio, currentIndex)} button />
 
       {/* Nút Play/Pause */}
       <ControlButton
@@ -93,7 +278,7 @@ export default function ButtonGroup(): React.ReactNode {
       />
 
       {/* Nút chuyển bài hát tiếp theo */}
-      <ControlButton Icon={SkipForwardIcon} onClick={onNext} button />
+      <ControlButton Icon={SkipForwardIcon} onClick={() => onNext(listAudio, currentIndex)} button />
 
       {/* Nút bật/tắt chế độ lặp lại */}
       <ControlSwitch

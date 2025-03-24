@@ -72,7 +72,7 @@ export default function Layout() {
         </ResizablePanel>
 
         {/* Thanh điều chỉnh kích thước giữa sidebar và phần main. */}
-        <ResizableHandle className="-left-1" />
+        <ResizableHandle className="-right-1" />
 
         {/* Panel chứa phần nội dung chính của trang. */}
         <ResizablePanel
