@@ -28,9 +28,11 @@ export default function Register() {
 		try {
 			const response = await registerUser(userData);
 			console.log("Đăng ký thành công:", response);
+			alert("Đăng kí thành công");
 			navigate("/login");
 		} catch (error: any) {
 				setErrors(error); // Lưu lỗi từ response backend
+				alert("Đăng kí thất bại")
 		}
 	};
 

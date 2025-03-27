@@ -31,7 +31,10 @@ const fetchAccessToken = async (onError : any) => {
 export const getUserInfo = async () => {
     try {
         const token = await fetchAccessToken(handleUnauthorized);
-        if (!token) throw new Error("Không có token");
+        if (!token){
+            handleUnauthorized();
+            window.location.href = "/login";
+        }
 
         const response = await axios.get(`${API_BASE_URL}/nguoidung/api/thong-tin-nguoi-dung`, {
             // headers: {
