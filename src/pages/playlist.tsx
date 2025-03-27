@@ -6,8 +6,8 @@ import PlayButton from "@/components/ui/play-button"
 import { getSongById, getSongFromPlayList } from "@/services/playlistAPI"
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentSong } from "@/stores/playlist/playerSlice"
-import { format } from "date-fns";
-import { formatThoiLuong } from "@/utils/utils"
+import { format, formatDuration } from "date-fns";
+import { formatSecondsToTime, formatThoiLuong } from "@/utils/utils"
 import { setReduxSongs } from "@/stores/playlist/songSlice"
 import { RootState } from "@/stores/playlist"
 import LibraryCard from "@/components/layout/sidebar/library-card/library-card"
@@ -15,7 +15,6 @@ import LibraryCard from "@/components/layout/sidebar/library-card/library-card"
 const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
 export default function PlayList(): React.ReactNode {
-  const [playlist, setPlaylist] = useState<Playlist | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { id } = useParams() // Lấy giá trị của tham số id từ URL
   const [songs, setSongs] = useState<any[]>([])
@@ -23,7 +22,7 @@ export default function PlayList(): React.ReactNode {
   const playlistId = id ? Number(id) : Number(id)
   const navigate = useNavigate() // Hook điều hướng
   const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
-
+  const [playlistItem, setPlaylistItem] = useState<any>({})
   const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
   // Hàm xử lý sự kiện nhấn nút Play/Pause
 
@@ -42,21 +41,6 @@ export default function PlayList(): React.ReactNode {
     audioPlayer.play();
   }, [audioPlayer])
 
-
-
-  useEffect(() => {
-    const fetchPlaylist = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/danhsachphat/${id}/`)
-        setPlaylist(response.data)
-      } catch (err: any) {
-        console.error("Error fetching playlist:", err)
-        setError(err)
-      }
-    }
-
-    fetchPlaylist()
-  }, [])
 
   useEffect(() => {
     const fetchSongs = async () => {
@@ -129,7 +113,10 @@ export default function PlayList(): React.ReactNode {
   const [clickCount, setClickCount] = useState(0)
   const dispatch = useDispatch();
 
-  console.log("playlistplaylistplaylist", playlist)
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+
+
   const handleClick = (songId: number, song: Song) => {
 
     // Kiểm tra xem bài hát được click có phải là bài đang active hay không
@@ -160,6 +147,24 @@ export default function PlayList(): React.ReactNode {
 
   }
 
+  const handleRightClick = (event: React.MouseEvent, bai_hat_id: any) => {
+    event.preventDefault(); // Ngăn chặn menu chuột phải mặc định
+    setIsModalOpen(true);
+    setSelectedId(bai_hat_id);
+
+    const { clientX, clientY } = event;
+    const windowHeight = window.innerHeight;
+    const menuHeight = 350; // Chiều cao ước lượng của menu
+
+    // Nếu chuột gần cuối màn hình, dùng `bottom`, ngược lại dùng `top`
+    const yPos = clientY + menuHeight > windowHeight ? windowHeight - clientY : clientY;
+
+    setModalPosition({ x: clientX, y: yPos });
+
+    console.log("📌 ID của item được click:", bai_hat_id);
+  };
+
+
   const activeSong = (songId: number) => {
     console.log(`Bài hát ID ${songId} đang phát!`)
   }
@@ -167,12 +172,7 @@ export default function PlayList(): React.ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const handleRightClick = (event: React.MouseEvent, bai_hat_id: any) => {
-    event.preventDefault(); // Ngăn chặn menu chuột phải mặc định
-    setIsModalOpen(true);
-    setSelectedId(bai_hat_id);
-    console.log("📌 ID của item được click:", bai_hat_id);
-  };
+
 
   const [playlists, setPlaylists] = useState([])
   const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
@@ -189,6 +189,19 @@ export default function PlayList(): React.ReactNode {
     fetchPlaylist()
   }, [])
 
+  useEffect(() => {
+    const fetchPlaylistId = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/danhsachphat/${playlistId}/`)
+        setPlaylistItem(response.data)
+      } catch (err: any) {
+        console.error("Error fetching playlist:", err)
+      }
+    }
+    fetchPlaylistId()
+  }, [playlistId])
+
+  console.log("playlistItem", playlistItem)
   console.log("playlistxxxx", playlists)
 
   const handleAddSongToPlaylist = async (bai_hat_id: any, danh_sach_phat_id: any) => {
@@ -220,24 +233,25 @@ export default function PlayList(): React.ReactNode {
   };
 
   if (error) return <div className="text-red-500">Lỗi khi tải danh sách phát</div>
-  if (!playlist) return <div className="text-gray-500">Đang tải...</div>
 
   return (
     <div className="flex flex-col w-full ">
       <div className="w-[100%]  bg-black-500 p-5 flex justify-start items-center gap-6 rounded-t-[10px]">
         <div className=" ">
-          <img className="w-[232px] h-[232px] rounded-lg" src="/public/uifaces-popular-image (2).jpg" alt="" />
+          <img className="w-[232px] h-[232px] rounded-lg" src={playlistItem?.anh_danh_sach} alt="" />
         </div>
         <div className="">
           <div className="text-[14px] text-white translate-y-[30px]">Playlist</div>
-          <div className="font-black text-[100px] text-white ml-[-4px]">Daily Mix 3</div>
-          <div className="text-gray-400 text-[14px]">PAR SG, RPT MCK, Madihu and more</div>
-          <div className="text-gray-400 text-[14px]">50 songs, about 2 hr 45 min</div>
+          <div className="font-black text-[100px] text-white ml-[-4px]">{playlistItem.ten_danh_sach}</div>
+          <div className="text-gray-400 text-[14px]">{playlistItem.mo_ta}</div>
+          <div className="text-gray-400 text-[14px]">
+            about {formatSecondsToTime(Number(playlistItem?.tong_thoi_luong))}
+          </div>
         </div>
       </div>
-      <div className="w-[100%]  bg-black-500 p-5 rounded-b-[10px] flex justify-between items-center gap-8">
+      <div className="w-[100%]  bg-black-500 p-4 rounded-b-[10px] flex justify-between items-center gap-8">
         <div className="flex justify-start items-center gap-8">
-          <div onClick={() => onClickPlay(songs)} className="bg-green-500 p-5 inline-block rounded-full hover:bg-green-400 transition">
+          <div onClick={() => onClickPlay(songs)} className="bg-green-500 p-3 inline-block rounded-full hover:bg-green-400 transition">
             <img className="w-[20px] h-[20px] object-cover" src="/public/play-button-svgrepo-com.svg" alt="" />
           </div>
           <div className="bg-black-500 rounded-full border-[3px] border-gray-300 inline-block">
@@ -294,16 +308,26 @@ export default function PlayList(): React.ReactNode {
       {isModalOpen && (
         <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 z-50">
           <div
-            className="w-[250px] p-4 bg-white rounded-lg shadow-lg absolute top-[300px] left-[60px]"
+            className="w-[250px] p-4 bg-black rounded-lg shadow-lg absolute"
+            style={{
+              top: modalPosition.y ? `${modalPosition.y}px` : "auto",
+              left: `${modalPosition.x}px`,
+              bottom: modalPosition.y ? "auto" : `${modalPosition.y}px`,
+            }}
           >
-            <p className="text-center text-lg font-semibold">thêm danh sách phát</p>
-            <div className="flex justify-between items-center flex-col mt-4">
+            <p className="text-center text-lg font-semibold">Thêm vào danh sách phát</p>
+            <div className="flex justify-between items-center flex-col mt-4 overflow-y-auto max-h-64">
               {playlists?.map((playlist: any) => (
                 <div
-                  onClick={() => handleAddSongToPlaylist(selectedId, playlist.danh_sach_phat_id)} // Thay 3 bằng ID bài hát động
+                  key={playlist.danh_sach_phat_id}
+                  onClick={() => handleAddSongToPlaylist(selectedId, playlist.danh_sach_phat_id)}
                   style={{ cursor: "pointer" }}
+                  className="text-green-500 w-full"
                 >
-                  {playlist.ten_danh_sach}
+                  <div className="flex justify-start items-center p-2 gap-2">
+                    <img src={playlist.anh_danh_sach} alt="" className="w-10 h-10 rounded-md object-cover" />
+                    <span>{playlist.ten_danh_sach}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -311,7 +335,5 @@ export default function PlayList(): React.ReactNode {
         </div>
       )}
     </div >
-
-
   )
 }

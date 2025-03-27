@@ -25,20 +25,8 @@ export default function PlaylistCardsContainer({ title, items }: { title: string
     // - `items`: Danh sách các playlist cần hiển thị.
     // - `Component`: Component `ItemCard` để hiển thị từng phần tử trong danh sách.
     <div>
-      <h3>{title}</h3>
       {/* Render các playlist */}
       <DynamicGrid<Playlist> title={title} items={items} Component={ItemCard} />
-
-      {items.map((playlist) => (
-        <div key={playlist.danh_sach_phat_id} onClick={() => {
-          console.log("playlist", playlist)
-          // if (playlist.songs[0]) {
-          //   onSongSelect(playlist.songs[0]); // Gọi hàm onSongSelect nếu bài hát tồn tại
-          // }
-        }}>
-          <h4>{playlist.anh_danh_sach}</h4> {/* Render tên của playlist */}
-        </div>
-      ))}
     </div>
   );
 }
