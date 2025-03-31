@@ -59,7 +59,7 @@ export default function TrackDisplayer({ artist, song, artistName }: TrackDispla
       {currentSong?.artist && <div className="flex min-w-[30vw] flex-row items-center gap-2 lg:min-w-[13vw]">
         {/* Hiển thị ảnh bìa album */}
         <img
-          alt={`${currentSong.album}'s cover`} // Thuộc tính `alt` giúp tăng khả năng truy cập
+          alt={currentSong.album} // Thuộc tính `alt` giúp tăng khả năng truy cập
           className="size-14 rounded-md" // `size-14`: Kích thước ảnh, `rounded-md`: Bo góc
           src={currentSong.albumCover} // Nguồn ảnh bìa
         />

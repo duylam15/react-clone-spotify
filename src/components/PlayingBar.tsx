@@ -3,6 +3,7 @@ import { RootState } from '@/stores/playlist';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { saveAs } from "file-saver";
+import { Spin } from 'antd';
 
 export default function PlayingBar() {
 	const currentSong: any = useSelector((state: RootState) => state.player.currentSong);
@@ -12,6 +13,16 @@ export default function PlayingBar() {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const [savedTime, setSavedTime] = useState(0);
 	const toggleDetails = useAppControllerStore((state) => state.toggleDetails)
+	const [isDownloading, setIsDownloading] = useState(false); // Trạng thái tải video
+
+	const [mp3, setMp3] = useState(0);
+	useEffect(() => {
+		if (currentSong?.duong_dan?.endsWith(".mp3")) {
+			setMp3(1);
+		} else {
+			setMp3(0);
+		}
+	}, [currentSong?.duong_dan]);
 
 	// Lấy phần tử audio sau khi component render
 	useEffect(() => {
@@ -60,18 +71,39 @@ export default function PlayingBar() {
 
 	console.log("currentSongcurrentSong", currentSong)
 
+	const downloadVideo = async () => {
+		const videoUrl = currentSong?.duong_dan
+		const fileName = currentSong?.ten_bai_hat
+		setIsDownloading(true); // Bắt đầu tải
 
-	const downloadVideo = () => {
-		const videoUrl = "https://spotifycloud.s3.ap-southeast-2.amazonaws.com/songs/B%E1%BA%A7u_Tr%E1%BB%9Di_M%E1%BB%9Bi_-_Da_LAB_ft._Minh_T%E1%BB%91c__Lam_Official_MV.mp4";
-		const fileName = "BauTroiMoi_DaLAB.mp4";
+		try {
+			const response = await fetch(videoUrl, {
+				method: "GET",
+				headers: {
+					"Content-Type": "video/mp4",
+				},
+			});
 
-		const link = document.createElement("a"); // Tạo thẻ <a> ẩn
-		link.href = videoUrl;
-		link.setAttribute("download", fileName); // Đặt thuộc tính download
-		document.body.appendChild(link);
-		link.click(); // Mô phỏng click để tải xuống
-		document.body.removeChild(link); // Xóa thẻ <a> sau khi tải
+			if (!response.ok) throw new Error("Lỗi khi tải file");
+
+			const blob = await response.blob(); // Chuyển dữ liệu thành Blob
+			const blobUrl = window.URL.createObjectURL(blob);
+
+			// Tạo thẻ <a> ẩn để tải file
+			const link = document.createElement("a");
+			link.href = blobUrl;
+			link.setAttribute("download", fileName);
+			document.body.appendChild(link);
+			link.click();
+
+			// Xóa object URL để tiết kiệm bộ nhớ
+			window.URL.revokeObjectURL(blobUrl);
+			document.body.removeChild(link);
+		} catch (error) {
+			console.error("Tải xuống thất bại", error);
+		}
 	};
+
 
 
 	return (
@@ -80,9 +112,13 @@ export default function PlayingBar() {
 				{currentSong?.ten_bai_hat}
 				<div className="flex justify-center items-center gap-3 ">
 					<div className="bg-black-500 inline-block" onClick={downloadVideo}>
-						<svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
-						</svg>
+						{isDownloading ? (
+							<div className='mb-2'><Spin size="small" /></div> // Hiển thị spinner khi tải
+						) : (
+							<svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+								<path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
+							</svg>
+						)}
 					</div>
 					<div className='' onClick={() => toggleDetails(false)}>
 						<svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -93,7 +129,7 @@ export default function PlayingBar() {
 				</div>
 			</div>
 			<div>
-				{videoUrl && (
+				{!mp3 ? (
 					<video
 						ref={videoRef}
 						src={videoUrl}
@@ -101,7 +137,10 @@ export default function PlayingBar() {
 						muted
 						className="absolute w-full h-full object-cover rounded-lg shadow-lg"
 					/>
-				)}
+				) :
+					<div>
+						<img src={currentSong?.anh_dai_dien} alt={currentSong?.ten_bai_hat} />
+					</div>}
 			</div>
 		</div>
 	);

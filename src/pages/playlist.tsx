@@ -202,6 +202,7 @@ export default function PlayList(): React.ReactNode {
         activeSong(songId);
         dispatch(setCurrentSong(song));
         setClickCount(0);
+        toggleDetails()
       } else {
         setClickCount(1);
         setTimeout(() => setClickCount(0), 300);
@@ -355,7 +356,7 @@ export default function PlayList(): React.ReactNode {
               key={song?.bai_hat_id}
               onClick={() => handleClick(song?.bai_hat_id, song)}
               onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
-              className={`grid grid-cols-[1%_40%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
+              className={`grid grid-cols-[1%_30%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
             >
               <div>{index + 1}</div>
               <div className="flex items-center gap-2">
