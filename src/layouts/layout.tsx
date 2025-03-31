@@ -21,6 +21,7 @@ import { ScrollArea, ScrollBar } from '../components/ui/scroll-area';
 
 // Import `useAppControllerStore`, một custom hook giúp quản lý state của ứng dụng.
 import { useAppControllerStore } from '../features/appControllerStore';
+import PlayingBar from '@/components/PlayingBar';
 
 // Định nghĩa component `Layout` - đây là layout chính của ứng dụng.
 export default function Layout() {
@@ -102,13 +103,13 @@ export default function Layout() {
         {/* Panel bên phải hiển thị thông tin "Now Playing Bar" nếu `isDetailsOpen` bật. */}
         <ResizablePanel
           className={`${isDetailsOpen ? 'flex' : 'hidden'
-            } min-w-[280px] items-start justify-center overflow-hidden text-clip rounded-lg bg-s-gray-darkest p-2 text-white`}
+            } min-w-[280px] items-start justify-center overflow-hidden text-clip rounded-lg bg-s-gray-darkest text-white`}
           defaultSize={12} // Chiếm 12% không gian mặc định.
-          maxSize={22} // Không thể mở rộng quá 22%.
+          maxSize={30} // Không thể mở rộng quá 22%.
           minSize={12} // Kích thước tối thiểu là 12%.
           order={3} // Thứ tự trong nhóm panel.
         >
-          Now Playing Bar {/* Hiển thị thông tin về bài hát đang phát. */}
+          <PlayingBar />
         </ResizablePanel>
       </ResizablePanelGroup>
 

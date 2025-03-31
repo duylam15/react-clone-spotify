@@ -15,6 +15,7 @@ import VolumeController from './volume-controller'
 export default function OtherControls(): React.ReactNode {
   // Lấy hàm `toggleDetails` từ `useAppControllerStore`, có thể dùng để mở/đóng chế độ xem chi tiết bài hát
   const toggleDetails = useAppControllerStore((state) => state.toggleDetails)
+  const isDetailsOpen = useAppControllerStore((state) => state.isDetailsOpen)
   // Khởi tạo hook `useNavigate` để xử lý điều hướng trang
   const navigate = useNavigate()
 
@@ -30,7 +31,7 @@ export default function OtherControls(): React.ReactNode {
     // Hiển thị danh sách nút điều khiển trong một hàng ngang
     <div className="flex w-auto flex-row items-center">
       {/* Nút mở chế độ xem bài hát hiện tại */}
-      <ControlButton Icon={PlaySquareIcon} onClick={toggleDetails} tooltipText="Now Playing View" button />
+      <ControlButton Icon={PlaySquareIcon} onClick={() => toggleDetails(!isDetailsOpen)} tooltipText="Now Playing View" button />
       {/* Nút mở lời bài hát */}
       <ControlButton Icon={Mic2Icon} onClick={openLyrics} tooltipText="Lyrics" button />
       {/* Nút mở danh sách phát */}

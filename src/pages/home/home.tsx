@@ -22,11 +22,13 @@ export default function Home(): React.ReactNode {
   const [danhSachPhat, setDanhSachPhat] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [nguoidung, setNguoidung] = useState<any>()
+  const userId = 1
 
   useEffect(() => {
     const fetchDanhSachPhat = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/danhsachphat/")
+        const response = await axios.get(`http://127.0.0.1:8000/danhsachphat/nguoidung/${userId}`)
         setDanhSachPhat(response.data)
       } catch (err: any) {
         setError(err.message)
@@ -38,17 +40,28 @@ export default function Home(): React.ReactNode {
     fetchDanhSachPhat()
   }, [])
 
-  console.log("danhSachPhatdanhSachPhatdanhSachPhatdanhSachPhatdanhSachPhat", danhSachPhat)
+
+  useEffect(() => {
+    const fetchNguoiDung = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${userId}`)
+        setNguoidung(response.data)
+      } catch (err: any) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchNguoiDung()
+  }, [])
+
+
 
   return (
     // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
     <div className="flex flex-col px-3">
       {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
-      <PlaylistCardsContainer title="First Playlist Bundle" items={danhSachPhat} />
-      <PlaylistCardsContainer title="Second Playlist Bundle" items={danhSachPhat} />
-      <PlaylistCardsContainer title="Third Playlist Bundle" items={danhSachPhat} />
-      <PlaylistCardsContainer title="Fourth Playlist Bundle" items={danhSachPhat} />
-      <PlaylistCardsContainer title="Fifth Playlist Bundle" items={danhSachPhat} />
+      <PlaylistCardsContainer title={"Made for " + nguoidung?.ten_hien_thi} items={danhSachPhat} />
     </div>
   )
 }

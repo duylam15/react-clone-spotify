@@ -18,23 +18,22 @@ import { Artist } from '@/types/types';
 // Định nghĩa component `Footer`, chứa giao diện điều khiển trình phát nhạc.
 export default function Footer(): React.ReactNode {
   const currentSong: any = useSelector((state: RootState) => state?.player?.currentSong);
-
+  console.log("currentSongcurrentSongcurrentSongcurrentSongcurrentSong", currentSong)
   const [artist, setArtist] = useState<Artist>(currentSong?.nghe_si_id)
-
+  const artistName = currentSong?.nghe_si
   useEffect(() => {
     const fetchArtist = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/nghesi/${currentSong?.nghe_si_id}/`)
+        const response = await axios.get(`http://127.0.0.1:8000/api/nghesi/${currentSong?.nghe_si_id}`)
         setArtist(response.data)
       } catch (err: any) {
         console.error("Error fetching playlist:", err)
       }
     }
-
     fetchArtist()
   }, [])
 
-  console.log("artistartistartistartist", artist)
+  console.log("artistartistarxxxtistartist", artist)
 
 
   return (
@@ -42,7 +41,7 @@ export default function Footer(): React.ReactNode {
     <div className="flex flex-row items-center justify-between p-2 pb-3">
 
       {/* Hiển thị thông tin bài hát (tên, ảnh bìa, nghệ sĩ, v.v.). */}
-      <TrackDisplayer song={currentSong} artist={artist} />
+      <TrackDisplayer song={currentSong} artist={artist} artistName={artistName} />
 
       {/* Điều khiển phát nhạc (play, pause, next, previous). */}
       <PlayerController />

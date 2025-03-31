@@ -11,6 +11,7 @@ import { formatSecondsToTime, formatThoiLuong } from "@/utils/utils"
 import { setReduxSongs } from "@/stores/playlist/songSlice"
 import { RootState } from "@/stores/playlist"
 import LibraryCard from "@/components/layout/sidebar/library-card/library-card"
+import { useAppControllerStore } from "@/features/appControllerStore"
 
 const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
@@ -24,14 +25,19 @@ export default function PlayList(): React.ReactNode {
   const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
   const [playlistItem, setPlaylistItem] = useState<any>({})
   const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
-  // Hàm xử lý sự kiện nhấn nút Play/Pause
+  const [artist, setArtist] = useState<Artist>()
+  const [activeSongId, setActiveSongId] = useState<number | null>(null)
+  const [clickCount, setClickCount] = useState(0)
+  const dispatch = useDispatch();
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const toggleDetails = useAppControllerStore((state) => state.toggleDetails)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [playlists, setPlaylists] = useState([])
+  const userId = 1
 
   const onClickPlay = useCallback((songs: any) => {
-    console.log(songs)
-    console.log("aaaaa")
-    console.log(songs[0]?.duong_dan)
     const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
-
     if (!audioPlayer) {
       return
     } // Nếu không tìm thấy phần tử audio thì dừng
@@ -40,7 +46,6 @@ export default function PlayList(): React.ReactNode {
     audioPlayer.load();
     audioPlayer.play();
   }, [audioPlayer])
-
 
   useEffect(() => {
     const fetchSongs = async () => {
@@ -55,8 +60,8 @@ export default function PlayList(): React.ReactNode {
           data.danh_sach_bai_hat.map(async (item: any) => {
             const songId = item.bai_hat;
             const songRes = await getSongById(songId); // Lấy thông tin bài hát
-            const artistRes = await axios.get(`http://127.0.0.1:8000/api/nghesi/${songRes.nghe_si}/`);
-            const albumRes = await axios.get(`http://127.0.0.1:8000/album/${songRes.album}/`);
+            const artistRes = await axios.get(`http://127.0.0.1:8000/api/nghesi/${songRes?.nghe_si}`);
+            const albumRes = await axios.get(`http://127.0.0.1:8000/album/${songRes?.album}/`);
             return {
               bai_hat_id: songRes.bai_hat_id,
               ten_bai_hat: songRes.ten_bai_hat,
@@ -90,42 +95,13 @@ export default function PlayList(): React.ReactNode {
 
   console.log("songssongssongssongssongssongs", songs)
 
-
-  const [artist, setArtist] = useState<Artist>()
-
-  useEffect(() => {
-    const fetchArtist = async () => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/nghesi/${1}/`)
-        console.log("responseresponseresponseresponseresponse", response)
-        setArtist(response.data)
-      } catch (err: any) {
-        console.error("Error fetching playlist:", err)
-      }
-    }
-
-    fetchArtist()
-  }, [])
-
-  console.log("artistartistartistartist", artist)
-
-  const [activeSongId, setActiveSongId] = useState<number | null>(null)
-  const [clickCount, setClickCount] = useState(0)
-  const dispatch = useDispatch();
-
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
-
-
-
   const handleClick = (songId: number, song: Song) => {
-
     // Kiểm tra xem bài hát được click có phải là bài đang active hay không
     if (activeSongId === songId) {
-      // Nếu người dùng đã click vào bài hát này 1 lần trước đó
-      console.log("clickCount", clickCount)
       if (clickCount === 1) {
         activeSong(songId) // Gọi hàm phát nhạc
         dispatch(setCurrentSong(song));
+        toggleDetails(true)
         setClickCount(0) // Reset số lần click để chuẩn bị cho lần click mới
       } else {
         setClickCount(1) // Đánh dấu rằng người dùng đã click 1 lần
@@ -144,7 +120,6 @@ export default function PlayList(): React.ReactNode {
         setTimeout(() => setClickCount(0), 300) // Reset sau 300ms nếu không có click tiếp theo
       }
     }
-
   }
 
   const handleRightClick = (event: React.MouseEvent, bai_hat_id: any) => {
@@ -164,23 +139,14 @@ export default function PlayList(): React.ReactNode {
     console.log("📌 ID của item được click:", bai_hat_id);
   };
 
-
   const activeSong = (songId: number) => {
     console.log(`Bài hát ID ${songId} đang phát!`)
   }
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-
-
-
-  const [playlists, setPlaylists] = useState([])
-  const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
-
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/danhsachphat/nguoidung/1/`)
+        const response = await axios.get(`${API_BASE_URL}/danhsachphat/nguoidung/${userId}/`)
         setPlaylists(response.data)
       } catch (err: any) {
         console.error("Error fetching playlist:", err)
@@ -249,7 +215,7 @@ export default function PlayList(): React.ReactNode {
           </div>
         </div>
       </div>
-      <div className="w-[100%]  bg-black-500 p-4 rounded-b-[10px] flex justify-between items-center gap-8">
+      <div className="w-[100%]  bg-black-500 p-5 pb-0 pt-0 rounded-b-[10px] flex justify-between items-center gap-8">
         <div className="flex justify-start items-center gap-8">
           <div onClick={() => onClickPlay(songs)} className="bg-green-500 p-3 inline-block rounded-full hover:bg-green-400 transition">
             <img className="w-[20px] h-[20px] object-cover" src="/public/play-button-svgrepo-com.svg" alt="" />
@@ -271,7 +237,7 @@ export default function PlayList(): React.ReactNode {
           </svg>
         </div>
       </div>
-      <div className="grid grid-cols-[1%_40%_24%_25%_10%] gap-4  text-gray-300 pl-4 pb-2 ml-6 mr-10 mb-3 mt-5 border-b border-gray-600 ">
+      <div className="grid grid-cols-[1%_30%_24%_25%_10%] gap-4  text-gray-300 pl-4 pb-2 ml-6 mr-10 mb-3 mt-5 border-b border-gray-600 ">
         <div className="">#</div>
         <div className="">Title</div>
         <div className="">Album</div>
@@ -282,16 +248,16 @@ export default function PlayList(): React.ReactNode {
         </div>
       </div>
       <div>
-        {songs.map((song: Song) => (
+        {songs.map((song: any, index) => (
           <div
             key={song?.bai_hat_id}
             onClick={() => handleClick(song?.bai_hat_id, song)}
             onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
-            className={`grid grid-cols-[1%_40%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] 
+            className={`grid grid-cols-[1%_30%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] 
             ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}>
-            <div>{song?.bai_hat_id}</div>
+            <div>{index + 1}</div>
             <div className="flex items-center gap-2">
-              <img className="w-[50px] h-[50px] object-cover rounded-lg" src="/public/uifaces-popular-image (2).jpg" alt="" />
+              <img className="w-[50px] h-[50px] object-cover rounded-lg" src={song?.anh_dai_dien} alt="" />
               <div>
                 <div className="font-semibold text-white cursor-pointer hover:underline" onClick={() => navigate(`/track/${song?.bai_hat_id}`)} >
                   {song?.ten_bai_hat}
@@ -326,7 +292,8 @@ export default function PlayList(): React.ReactNode {
                 >
                   <div className="flex justify-start items-center p-2 gap-2">
                     <img src={playlist.anh_danh_sach} alt="" className="w-10 h-10 rounded-md object-cover" />
-                    <span>{playlist.ten_danh_sach}</span>
+                    <span>{playlist.ten_danh_sach}
+                    </span>
                   </div>
                 </div>
               ))}

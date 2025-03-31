@@ -8,7 +8,7 @@ interface PlayerControllerStore {
   isDetailsOpen: boolean; // Trạng thái hiển thị chi tiết.
   setMainWidth: (width: number) => void; // Hàm cập nhật `mainWidth`.
   setPanel: (setTo: boolean) => void; // Hàm cập nhật trạng thái mở rộng của panel.
-  toggleDetails: () => void; // Hàm bật/tắt chi tiết.
+  toggleDetails: (forceOpen?: boolean) => void; // Hàm bật/tắt chi tiết.
 }
 
 // Tạo store Zustand có tên `useAppControllerStore` sử dụng `create`.
@@ -25,6 +25,11 @@ export const useAppControllerStore = create<PlayerControllerStore>(function play
     setPanel: (setTo: boolean) => set((state) => ({ ...state, isPanelExpanded: setTo })),
 
     // Hàm `toggleDetails` để thay đổi trạng thái của `isDetailsOpen`.
-    toggleDetails: () => set((state) => ({ ...state, isDetailsOpen: !state.isDetailsOpen })),
+   toggleDetails: (forceOpen?: boolean) =>
+      set((state) => ({
+        ...state,
+        isDetailsOpen: forceOpen !== undefined ? forceOpen : !state.isDetailsOpen
+      })),
+
   };
 });

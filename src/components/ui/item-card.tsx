@@ -74,7 +74,7 @@ export default function ItemCard({ danh_sach_phat_id, anh_danh_sach, ten_danh_sa
       <img
         ref={imageReference} // Gán ref để theo dõi kích thước ảnh.
         className={imageVariants({ isArtist })} // Tạo class động dựa trên `isArtist`.
-        src={'/public/uifaces-popular-image (2).jpg'} // Nếu không có ảnh thì dùng ảnh placeholder.
+        src={anh_danh_sach} // Nếu không có ảnh thì dùng ảnh placeholder.
         height={256} // Chiều cao ảnh.
         width={256} // Chiều rộng ảnh.
         alt="playlist" // Văn bản thay thế cho ảnh.

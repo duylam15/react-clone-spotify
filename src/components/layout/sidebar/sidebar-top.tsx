@@ -66,7 +66,7 @@ export default function SidebarTop() {
   const iconProperties = getIconSize("l", true);
 
   return (
-    <div className="flex w-full flex-col items-start ml-4 justify-center gap-6 rounded-lg bg-s-gray-darkest py-4 text-white">
+    <div className="flex w-full flex-col items-start ml-4 justify-center gap-6 rounded-lg bg-black py-4 text-white">
       <IconLink Icon={HomeIcon} title="Home" to="/" />
       <IconLink Icon={SearchIcon} title="Search" to="/search" />
 
