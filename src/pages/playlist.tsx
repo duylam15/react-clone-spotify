@@ -25,16 +25,35 @@ export default function PlayList(): React.ReactNode {
   const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
   const [playlistItem, setPlaylistItem] = useState<any>({})
   const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
-  const [artist, setArtist] = useState<Artist>()
-  const [activeSongId, setActiveSongId] = useState<number | null>(null)
-  const [clickCount, setClickCount] = useState(0)
-  const dispatch = useDispatch();
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const toggleDetails = useAppControllerStore((state) => state.toggleDetails)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [playlists, setPlaylists] = useState([])
   const userId = 1
+
+  console.log(songs)
+
+  // premium
+  const [songsPlayedCount, setSongsPlayedCount] = useState(0);
+  const [isPlayingAd, setIsPlayingAd] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userId = localStorage.getItem("userId"); // Lấy userId từ localStorage
+        if (!userId) return;
+
+        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${userId}`);
+        setIsPremium(userRes.data.isPremium || false);
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+  // Hàm xử lý sự kiện nhấn nút Play/Pause
 
   const onClickPlay = useCallback((songs: any) => {
     const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
@@ -60,14 +79,17 @@ export default function PlayList(): React.ReactNode {
           data.danh_sach_bai_hat.map(async (item: any) => {
             const songId = item.bai_hat;
             const songRes = await getSongById(songId); // Lấy thông tin bài hát
-            const artistRes = await axios.get(`http://127.0.0.1:8000/api/nghesi/${songRes?.nghe_si}`);
-            const albumRes = await axios.get(`http://127.0.0.1:8000/album/${songRes?.album}/`);
+            console.log(songRes)
+            const artistRes = await axios.get(`http://127.0.0.1:8000/api/nghesi/${songRes.nghe_si}`);
+            const albumRes = await axios.get(`http://127.0.0.1:8000/album/${songRes.album}/`);
+
             return {
               bai_hat_id: songRes.bai_hat_id,
               ten_bai_hat: songRes.ten_bai_hat,
               the_loai: songRes.the_loai,
               duong_dan: songRes.duong_dan,
               loi_bai_hat: songRes.loi_bai_hat,
+              is_premium: songRes.is_premium,
               thoi_luong: formatThoiLuong(songRes.thoi_luong),
               ngay_phat_hanh: format(new Date(songRes.ngay_phat_hanh), "MMM dd, yyyy"),
               album_id: albumRes?.data.album_id,
@@ -80,8 +102,35 @@ export default function PlayList(): React.ReactNode {
           })
         );
 
-        setSongs(songDetails);
-        dispatch(setReduxSongs(songDetails));
+        // Thêm bài quảng cáo vào danh sách
+        const adSong = {
+          bai_hat_id: -12, // ID đặc biệt cho quảng cáo
+          ten_bai_hat: "Quảng cáo - Premium để bỏ quảng cáo",
+          the_loai: "Advertisement",
+          duong_dan: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+          loi_bai_hat: "Nâng cấp lên Premium để tận hưởng âm nhạc không gián đoạn.",
+          thoi_luong: "0:30",
+          ngay_phat_hanh: format(new Date(), "MMM dd, yyyy"),
+          album_id: null,
+          ten_album: null,
+          anh_bia: "https://picsum.photos/200", // Hình ảnh cho quảng cáo
+          nghe_si_id: null,
+          nghe_si: "Quảng cáo",
+          anh_dai_dien: null,
+        };
+
+        const songsWithAds = [];
+        for (let i = 0; i < songDetails.length; i++) {
+          if (songDetails[i].is_premium == 1 && !isPremium)
+            songDetails[i].duong_dan = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+          songsWithAds.push(songDetails[i]);
+          if ((i + 1) % 2 === 0 && !isPremium) {
+            songsWithAds.push(adSong); // Chèn quảng cáo sau mỗi 2 bài
+          }
+        }
+
+        setSongs(songsWithAds);
+        dispatch(setReduxSongs(songsWithAds));
 
       } catch (err) {
         setError("Không thể tải danh sách bài hát.");
@@ -93,34 +142,85 @@ export default function PlayList(): React.ReactNode {
     fetchSongs();
   }, [playlistId]);
 
+
   console.log("songssongssongssongssongssongs", songs)
 
-  const handleClick = (songId: number, song: Song) => {
-    // Kiểm tra xem bài hát được click có phải là bài đang active hay không
-    if (activeSongId === songId) {
-      if (clickCount === 1) {
-        activeSong(songId) // Gọi hàm phát nhạc
-        dispatch(setCurrentSong(song));
-        toggleDetails(true)
-        setClickCount(0) // Reset số lần click để chuẩn bị cho lần click mới
-      } else {
-        setClickCount(1) // Đánh dấu rằng người dùng đã click 1 lần
-        // Nếu sau 300ms không có lần click thứ 2, reset clickCount
-        setTimeout(() => setClickCount(0), 300)
-      }
-    } else {
-      // Nếu người dùng click vào một bài hát khác, cập nhật bài hát mới
-      setActiveSongId(songId)
-      // Kiểm tra xem lần click này có phải là lần thứ 2 hay không
-      if (clickCount === 1) {
-        activeSong(songId) // Nếu là lần thứ 2, phát nhạc luôn
-        setClickCount(0) // Reset lại bộ đếm
-      } else {
-        setClickCount(1) // Nếu là lần đầu, tăng bộ đếm click lên 1
-        setTimeout(() => setClickCount(0), 300) // Reset sau 300ms nếu không có click tiếp theo
+
+  const [artist, setArtist] = useState<Artist>()
+
+  useEffect(() => {
+    const fetchArtist = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/nghesi/${1}/`)
+        console.log("responseresponseresponseresponseresponse", response)
+        setArtist(response.data)
+      } catch (err: any) {
+        console.error("Error fetching playlist:", err)
       }
     }
-  }
+
+    fetchArtist()
+  }, [])
+
+  console.log("artistartistartistartist", artist)
+
+  const [activeSongId, setActiveSongId] = useState<number | null>(null)
+  const [clickCount, setClickCount] = useState(0)
+  const dispatch = useDispatch();
+
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+
+
+
+  const handleClick = (songId: number, song: Song) => {
+    if (isPlayingAd) return; // Nếu đang phát quảng cáo, chặn phát bài khác
+
+    if (!isPremium) {
+      // Nếu không phải Premium, kiểm tra số bài đã phát
+      if (songsPlayedCount > 2) {
+        const adSong = songs.find((s) => s.bai_hat_id === -12); // Tìm bài quảng cáo
+
+        if (adSong) {
+          setIsPlayingAd(true);
+          activeSong(adSong.bai_hat_id);
+          dispatch(setCurrentSong(adSong));
+
+          setTimeout(() => {
+            setIsPlayingAd(false);
+            setSongsPlayedCount(0); // Reset đếm số bài đã phát
+            activeSong(songId);
+            dispatch(setCurrentSong(song));
+          }, 30000); // Quảng cáo phát trong 30s
+          return;
+        }
+      }
+    }
+
+    if (activeSongId === songId) {
+      if (clickCount === 1) {
+        activeSong(songId);
+        dispatch(setCurrentSong(song));
+        setClickCount(0);
+      } else {
+        setClickCount(1);
+        setTimeout(() => setClickCount(0), 300);
+      }
+    } else {
+      setActiveSongId(songId);
+      if (clickCount === 1) {
+        activeSong(songId);
+        dispatch(setCurrentSong(song));
+        setClickCount(0);
+      } else {
+        setClickCount(1);
+        setTimeout(() => setClickCount(0), 300);
+      }
+    }
+
+    setSongsPlayedCount((prev) => prev + 1); // Tăng số bài đã phát
+  };
+
 
   const handleRightClick = (event: React.MouseEvent, bai_hat_id: any) => {
     event.preventDefault(); // Ngăn chặn menu chuột phải mặc định
@@ -248,28 +348,38 @@ export default function PlayList(): React.ReactNode {
         </div>
       </div>
       <div>
-        {songs.map((song: any, index) => (
-          <div
-            key={song?.bai_hat_id}
-            onClick={() => handleClick(song?.bai_hat_id, song)}
-            onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
-            className={`grid grid-cols-[1%_30%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] 
-            ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}>
-            <div>{index + 1}</div>
-            <div className="flex items-center gap-2">
-              <img className="w-[50px] h-[50px] object-cover rounded-lg" src={song?.anh_dai_dien} alt="" />
-              <div>
-                <div className="font-semibold text-white cursor-pointer hover:underline" onClick={() => navigate(`/track/${song?.bai_hat_id}`)} >
-                  {song?.ten_bai_hat}
+        {songs
+          .filter((song) => song?.bai_hat_id !== -12) // Ẩn bài có id = -12
+          .map((song: any, index) => (
+            <div
+              key={song?.bai_hat_id}
+              onClick={() => handleClick(song?.bai_hat_id, song)}
+              onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
+              className={`grid grid-cols-[1%_40%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
+            >
+              <div>{index + 1}</div>
+              <div className="flex items-center gap-2">
+                <img
+                  className="w-[50px] h-[50px] object-cover rounded-lg"
+                  src={song?.anh_dai_dien}
+                  alt=""
+                />
+                <div>
+                  <div
+                    className="font-semibold text-white cursor-pointer hover:underline"
+                    onClick={() => navigate(`/track/${song?.bai_hat_id}`)}
+                  >
+                    {song?.ten_bai_hat}
+                  </div>
+                  <div>{song?.nghe_si}</div>
                 </div>
-                <div>{song?.nghe_si}</div>
               </div>
+              <div>{song?.ten_album}</div>
+              <div>{song?.ngay_phat_hanh}</div>
+              <div>{song?.thoi_luong}</div>
             </div>
-            <div>{song?.ten_album}</div>
-            <div>{song?.ngay_phat_hanh}</div>
-            <div>{song?.thoi_luong}</div>
-          </div>
-        ))}
+          ))}
+
       </div>
       {isModalOpen && (
         <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 z-50">
@@ -292,8 +402,7 @@ export default function PlayList(): React.ReactNode {
                 >
                   <div className="flex justify-start items-center p-2 gap-2">
                     <img src={playlist.anh_danh_sach} alt="" className="w-10 h-10 rounded-md object-cover" />
-                    <span>{playlist.ten_danh_sach}
-                    </span>
+                    <span>{playlist.ten_danh_sach}</span>
                   </div>
                 </div>
               ))}
