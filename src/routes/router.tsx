@@ -15,6 +15,7 @@ import Track from '@/pages/track';
 import Register from '@/pages/register';
 import ForgotPassword from '@/pages/forgot-password';
 import ResetPassword from '@/pages/reset-password';
+import Premium from '@/pages/premium';
 
 // Import từ file thứ hai (chỉ lấy phần admin)
 import LayoutDefaultAdmin from '../layout/DefaultLayoutAdmin';
@@ -59,6 +60,7 @@ export const router = createBrowserRouter(
         <Route element={<Feed />} path="feed" />
         <Route element={<PlayList />} path="playlist/:id" />
         <Route element={<Track />} path="track/:id" />
+        <Route element={<Premium />} path="premium" />
         <Route path="user">
           <Route element={<UserPage />} path="trknell" />
         </Route>
