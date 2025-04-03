@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { convertPlaylistFromBackend, getPlayList } from '@/services/playlistAPI'
 
 import axios from "axios"
-import { getUserInfo } from '@/services/user'
+import ChatButton from '@/components/chat'
 
 // Khai báo một danh sách `Playlists` có kiểu `Playlist[]` (mảng các playlist).
 
@@ -41,7 +41,8 @@ export default function Home(): React.ReactNode {
   console.log("danhSachPhatdanhSachPhatdanhSachPhatdanhSachPhatdanhSachPhat", danhSachPhat)
 
   return (
-    // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
+  <>
+        // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
     <div className="flex flex-col px-3">
       {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
       <PlaylistCardsContainer title="First Playlist Bundle" items={danhSachPhat} />
@@ -50,5 +51,7 @@ export default function Home(): React.ReactNode {
       <PlaylistCardsContainer title="Fourth Playlist Bundle" items={danhSachPhat} />
       <PlaylistCardsContainer title="Fifth Playlist Bundle" items={danhSachPhat} />
     </div>
+  </>
+
   )
 }

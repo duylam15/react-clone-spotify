@@ -67,3 +67,13 @@ export const forgotPassword = async (sendData : any) => {
         return error.response; // Xử lý lỗi
     }
 };
+
+
+export const UserInfo = async () => {
+    try {
+                const user = await getUserInfo();
+                return user
+            } catch (error) {
+                console.error("Lỗi khi lấy user info:", error);
+            }
+}

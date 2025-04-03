@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 interface SearchResults {
   nghe_si: { id: number; ten_nghe_si: string; anh_dai_dien: string | null }[];
-  bai_hat: { id: number; ten_bai_hat: string }[];
+  bai_hat: { id: number; ten_bai_hat: string; duong_dan: string }[];
   albums: { id: number; ten_album: string; anh_bia: string | null }[];
 }
 
@@ -30,13 +30,18 @@ export default function Search(): React.ReactNode {
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra hoặc không tìm thấy kết quả.");
       }
-
+      console.log("data ablum , nghe si , bai hat")
+      console.log(data);
       setResults(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClickSong = (duongDan: string) => {
+    console.log(`Đường dẫn bài hát: ${duongDan}`);
   };
 
   return (
@@ -79,7 +84,7 @@ export default function Search(): React.ReactNode {
       {results && (
         <div className="mt-6 w-full bg-inherit p-5 shadow-lg rounded-lg">
 
-          
+
           {/* Bài hát */}
           {(filter === "all" || filter === "bai_hat") && (
             <div className="mb-6 pb-4">
@@ -88,7 +93,11 @@ export default function Search(): React.ReactNode {
                 {results.bai_hat.length > 0 ? (
                   results.bai_hat
                     .slice(0, filter === "all" ? 5 : results.bai_hat.length)
-                    .map((song) => <li key={song.id}>{song.ten_bai_hat}</li>)
+                    .map((song) => <li
+                      key={song.id}
+                      className="cursor-pointer hover:text-blue-400"
+                      onClick={() => handleClickSong(song.duong_dan)}
+                    >{song.ten_bai_hat}</li>)
                 ) : (
                   <p className="text-gray-300">Không tìm thấy bài hát.</p>
                 )}

@@ -18,6 +18,7 @@ import ResetPassword from '@/pages/reset-password';
 
 // Import từ file thứ hai (chỉ lấy phần admin)
 import LayoutDefaultAdmin from '../layout/DefaultLayoutAdmin';
+import Chat from '@/components/chat';
 
 // Lazy-loaded components từ file thứ hai (chỉ lấy phần admin)
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
@@ -67,6 +68,7 @@ export const router = createBrowserRouter(
       <Route element={<Register />} path="register" />
       <Route element={<ForgotPassword />} path="forgot-password" />
       <Route element={<ResetPassword />} path="reset-password/:uid/:token" />
+      <Route path= "chat" element={<Chat/>}/>
 
       {/* Routes admin từ file thứ hai */}
       <Route path="/admin" element={<LayoutDefaultAdmin />}>

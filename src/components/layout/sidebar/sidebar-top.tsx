@@ -1,8 +1,11 @@
 // Import hai biểu tượng `HomeIcon` và `SearchIcon` từ thư viện `lucide-react` để hiển thị icon trang chủ và tìm kiếm.
-import { HomeIcon, SearchIcon } from 'lucide-react'
+import { HomeIcon, SearchIcon, User } from 'lucide-react'
 
 // Import `IconLink` - một component giúp tạo liên kết icon có tooltip.
 import IconLink from './icon-link'
+import ChatButton from '@/components/chat'
+import { useState } from 'react'
+import { UserInfo } from '@/services/user'
 
 // Định nghĩa component `SidebarTop`, hiển thị các icon điều hướng ở đầu sidebar.
 export default function SidebarTop(): React.ReactNode {
@@ -13,9 +16,9 @@ export default function SidebarTop(): React.ReactNode {
       {/* Liên kết đến trang chủ với biểu tượng Home */}
       <IconLink Icon={HomeIcon} title="Home" to="/" />
 
-      {/* Liên kết đến trang tìm kiếm với biểu tượng Search */}
+      {/* Liên kết đến trang tìm kiếm với biểu tượng ssSearch */}
       <IconLink Icon={SearchIcon} title="Search" to="/search" />
-
+      <ChatButton  />
     </div>
   )
 }
