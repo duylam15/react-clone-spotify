@@ -12,6 +12,7 @@ import { setReduxSongs } from "@/stores/playlist/songSlice"
 import { RootState } from "@/stores/playlist"
 import LibraryCard from "@/components/layout/sidebar/library-card/library-card"
 import { useAppControllerStore } from "@/features/appControllerStore"
+import { getUserInfo } from '@/services/user';
 
 const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
@@ -41,11 +42,14 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = localStorage.getItem("userId"); // Lấy userId từ localStorage
-        if (!userId) return;
+        const user = await getUserInfo();
+        console.log("User info:", user);
+        if (!user) return;
 
-        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${userId}`);
-        setIsPremium(userRes.data.isPremium || false);
+        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
+        setIsPremium(userRes.data.la_premium || false);
+        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+isPremium)
+        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+userRes.data.la_premium)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin user:", error);
       }
