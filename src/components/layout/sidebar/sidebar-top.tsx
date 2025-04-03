@@ -4,6 +4,7 @@ import axios from "axios";
 import IconLink from "./icon-link";
 import TooltipWrapper from "@/components/ui/tooltip-wrapper";
 import getIconSize from "@/utils/get-icon-size";
+import ChatButton from "@/components/chat";
 
 export default function SidebarTop() {
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -140,6 +141,7 @@ export default function SidebarTop() {
           <LibraryBig className="text-s-gray-lighter transition-colors duration-300 hover:text-white" {...iconProperties} />
         </TooltipWrapper>
       </div>
+      <ChatButton/>
     </div>
   );
 }

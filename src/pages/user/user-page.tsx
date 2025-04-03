@@ -78,7 +78,6 @@ export default function UserPage() {
     const fetchUser = async () => {
       const dataresponse = await getUserInfo();
       setName(dataresponse?.ten_hien_thi);
-      console.log(dataresponse)
     };
     fetchUser()
   }, [])
