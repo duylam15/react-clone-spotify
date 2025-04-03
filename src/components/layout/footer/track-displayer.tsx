@@ -21,18 +21,14 @@ const iconProperty = getIconSize('l')
 type TrackDisplayerProps = {
   song: Song | null // Định nghĩa props song
   artist: Artist;
+  artistName: string;
 };
 
-export default function TrackDisplayer({ artist, song }: TrackDisplayerProps) {
-
+export default function TrackDisplayer({ artist, song, artistName }: TrackDisplayerProps) {
   // State `isLiked` lưu trạng thái bài hát có được yêu thích không (mặc định là `false`)
   const [isLiked, setIsLiked] = useState<boolean>(false)
-
   const [effects, setEffects] = useState<boolean>(false)
-
   const [album, setAlbum] = useState<Album | null>(null);
-
-  console.log("songsongsongsongsongsong", song)
 
   useEffect(() => {
     const fetchAlbum = async () => {
@@ -45,64 +41,67 @@ export default function TrackDisplayer({ artist, song }: TrackDisplayerProps) {
         console.error("Error fetching playlist:", err)
       }
     }
-
     fetchAlbum()
   }, [artist])
-
-  console.log("artistartistartistartist", artist?.ten_nghe_si)
 
   const currentSong = {
     album: album?.ten_album, // Tên album chứa bài hát
     albumCover: album?.anh_bia, // Ảnh bìa album (sử dụng hình ảnh ngẫu nhiên)
-    artist: artist?.ten_nghe_si, // Tên nghệ sĩ
+    artist: artistName, // Tên nghệ sĩ
     name: song?.ten_bai_hat, // Tên bài hát
   }
+
+  console.log("currentSongcurrentSongxx", currentSong)
+
   return (
     // Container chính chứa thông tin bài hát, ảnh bìa, và nút yêu thích
     <div className="flex min-w-[30vw] flex-row items-center gap-2 lg:min-w-[13vw]">
-      {/* Hiển thị ảnh bìa album */}
-      <img
-        alt={`${currentSong.album}'s cover`} // Thuộc tính `alt` giúp tăng khả năng truy cập
-        className="size-14 rounded-md" // `size-14`: Kích thước ảnh, `rounded-md`: Bo góc
-        src={currentSong.albumCover} // Nguồn ảnh bìa
-      />
+      {currentSong?.artist && <div className="flex min-w-[30vw] flex-row items-center gap-2 lg:min-w-[13vw]">
+        {/* Hiển thị ảnh bìa album */}
+        <img
+          alt={currentSong.album} // Thuộc tính `alt` giúp tăng khả năng truy cập
+          className="size-14 rounded-md" // `size-14`: Kích thước ảnh, `rounded-md`: Bo góc
+          src={currentSong.albumCover} // Nguồn ảnh bìa
+        />
 
-      {/* Hiển thị thông tin bài hát */}
-      <div className="flex flex-col justify-center px-2">
-        {/* Hiển thị tên bài hát */}
-        <h3 className="text-sm font-normal text-s-white">{currentSong.name}</h3>
-        {/* Hiển thị tên nghệ sĩ */}
-        <h4 className="text-xs font-normal text-s-gray-lighter">{currentSong.artist}</h4>
-      </div>
+        {/* Hiển thị thông tin bài hát */}
+        <div className="flex flex-col justify-center px-2">
+          {/* Hiển thị tên bài hát */}
+          <h3 className="text-sm font-normal text-s-white">{currentSong.name}</h3>
+          {/* Hiển thị tên nghệ sĩ */}
+          <h4 className="text-xs font-normal text-s-gray-lighter">{currentSong.artist}</h4>
+        </div>
 
-      {/* Tooltip giúp hiển thị thông báo khi người dùng hover vào biểu tượng trái tim */}
-      <Tooltip>
-        {/* Nút kích hoạt tooltip (Trigger) */}
-        <TooltipTrigger>
-          {/* Biểu tượng trái tim để đánh dấu bài hát yêu thích */}
-          <HeartIcon
-            className={`
+        {/* Tooltip giúp hiển thị thông báo khi người dùng hover vào biểu tượng trái tim */}
+        <Tooltip>
+          {/* Nút kích hoạt tooltip (Trigger) */}
+          <TooltipTrigger>
+            {/* Biểu tượng trái tim để đánh dấu bài hát yêu thích */}
+            <HeartIcon
+              className={`
               size-4 cursor-default hover:cursor-pointer 
               ${isLiked
-                ? 'text-s-green hover:text-s-green-light' // Nếu đã thích, icon có màu xanh
-                : 'text-s-gray-lighter hover:text-s-gray-light' // Nếu chưa thích, icon có màu xám
-              }
+                  ? 'text-s-green hover:text-s-green-light' // Nếu đã thích, icon có màu xanh
+                  : 'text-s-gray-lighter hover:text-s-gray-light' // Nếu chưa thích, icon có màu xám
+                }
               ${effects ? 'animate-wiggle' : ''} 
             `}
-            onAnimationEnd={() => setEffects(false)} // Khi hiệu ứng kết thúc, đặt `effects` về `false`
-            onClick={() => {
-              setIsLiked(!isLiked) // Đảo ngược trạng thái `isLiked`
-              setEffects(true) // Kích hoạt hiệu ứng rung
-            }}
-            {...iconProperty} // Thêm thuộc tính kích thước của icon
-          />
-        </TooltipTrigger>
+              onAnimationEnd={() => setEffects(false)} // Khi hiệu ứng kết thúc, đặt `effects` về `false`
+              onClick={() => {
+                setIsLiked(!isLiked) // Đảo ngược trạng thái `isLiked`
+                setEffects(true) // Kích hoạt hiệu ứng rung
+              }}
+              {...iconProperty} // Thêm thuộc tính kích thước của icon
+            />
+          </TooltipTrigger>
 
-        {/* Nội dung của Tooltip khi hover vào icon trái tim */}
-        <TooltipContent className="border-0 bg-s-gray-dark p-1 px-2 text-white" sideOffset={16}>
-          Save to Your Library {/* Hiển thị nội dung "Save to Your Library" */}
-        </TooltipContent>
-      </Tooltip>
+          {/* Nội dung của Tooltip khi hover vào icon trái tim */}
+          <TooltipContent className="border-0 bg-s-gray-dark p-1 px-2 text-white" sideOffset={16}>
+            Save to Your Library {/* Hiển thị nội dung "Save to Your Library" */}
+          </TooltipContent>
+        </Tooltip>
+      </div>}
+
     </div>
   )
 }

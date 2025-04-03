@@ -64,7 +64,7 @@ export default function LibraryCard({
             }
           >
             <div className="flex items-center rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-darker" onClick={() => navigate(`/playlist/${danh_sach_phat_id}`)}>
-              <LibraryCardImage image={anh_danh_sach || "/public/uifaces-popular-image (3).jpg"} />
+              <LibraryCardImage image={anh_danh_sach} />
             </div>
           </TooltipWrapper>
         </div>
@@ -82,7 +82,7 @@ export default function LibraryCard({
       {isModalOpen && (
         <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 z-50">
           <div
-            className="w-[250px] p-4 bg-white rounded-lg shadow-lg absolute top-[300px] left-[60px]"
+            className="w-[250px] p-4 bg-black rounded-lg shadow-lg absolute top-[300px] left-[60px]"
           >
             <p className="text-center text-lg font-semibold">Bạn có chắc chắn muốn xóa?</p>
             <div className="flex justify-between mt-4">
