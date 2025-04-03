@@ -20,21 +20,22 @@ const ChatButton = () => {
         avatar_url: ""
     })
 
-    useEffect(() => {
-        if (!isOpen) return;
-        const fetchUserDatas = async () => {
-            const userData = await UserInfo();
+    const fetchUserDatas = async () => {
+        const userData = await UserInfo();
+        
+        if (!userData.email) { // Chỉ đóng khi dữ liệu trả về thực sự không có email
+            setIsOpen(false);
+        } else {
             setUserData({
                 username: userData.ten_hien_thi,
                 email: userData.email,
                 avatar_url: userData.avatar_url
-            })
+            });
         }
-        fetchUserDatas();
-    }, [isOpen])
+    }
 
     useEffect(() => {
-        if (userData.email == "") { setIsOpen(false); return; }
+        // if (userData.email == "") { setIsOpen(false); return; }
         if (isOpen) {
             const ws = new WebSocket("ws://127.0.0.1:8000/ws/chat/");
 
@@ -59,7 +60,7 @@ const ChatButton = () => {
                     setMessages((prev) => [...prev, newMessage]);
                 }
             };
-
+            fetchUserDatas()
             ws.onerror = (error) => console.error("WebSocket Error:", error);
             ws.onclose = () => console.log("WebSocket Disconnected!");
 
@@ -72,14 +73,14 @@ const ChatButton = () => {
     }, [isOpen, loading]);
 
     useEffect(() => {
-        if (userData.email == "") { setIsOpen(false); return; }
+        // if (userData.email == "") { setIsOpen(false); return; }
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
         }
     }, [messages]);
 
     const sendMessage = () => {
-        if (userData.email == "") { setIsOpen(false); return; }
+        // if (userData.email == "") { setIsOpen(false); return; }
         if (socket && message.trim()) {
             const dataToSend = {
                 username: userData.username,

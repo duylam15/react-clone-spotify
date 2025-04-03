@@ -1,5 +1,4 @@
 import { loginUser } from '@/services/login';
-import { getUserInfo } from '@/services/user';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,17 +7,6 @@ export default function Login() {
 	const [password, setPassword] = useState('');
 	const [errors, setErrors] = useState<any>({}); // Lưu lỗi từ backend
 	const navigate = useNavigate()
-
-
-	const handleFetchUser = async () => {
-		try {
-			const user = await getUserInfo();
-			console.log("User info:", user);
-		} catch (error) {
-			console.error("Lỗi khi lấy user info:", error);
-		}
-	};
-
 
 
 	const handleSubmit = async (e: any) => {
@@ -98,14 +86,6 @@ export default function Login() {
 						</button>
 					</div>
 
-					<div className='flex items-center justify-center mt-3'>
-						<button type='button'
-							onClick={handleFetchUser}
-							className='bg-blue-500 hover:bg-blue-600 text-white p-2 
-        w-[324px] h-[48px] rounded-full text-lg font-medium text-center'>
-							User infor
-						</button>
-					</div>
 				</form>
 
 				<div className='flex flex-col items-center justify-center'>
