@@ -41,7 +41,15 @@ export default function Search(): React.ReactNode {
   };
 
   const handleClickSong = (duongDan: string) => {
-    console.log(`Đường dẫn bài hát: ${duongDan}`);
+    const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
+    if (!audioPlayer) {
+      return
+
+    }
+    console.log("audioPlayeraudioPlayeraudioPlayer", audioPlayer)
+    audioPlayer.src = duongDan;
+    audioPlayer.load();
+    audioPlayer.play();
   };
 
   return (
