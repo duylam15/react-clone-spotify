@@ -9,7 +9,7 @@ import PlaylistCardsContainer from './playlist-cards-container';
 import UserHeader from './user-header';
 import { getUserInfo } from '@/services/user';
 import { logoutUser } from '@/services/login';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 // Định nghĩa object `data` chứa thông tin của user và danh sách playlist công khai.
 const data = {
@@ -62,6 +62,10 @@ const data = {
 // Định nghĩa component `UserPage` để hiển thị trang cá nhân của người dùng.
 export default function UserPage() {
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const id = queryParams.get("id"); // Lấy giá trị của tham số "id"
+
   const [name, setName] = useState("No Name");
     const navigate = useNavigate()
 
@@ -76,7 +80,9 @@ export default function UserPage() {
   useEffect(() => {
 
     const fetchUser = async () => {
-      const dataresponse = await getUserInfo();
+      const dataresponse = await getUserInfo(id);
+      console.log(dataresponse)
+      console.log("id---------------------------------" + id)
       setName(dataresponse?.ten_hien_thi);
     };
     fetchUser()

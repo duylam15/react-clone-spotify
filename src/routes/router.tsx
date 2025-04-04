@@ -63,7 +63,7 @@ export const router = createBrowserRouter(
         <Route element={<Track />} path="track/:id" />
         <Route element={<Premium />} path="premium" />
         <Route path="user">
-          <Route element={<UserPage />} path="trknell" />
+          <Route element={<UserPage />} path="profile" />
         </Route>
       </Route>
       <Route element={<Login />} path="login" />

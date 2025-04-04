@@ -1,4 +1,4 @@
-import { UserInfo } from "@/services/user";
+import { getUserInfo } from "@/services/user";
 import React, { useState, useEffect, useRef } from "react";
 
 const ChatButton = () => {
@@ -21,7 +21,7 @@ const ChatButton = () => {
     })
 
     const fetchUserDatas = async () => {
-        const userData = await UserInfo();
+        const userData = await getUserInfo("");
         
         if (!userData.email) { // Chỉ đóng khi dữ liệu trả về thực sự không có email
             setIsOpen(false);

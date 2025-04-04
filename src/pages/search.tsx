@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface SearchResults {
-  nghe_si: { id: number; ten_nghe_si: string; anh_dai_dien: string | null }[];
-  bai_hat: { id: number; ten_bai_hat: string; duong_dan: string }[];
-  albums: { id: number; ten_album: string; anh_bia: string | null }[];
+  nghe_si: { nghe_si_id: number; ten_nghe_si: string; anh_dai_dien: string | null }[];
+  bai_hat: { bai_hat_id: number; ten_bai_hat: string; duong_dan: string }[];
+  albums: { album_id: number; ten_album: string; anh_bia: string | null }[];
 }
 
 export default function Search(): React.ReactNode {
@@ -51,6 +52,15 @@ export default function Search(): React.ReactNode {
     audioPlayer.load();
     audioPlayer.play();
   };
+
+
+  const handleClickArtis = (id: number) => {
+    console.log("id nghe si : " + id);
+  }
+
+  const handleClickAlbum = (id: number) => {
+    console.log("id album" + id);
+  }
 
   return (
     <div className="flex flex-col items-center w-full h-full p-6 bg-inherit">
@@ -102,7 +112,7 @@ export default function Search(): React.ReactNode {
                   results.bai_hat
                     .slice(0, filter === "all" ? 5 : results.bai_hat.length)
                     .map((song) => <li
-                      key={song.id}
+                      key={song.bai_hat_id}
                       className="cursor-pointer hover:text-blue-400"
                       onClick={() => handleClickSong(song.duong_dan)}
                     >{song.ten_bai_hat}</li>)
@@ -122,17 +132,19 @@ export default function Search(): React.ReactNode {
                   results.nghe_si
                     .slice(0, filter === "all" ? 5 : results.nghe_si.length)
                     .map((artist) => (
-                      <div key={artist.id} className="flex flex-col items-center w-28">
-                        <img
-                          src={artist.anh_dai_dien || "/default-avatar.jpg"}
-                          alt={artist.ten_nghe_si}
-                          className="w-24 h-24 object-cover rounded-full border-2 border-white"
-                        />
-                        <p className="mt-2 text-white text-sm text-center">{artist.ten_nghe_si}</p>
+                      <div key={artist.nghe_si_id} className="flex flex-col items-center w-28">
+                          <img
+                            src={artist.anh_dai_dien || "/default-avatar.jpg"}
+                            alt={artist.ten_nghe_si}
+                            className="w-24 h-24 object-cover rounded-full border-2 border-white cursor-pointer"
+                          />
+                          <p className="mt-2 text-white text-sm text-center cursor-pointer hover:text-blue-400">
+                            {artist.ten_nghe_si}
+                          </p>
                       </div>
                     ))
                 ) : (
-                  <p className="text-gray-300">Không tìm thấy nghệ sĩ.</p>
+                  <p className="text-gray-300 cursor-pointer hover:text-blue-400" >Không tìm thấy nghệ sĩ.</p>
                 )}
               </div>
             </div>
@@ -147,13 +159,14 @@ export default function Search(): React.ReactNode {
                   results.albums
                     .slice(0, filter === "all" ? 5 : results.albums.length)
                     .map((album) => (
-                      <div key={album.id} className="flex flex-col items-center w-28">
+                      <div key={album.album_id} className="flex flex-col items-center w-28">
                         <img
                           src={album.anh_bia || "/default-album.jpg"}
                           alt={album.ten_album}
-                          className="w-24 h-24 object-cover rounded-lg border-2 border-white"
+                          className="w-24 h-24 object-cover rounded-lg border-2 border-white cursor-pointer"
+                          onClick={() => handleClickAlbum(album.album_id)}
                         />
-                        <p className="mt-2 text-white text-sm text-center">{album.ten_album}</p>
+                        <p className="mt-2 text-white text-sm text-center cursor-pointer" onClick={() => handleClickAlbum(album.album_id)}>{album.ten_album}</p>
                       </div>
                     ))
                 ) : (

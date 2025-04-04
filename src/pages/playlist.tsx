@@ -42,7 +42,7 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await getUserInfo();
+        const user = await getUserInfo("");
         console.log("User info:", user);
         if (!user) return;
 

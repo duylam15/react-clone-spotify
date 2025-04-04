@@ -5,10 +5,14 @@ import { useNavigate } from 'react-router-dom';
 const API_BASE_URL = 'http://localhost:8000'; // URL Django server
 
 const handleUnauthorized = () => {
-    alert("⚠️ Bạn cần đăng nhập để thực thi  tác vụ này");
+    const confirmLogin = window.confirm("⚠️ Bạn cần đăng nhập để thực thi tác vụ này");
+    if (confirmLogin) {
+        window.location.href = "/login"; // Chuyển hướng đến trang đăng nhập
+    }
+    else window.location.href="/";
 };
 
-const fetchAccessToken = async (onError : any) => {
+export const fetchAccessToken = async (onError: any) => {
     try {
         const response = await axios.get("http://localhost:8000/nguoidung/api/get-access-token", {
             headers: {
@@ -17,31 +21,28 @@ const fetchAccessToken = async (onError : any) => {
             withCredentials: true, // 🚀 Quan trọng để gửi và nhận cookie
         });
         return response.data.access_token;
-    } catch (error : any) {
+    } catch (error: any) {
+        console.log("errrrrrrrrrrrrrrro dang nhap : ")
+        console.log(error)
         if (error.response && error.response.status === 401) {
             if (onError) onError(); // Gọi hàm xử lý lỗi được truyền vào
-            window.location.href = "/login"; // 🔥 Chuyển hướng về trang chủ
         } else {
             console.error("Lỗi khi lấy access token:", error);
         }
-        return null;
+        return error;
     }
 };
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (id) => {
     try {
         const token = await fetchAccessToken(handleUnauthorized);
-        if (!token){
-            handleUnauthorized();
-            window.location.href = "/login";
-        }
 
-        const response = await axios.get(`${API_BASE_URL}/nguoidung/api/thong-tin-nguoi-dung`, {
-            // headers: {
-            //     "Content-Type": "application/json",
-            // },
-            withCredentials: true, // 🚀 Quan trọng để gửi và nhận cookie
-        });
+        const response = await axios.get(
+            `${API_BASE_URL}/nguoidung/api/thong-tin-nguoi-dung?id=${id}`,
+            {
+                withCredentials: true, // 🚀 Quan trọng để gửi và nhận token
+            }
+        );
 
         const data = await response.data;
 
@@ -53,27 +54,18 @@ export const getUserInfo = async () => {
 };
 
 
-export const forgotPassword = async (sendData : any) => {
+export const forgotPassword = async (sendData: any) => {
     try {
 
         const response = await axios.post(
-            `${API_BASE_URL}/nguoidung/api/forgot-password`, 
+            `${API_BASE_URL}/nguoidung/api/forgot-password`,
             sendData,
         );
 
         return await response; // Trả về dữ liệu JSON
-    } catch (error : any) {
+    } catch (error: any) {
         console.error("Lỗi khi lấy thông tin người dùng:", error);
         return error.response; // Xử lý lỗi
     }
 };
 
-
-export const UserInfo = async () => {
-    try {
-                const user = await getUserInfo();
-                return user
-            } catch (error) {
-                console.error("Lỗi khi lấy user info:", error);
-            }
-}
