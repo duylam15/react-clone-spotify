@@ -1,14 +1,40 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
+import { taoThanhToanPayPal } from "@/services/paypal";
+import { message } from 'antd'; // Import thông báo từ Ant Design
 const Premium: React.FC = () => {
   const plansRef = useRef<HTMLDivElement | null>(null);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
   const handleGetStarted = () => {
     setShowPaymentOptions(true); // Hiển thị modal khi nhấn Get Started
   };
+
+
+  const [hasShownMessage, setHasShownMessage] = useState(false); // State để theo dõi thông báo đã hiện hay chưa
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search); // Lấy các tham số URL
+    const success = urlParams.get('success'); // Kiểm tra nếu có tham số success
+
+    if (success === 'true' && !hasShownMessage) {
+      // Hiển thị thông báo thành công của Ant Design
+      message.success('Đăng kí Premium thành công');
+      
+      // Cập nhật state để tránh hiển thị thông báo nữa
+      setHasShownMessage(true);
+
+      // Đặt thời gian trì hoãn trước khi thay đổi URL để người dùng thấy thông báo
+      setTimeout(() => {
+        // Xóa các tham số trên URL và điều hướng lại trang mà không có tham số
+        const newUrl = window.location.origin + window.location.pathname;
+        window.location.replace(newUrl); // Điều hướng lại mà không có tham số
+      }, 2000); // Trì hoãn 2 giây (2000 ms)
+    }
+  }, [hasShownMessage]); // useEffect phụ thuộc vào `hasShownMessage`
 
   const handlePaymentMethod = async (method: string) => {
     setLoading(true);
@@ -36,8 +62,35 @@ const Premium: React.FC = () => {
       // Placeholder cho VNPay
       alert("VNPay integration not implemented yet.");
     } else if (method === "paypal") {
-      // Placeholder cho PayPal
-      alert("PayPal integration not implemented yet.");
+      alert("PayPal ok");
+
+      const userId = localStorage.getItem("userId") || 7;
+      const data = {
+        amount: 2, // 59000 VNĐ ~ 2 USD
+        idNguoiDung: userId,
+      };
+
+      try {
+        const response = await taoThanhToanPayPal(data);
+        console.log("Response from PayPal:", response);
+
+        if (response && response.approval_url) {
+          const approvalUrl = response.approval_url; // Sửa lỗi destructuring
+          console.log("Approval URL:", approvalUrl);
+          // Mở cửa sổ mới với URL phê duyệt
+          window.open(approvalUrl, "_blank");
+
+        } else {
+          setError("No approval URL returned from PayPal");
+          console.error("No approval URL:", response);
+        }
+      } catch (error) {
+        setError("Error processing PayPal payment");
+        console.error("PayPal error:", error);
+      }
+
+      
+
     }
 
     setLoading(false);
@@ -58,7 +111,7 @@ const Premium: React.FC = () => {
         </h1>
         <p className="text-lg text-center mb-4">Only ₫59,000/month after. Cancel anytime.</p>
         <div className="flex flex-col space-y-4">
-        <button
+          <button
             className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition duration-300 disabled:bg-gray-400"
             onClick={handleGetStarted}
             disabled={loading}
