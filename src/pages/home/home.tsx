@@ -23,7 +23,7 @@ export default function Home(): React.ReactNode {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [nguoidung, setNguoidung] = useState<any>()
-  const userId = Number(localStorage.getItem("idLogin"))
+  const userId = Number(localStorage.getItem("idLogin") ?? 0);
 
   useEffect(() => {
     const fetchDanhSachPhat = async () => {
@@ -32,6 +32,7 @@ export default function Home(): React.ReactNode {
         setDanhSachPhat(response.data)
       } catch (err: any) {
         setError(err.message)
+        setDanhSachPhat([])
       } finally {
         setLoading(false)
       }

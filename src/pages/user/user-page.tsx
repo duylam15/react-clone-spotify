@@ -28,8 +28,8 @@ export default function UserPage() {
   useEffect(() => {
 
     const fetchUser = async () => {
-      if(localStorage.getItem("idLogin") == undefined)
-        return ;
+      if (localStorage.getItem("idLogin") == undefined)
+        return;
       const dataresponse = await getUserInfo(id);
       console.log(dataresponse)
       console.log("id---------------------------------" + id)
@@ -62,6 +62,8 @@ export default function UserPage() {
         setDanhSachPhat(response.data)
       } catch (err: any) {
         setError(err.message)
+        setDanhSachPhat([])
+        setUser("")
       } finally {
         setLoading(false)
       }
