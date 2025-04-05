@@ -24,6 +24,7 @@ export default function Login() {
 			if(response.ten_hien_thi != null)
 			{
 				console.log("Đăng nhập thành công:", response);
+				localStorage.setItem("idLogin" , response.idLogin)
 				alert("chào mừng " + response.ten_hien_thi + " đã quay trời lại");
 				navigate("/");
 			}

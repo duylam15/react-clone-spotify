@@ -92,8 +92,9 @@ export default function UserPage() {
   const handleLogout = async () => {
             try {
               const response = await logoutUser();
+              localStorage.removeItem("idLogin")
               console.log("Đăng xuất thành công:", response);
-              navigate("/");
+              window.location.href="/";
             } catch (error: any) {
               
             }

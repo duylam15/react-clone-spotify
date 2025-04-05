@@ -45,7 +45,8 @@ export default function Header(): React.ReactNode {
       }
     }
     checkLogin()
-  }, [])
+    setIsLogin(Number(localStorage.getItem("isLogin")) != null)
+  } , [])
 
   return (
     <div style={memoizedWidth} className="absolute z-10 flex justify-between px-6 py-4">
