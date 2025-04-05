@@ -1,4 +1,4 @@
-import { getUserInfo } from "@/services/user";
+import { getUserInfo, handleUnauthorized } from "@/services/user";
 import React, { useState, useEffect, useRef } from "react";
 
 const ChatButton = () => {
@@ -21,17 +21,8 @@ const ChatButton = () => {
     })
 
     const fetchUserDatas = async () => {
-        const userData = await getUserInfo("");
         
-        if (!userData.email) { // Chỉ đóng khi dữ liệu trả về thực sự không có email
-            setIsOpen(false);
-        } else {
-            setUserData({
-                username: userData.ten_hien_thi,
-                email: userData.email,
-                avatar_url: userData.avatar_url
-            });
-        }
+    
     }
 
     useEffect(() => {
@@ -60,7 +51,6 @@ const ChatButton = () => {
                     setMessages((prev) => [...prev, newMessage]);
                 }
             };
-            fetchUserDatas()
             ws.onerror = (error) => console.error("WebSocket Error:", error);
             ws.onclose = () => console.log("WebSocket Disconnected!");
 
@@ -79,9 +69,19 @@ const ChatButton = () => {
         }
     }, [messages]);
 
-    const sendMessage = () => {
-        // if (userData.email == "") { setIsOpen(false); return; }
+    const sendMessage = async () => {
+        if(localStorage.getItem("idLogin") == undefined)
+        {
+            handleUnauthorized();
+            return ;
+        }
         if (socket && message.trim()) {
+            const userData = await getUserInfo("");
+            setUserData({
+                username: userData.ten_hien_thi,
+                email: userData.email,
+                avatar_url: userData.avatar_url
+            });
             const dataToSend = {
                 username: userData.username,
                 email: userData.email,

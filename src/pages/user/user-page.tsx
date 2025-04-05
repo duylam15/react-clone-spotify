@@ -28,6 +28,8 @@ export default function UserPage() {
   useEffect(() => {
 
     const fetchUser = async () => {
+      if(localStorage.getItem("idLogin") == undefined)
+        return ;
       const dataresponse = await getUserInfo(id);
       console.log(dataresponse)
       console.log("id---------------------------------" + id)
@@ -46,16 +48,6 @@ export default function UserPage() {
     ten_hien_thi: user?.ten_hien_thi,
   }
 
-  const handleLogout = async () => {
-    try {
-      const response = await logoutUser();
-      localStorage.removeItem("idLogin")
-      console.log("Đăng xuất thành công:", response);
-      window.location.href = "/";
-    } catch (error: any) {
-
-    }
-  };
 
 
   const [danhSachPhat, setDanhSachPhat] = useState([])
@@ -82,12 +74,6 @@ export default function UserPage() {
     // Thẻ div cha chứa toàn bộ nội dung trang, sử dụng flexbox để hiển thị theo chiều dọc.
     <div className="flex flex-col pt-4 *:w-full">
 
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-      >
-        Đăng xuất
-      </button>
       {/* Hiển thị header của user với thông tin từ `data.user` */}
       <UserHeader {...userInfo} />
 

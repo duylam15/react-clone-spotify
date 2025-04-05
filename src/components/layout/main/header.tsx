@@ -12,7 +12,8 @@ import TooltipWrapper from '@/components/ui/tooltip-wrapper'
 
 // Import custom hook `useAppControllerStore` để lấy dữ liệu `mainWidth` từ state của app
 import { useAppControllerStore } from '@/features/appControllerStore'
-import { fetchAccessToken, getUserInfo } from '@/services/user'
+import {  getUserInfo } from '@/services/user'
+import { logoutUser } from '@/services/login'
 
 // Định nghĩa component Header
 export default function Header(): React.ReactNode {
@@ -34,10 +35,7 @@ export default function Header(): React.ReactNode {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const response = await fetchAccessToken(null);
-      console.log("------------------------------------ check login")
-      console.log(response)
-      if (response.status == 401)
+      if (localStorage.getItem("idLogin") == undefined)
         setIsLogin(false)
       else {
         setIsLogin(true)
@@ -46,18 +44,30 @@ export default function Header(): React.ReactNode {
       }
     }
     checkLogin()
-    setIsLogin(Number(localStorage.getItem("isLogin")) != null)
   }, [])
 
 
   useEffect(() => {
     const fetchUser = async () => {
+      if(localStorage.getItem("idLogin") == undefined) return ;
       const dataresponse = await getUserInfo(idUser);
       console.log("dataresponsedataresponse", dataresponse)
       setUser(dataresponse)
     };
     fetchUser()
   }, [])
+
+
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      localStorage.removeItem("idLogin")
+      console.log("Đăng xuất thành công:", response);
+      setIsLogin(false);
+    } catch (error: any) {
+
+    }
+  };
 
   return (
     <div style={memoizedWidth} className="absolute z-10 flex justify-between px-6 py-4">
@@ -106,7 +116,7 @@ export default function Header(): React.ReactNode {
               <button className="text-white hover:bg-black p-2 w-[180px] rounded-md "
                   onClick={() => navigate(`/user/profile?id=${idUser}`)} // Chuyển hướng đến trang đăng nhập
               >Xem thông tin cá nhân</button>
-              <button className="text-white hover:bg-black p-2 w-[180px] rounded-md ">Đăng xuất</button>
+              <button className="text-white hover:bg-black p-2 w-[180px] rounded-md " onClick={handleLogout}>Đăng xuất</button>
             </div>
 
           </div>

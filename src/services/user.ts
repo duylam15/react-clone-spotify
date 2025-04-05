@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = 'http://localhost:8000'; // URL Django server
 
-const handleUnauthorized = () => {
+export const handleUnauthorized = () => {
     const confirmLogin = window.confirm("⚠️ Bạn cần đăng nhập để thực thi tác vụ này");
     if (confirmLogin) {
         window.location.href = "/login"; // Chuyển hướng đến trang đăng nhập
     }
-    else window.location.href="/";
 };
 
 export const fetchAccessToken = async (onError: any) => {
