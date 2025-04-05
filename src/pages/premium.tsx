@@ -45,7 +45,7 @@ const Premium: React.FC = () => {
         // Gọi API ZaloPay
         const response = await axios.post("http://localhost:8000/api/zalopay/create/", {
           amount: 59000,
-          user_id: localStorage.getItem("userId") || "1",
+          user_id: localStorage.getItem("idLogin") || "1",
         });
 
         const { orderurl } = response.data;
@@ -64,7 +64,7 @@ const Premium: React.FC = () => {
     } else if (method === "paypal") {
       alert("PayPal ok");
 
-      const userId = localStorage.getItem("userId") || 7;
+      const userId = localStorage.getItem("idLogin") || 7;
       const data = {
         amount: 2, // 59000 VNĐ ~ 2 USD
         idNguoiDung: userId,
