@@ -12,8 +12,9 @@ import TooltipWrapper from '@/components/ui/tooltip-wrapper'
 
 // Import custom hook `useAppControllerStore` để lấy dữ liệu `mainWidth` từ state của app
 import { useAppControllerStore } from '@/features/appControllerStore'
-import {  getUserInfo } from '@/services/user'
+import { getUserInfo } from '@/services/user'
 import { logoutUser } from '@/services/login'
+import { useRefresh } from '@/contexts/RefreshContext'
 
 // Định nghĩa component Header
 export default function Header(): React.ReactNode {
@@ -31,6 +32,7 @@ export default function Header(): React.ReactNode {
   // Gán username cố định (có thể thay bằng giá trị động trong thực tế)
   const [username, setusername] = useState("no name")
   const [user, setUser] = useState<any>()
+  const { refreshTrigger, refresh } = useRefresh(); // Lấy giá trị từ context
 
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function Header(): React.ReactNode {
 
   useEffect(() => {
     const fetchUser = async () => {
-      if(localStorage.getItem("idLogin") == undefined) return ;
+      if (localStorage.getItem("idLogin") == undefined) return;
       const dataresponse = await getUserInfo(idUser);
       console.log("dataresponsedataresponse", dataresponse)
       setUser(dataresponse)
@@ -63,6 +65,7 @@ export default function Header(): React.ReactNode {
       const response = await logoutUser();
       localStorage.removeItem("idLogin")
       console.log("Đăng xuất thành công:", response);
+      refresh()
       setIsLogin(false);
     } catch (error: any) {
 
@@ -109,12 +112,12 @@ export default function Header(): React.ReactNode {
                 className="size-10 rounded-full"
               />
             </div>
-         
+
 
             {/* Nút "Xem thông tin cá nhân" và "Đăng xuất" */}
             <div className="absolute hidden group-hover:flex flex-col items-center bg-gray-700  rounded-md  top-[35px] left-[-50px] transform -translate-x-1/2">
               <button className="text-white hover:bg-black p-2 w-[180px] rounded-md "
-                  onClick={() => navigate(`/user/profile?id=${idUser}`)} // Chuyển hướng đến trang đăng nhập
+                onClick={() => navigate(`/user/profile?id=${idUser}`)} // Chuyển hướng đến trang đăng nhập
               >Xem thông tin cá nhân</button>
               <button className="text-white hover:bg-black p-2 w-[180px] rounded-md " onClick={handleLogout}>Đăng xuất</button>
             </div>

@@ -27,19 +27,21 @@ export default function SidebarLibraryExplorer() {
   const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
   const navigate = useNavigate()
   const { refreshTrigger, refresh } = useRefresh(); // Lấy giá trị từ context
-  const userId = Number(localStorage.getItem("idLogin"))
-
+  const userId = Number(localStorage.getItem("idLogin") ?? 0);
+  console.log("userIduserIduserIdxxxx", userId)
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/danhsachphat/nguoidung/${userId}/`)
         setPlaylists(response.data) // Cập nhật state
+        console.log("responsexxx", response)
       } catch (err: any) {
         console.error("Error fetching playlist:", err)
+        setPlaylists([])
       }
     }
     fetchPlaylist()
-  }, [refreshTrigger]) // 🔥 Chỉ chạy một lần khi component mount
+  }, [refreshTrigger, userId]) // 🔥 Chỉ chạy một lần khi component mount
 
   console.log("playlistsplxxxaylistsplaylists", playlists)
 
