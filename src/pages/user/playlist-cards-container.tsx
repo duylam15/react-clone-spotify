@@ -16,7 +16,7 @@ import { Playlist } from '../../types/types';
 // - `name`: Tên của người tạo playlist hoặc chủ sở hữu danh sách.
 interface Properties {
   title: string;
-  items: Playlist[];
+  items: Playlist[] | any;
   name: string;
 }
 
@@ -33,14 +33,13 @@ export default function PlaylistCardsContainer({ title, items, name }: Propertie
 
       // Truyền component `PlaylistCard` vào `Component`.
       // `Component` là một hàm nhận vào `properties` và render `PlaylistCard`.
-      Component={(properties) => (
+      Component={(properties: any) => (
         <PlaylistCard
           {...properties} // Spread tất cả thuộc tính từ `properties` vào `PlaylistCard`.
 
           // Thiết lập thuộc tính `description` dựa trên số lượng người theo dõi (`followers`):
           // - Nếu số `followers` > 0, hiển thị số lượng người theo dõi (ví dụ: "100 Followers").
           // - Nếu không, hiển thị tên chủ sở hữu danh sách (ví dụ: "By John Doe").
-          description={Number(properties.followers) > 0 ? `${properties.followers} Followers` : `By ${name}`}
 
           showFollowers // Kích hoạt hiển thị số lượng người theo dõi.
         />

@@ -16,19 +16,19 @@ export default function LibraryCardContent({
 }) {
   return (
     // Chứa nội dung của thẻ thư viện, sử dụng flexbox để sắp xếp các thành phần theo chiều dọc
-    <div className="flex flex-col">
+    <div className="flex flex-col items-center  gap-2 p-2">
 
       {/* Hiển thị tên thư viện với font-size `base` và không có khoảng cách dòng dư thừa */}
       <div className="text-base leading-none">{name}</div>
 
       {/* Dòng hiển thị số lượng bài hát và biểu tượng ghim nếu thư viện được ghim */}
-      <div className="flex flex-row items-end gap-2 py-1">
+      <div className="flex flex-row items-end gap-3 ">
 
         {/* Nếu thư viện được ghim (`isPinned === true`), hiển thị icon ghim (`PinIcon`) */}
         {isPinned ? <PinIcon className="text-s-green" {...getIconSize('s', true)} /> : undefined}{' '}
 
         {/* Hiển thị số lượng bài hát trong thư viện */}
-        <p className="text-base leading-none text-s-gray-lighter">{songCount} songs</p>
+        <div className="text-base leading-none text-s-gray-lighter">{songCount}</div>
 
       </div>
     </div>

@@ -16,7 +16,7 @@ import { Playlist } from '../../types/types';
 // - `description`: Mô tả danh sách nghệ sĩ (tuỳ chọn).
 interface Properties {
   title: string;
-  items: Playlist[];
+  items: Playlist[] | any;
   description?: string;
 }
 
@@ -35,7 +35,7 @@ export default function ArtistCardsContainer({ title, items, description }: Prop
       // `Component` là một hàm nhận vào `properties` và render `PlaylistCard`.
       // - `description="Artist"`: Gán mô tả mặc định là "Artist".
       // - `isArtist`: Thuộc tính này có thể giúp `PlaylistCard` biết rằng nó đang hiển thị nghệ sĩ.
-      Component={(properties) => <PlaylistCard {...properties} description="Artist" isArtist />}
+      Component={(properties: any) => <PlaylistCard {...properties} description="Artist" isArtist />}
 
       description={description} // Truyền mô tả danh sách nghệ sĩ (nếu có).
     />

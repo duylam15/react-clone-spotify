@@ -25,10 +25,12 @@ export default function Header(): React.ReactNode {
 
   // Dùng `useMemo` để tránh render lại không cần thiết khi `width` không thay đổi
   const memoizedWidth = useMemo(() => ({ width }), [width])
-
+  const idUser = Number(localStorage.getItem("idLogin"))
+  console.log(idUser)
   // Gán username cố định (có thể thay bằng giá trị động trong thực tế)
   const [username, setusername] = useState("no name")
-  const [idUser, setIdUser] = useState(1);
+  const [user, setUser] = useState<any>()
+
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -41,19 +43,28 @@ export default function Header(): React.ReactNode {
         setIsLogin(true)
         const dataUser = await getUserInfo("");
         setusername(dataUser.ten_hien_thi)
-        setIdUser(dataUser.id)
       }
     }
     checkLogin()
     setIsLogin(Number(localStorage.getItem("isLogin")) != null)
-  } , [])
+  }, [])
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const dataresponse = await getUserInfo(idUser);
+      console.log("dataresponsedataresponse", dataresponse)
+      setUser(dataresponse)
+    };
+    fetchUser()
+  }, [])
 
   return (
     <div style={memoizedWidth} className="absolute z-10 flex justify-between px-6 py-4">
 
       {/* Nhóm các nút điều hướng */}
       <div className="flex flex-row items-center gap-2">
-       
+
       </div>
 
       {/* Nếu chưa đăng nhập, hiển thị nút Login */}
@@ -70,27 +81,36 @@ export default function Header(): React.ReactNode {
           <TooltipWrapper tooltipContent="What's New" side="bottom">
             <div className="flex size-9 items-center justify-center">
               <button
-                className="flex size-8 items-center justify-center rounded-full bg-black/50 text-s-gray-lighter hover:size-9 hover:text-white"
+                className="flex size-10 items-center justify-center rounded-full bg-black/50 text-s-gray-lighter hover:size-9 hover:text-white mr-8"
                 onClick={() => navigate('/feed')}
               >
-                <BellIcon strokeWidth={2} size={18} />
+                <BellIcon strokeWidth={2} size={24} />
               </button>
             </div>
           </TooltipWrapper>
 
-          <TooltipWrapper tooltipContent={username} side="bottom">
-            <Link to={`/user/profile?id=${idUser}`} className="flex size-9 items-center justify-center">
-                <div className="flex size-10 cursor-pointer items-center justify-center rounded-full bg-black/50 hover:size-10 hover:bg-black/70">
-                <img
-                  src="/public/uifaces-popular-image (2).jpg"
-                  width={24}
-                  height={24}
-                  alt="avatar"
-                  className="size-10 rounded-full"
-                />
-              </div>
-            </Link>
-          </TooltipWrapper>
+          <div className="relative flex  items-center justify-center group">
+            <div className="flex cursor-pointer items-center justify-center rounded-full bg-black/50  hover:bg-black/70">
+              <img
+                src={user?.avatar_url}
+                width={24}
+                height={24}
+                alt="avatar"
+                className="size-10 rounded-full"
+              />
+            </div>
+         
+
+            {/* Nút "Xem thông tin cá nhân" và "Đăng xuất" */}
+            <div className="absolute hidden group-hover:flex flex-col items-center bg-gray-700  rounded-md  top-[35px] left-[-50px] transform -translate-x-1/2">
+              <button className="text-white hover:bg-black p-2 w-[180px] rounded-md "
+                  onClick={() => navigate(`/user/profile?id=${idUser}`)} // Chuyển hướng đến trang đăng nhập
+              >Xem thông tin cá nhân</button>
+              <button className="text-white hover:bg-black p-2 w-[180px] rounded-md ">Đăng xuất</button>
+            </div>
+
+          </div>
+
         </div>
       )}
     </div>

@@ -12,6 +12,7 @@ interface Properties {
     ten_danh_sach: string;
     so_nguoi_theo_doi: number;
     danh_sach_phat_id: number;
+    mo_ta: string
   };
 }
 
@@ -22,7 +23,7 @@ import { useRefresh } from "@/contexts/RefreshContext";
 export default function LibraryCard({
   isCollapsed = true,
   isPinned,
-  playlist: { anh_danh_sach, ten_danh_sach, so_nguoi_theo_doi, danh_sach_phat_id },
+  playlist: { anh_danh_sach, ten_danh_sach, so_nguoi_theo_doi, danh_sach_phat_id, mo_ta },
 }: Properties): React.ReactNode {
   const mainWidth = useAppControllerStore((state) => state.mainWidth);
 
@@ -60,7 +61,7 @@ export default function LibraryCard({
             side="right"
             sideOffset={12}
             tooltipContent={
-              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={so_nguoi_theo_doi} />
+              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={mo_ta} />
             }
           >
             <div className="flex items-center rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-darker" onClick={() => navigate(`/playlist/${danh_sach_phat_id}`)}>
@@ -72,7 +73,7 @@ export default function LibraryCard({
         <div className="rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-dark">
           <div className="flex items-center gap-2">
             <div className="flex flex-col">
-              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={so_nguoi_theo_doi} />
+              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={mo_ta} />
             </div>
           </div>
         </div>
@@ -85,7 +86,7 @@ export default function LibraryCard({
             className="w-[250px] p-4 bg-black rounded-lg shadow-lg absolute top-[300px] left-[60px]"
           >
             <p className="text-center text-lg font-semibold">Bạn có chắc chắn muốn xóa?</p>
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between mt-4 text-black">
               <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-300 rounded">
                 Hủy
               </button>

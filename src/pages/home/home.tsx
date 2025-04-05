@@ -23,7 +23,7 @@ export default function Home(): React.ReactNode {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [nguoidung, setNguoidung] = useState<any>()
-  const userId = 1
+  const userId = Number(localStorage.getItem("idLogin"))
 
   useEffect(() => {
     const fetchDanhSachPhat = async () => {
@@ -54,8 +54,6 @@ export default function Home(): React.ReactNode {
     }
     fetchNguoiDung()
   }, [])
-
-
 
   return (
     <>
