@@ -28,48 +28,31 @@ export default function Header(): React.ReactNode {
 
   // Gán username cố định (có thể thay bằng giá trị động trong thực tế)
   const [username, setusername] = useState("no name")
-  const [idUser , setIdUser] = useState(1);
+  const [idUser, setIdUser] = useState(1);
 
   useEffect(() => {
     const checkLogin = async () => {
       const response = await fetchAccessToken(null);
       console.log("------------------------------------ check login")
       console.log(response)
-      if(response.status == 401)
+      if (response.status == 401)
         setIsLogin(false)
-      else
-        {
-          setIsLogin(true)
-          const dataUser = await getUserInfo("");
-          setusername(dataUser.ten_hien_thi)
-          setIdUser(dataUser.id)
-        }
+      else {
+        setIsLogin(true)
+        const dataUser = await getUserInfo("");
+        setusername(dataUser.ten_hien_thi)
+        setIdUser(dataUser.id)
+      }
     }
     checkLogin()
-  } , [])
+  }, [])
 
   return (
     <div style={memoizedWidth} className="absolute z-10 flex justify-between px-6 py-4">
 
       {/* Nhóm các nút điều hướng */}
       <div className="flex flex-row items-center gap-2">
-        <TooltipWrapper tooltipContent="Go back" side="bottom">
-          <button
-            className="flex size-8 items-center justify-center rounded-full bg-black/70 text-white"
-            onClick={() => navigate(-1)}
-          >
-            <ChevronLeftIcon className="relative -left-px" strokeWidth={1} size={32} />
-          </button>
-        </TooltipWrapper>
-
-        <TooltipWrapper tooltipContent="Go forward" side="bottom">
-          <button
-            className="flex size-8 items-center justify-center rounded-full bg-black/70 text-white"
-            onClick={() => navigate(1)}
-          >
-            <ChevronRightIcon className="relative left-px" strokeWidth={1} size={32} />
-          </button>
-        </TooltipWrapper>
+       
       </div>
 
       {/* Nếu chưa đăng nhập, hiển thị nút Login */}
@@ -96,13 +79,13 @@ export default function Header(): React.ReactNode {
 
           <TooltipWrapper tooltipContent={username} side="bottom">
             <Link to={`/user/profile?id=${idUser}`} className="flex size-9 items-center justify-center">
-              <div className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-black/50 hover:size-[33px] hover:bg-black/70">
+                <div className="flex size-10 cursor-pointer items-center justify-center rounded-full bg-black/50 hover:size-10 hover:bg-black/70">
                 <img
                   src="/public/uifaces-popular-image (2).jpg"
                   width={24}
                   height={24}
                   alt="avatar"
-                  className="size-6 rounded-full"
+                  className="size-10 rounded-full"
                 />
               </div>
             </Link>

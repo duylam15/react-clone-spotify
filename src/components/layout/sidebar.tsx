@@ -5,6 +5,8 @@ import SidebarLibraryExplorer from './sidebar/sidebar-library-explorer'
 // Import component SidebarLibraryExplorer (hiển thị danh sách thư viện nhạc).
 
 import SidebarTop from './sidebar/sidebar-top'
+import { ScrollArea } from '@radix-ui/react-scroll-area'
+import { ScrollBar } from '../ui/scroll-area'
 // Import component SidebarTop (hiển thị các biểu tượng điều hướng như Home, Search).
 
 // Định nghĩa component Sidebar và sử dụng `forwardRef` để có thể truyền ref từ component cha xuống.

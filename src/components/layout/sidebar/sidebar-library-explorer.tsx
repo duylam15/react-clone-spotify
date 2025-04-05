@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Playlist } from '@/types/types'
 import { useNavigate } from 'react-router-dom'
+import { useRefresh } from '@/contexts/RefreshContext'
 
 // Danh sách các thư viện nhạc có sẵn trong sideba
 
@@ -25,6 +26,7 @@ export default function SidebarLibraryExplorer() {
   const [playlists, setPlaylists] = useState([])
   const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
   const navigate = useNavigate()
+  const { refreshTrigger, refresh } = useRefresh(); // Lấy giá trị từ context
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -36,16 +38,18 @@ export default function SidebarLibraryExplorer() {
       }
     }
     fetchPlaylist()
-  }, []) // 🔥 Chỉ chạy một lần khi component mount
+  }, [refreshTrigger]) // 🔥 Chỉ chạy một lần khi component mount
+
 
 
   console.log("playlistxxxx", playlists)
 
   return (
     // Container chính của sidebar với các thuộc tính kiểu dáng.
-    <div className="flex w-full flex-col items-start justify-start gap-4 overflow-hidden rounded-lg bg-s-red-darkest  text-white">
-      {/* Khu vực hiển thị danh sách thư viện, có hỗ trợ cuộn khi danh sách dài */}
-      <ScrollArea className="flex scroll-pt-2 flex-col overflow-hidden">
+    <ScrollArea className="flex scroll-pt-2 flex-col overflow-hidden">
+
+      <div className="flex w-full flex-col items-start justify-start  overflow-hidden rounded-lg bg-s-red-darkest  text-white">
+        {/* Khu vực hiển thị danh sách thư viện, có hỗ trợ cuộn khi danh sách dài */}
         {/* Duyệt danh sách `libraries` và render mỗi thư viện bằng `LibraryCard` */}
         {playlists?.map((playlist: any) => (
           <div >
@@ -56,8 +60,7 @@ export default function SidebarLibraryExplorer() {
             />
           </div>
         ))}
-      </ScrollArea>
-
-    </div >
+      </div >
+    </ScrollArea>
   )
 }

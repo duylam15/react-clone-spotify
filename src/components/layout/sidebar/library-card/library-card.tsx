@@ -17,6 +17,7 @@ interface Properties {
 
 import { useAppControllerStore } from "../../../../features/appControllerStore";
 import { useNavigate } from "react-router-dom";
+import { useRefresh } from "@/contexts/RefreshContext";
 
 export default function LibraryCard({
   isCollapsed = true,
@@ -24,29 +25,28 @@ export default function LibraryCard({
   playlist: { anh_danh_sach, ten_danh_sach, so_nguoi_theo_doi, danh_sach_phat_id },
 }: Properties): React.ReactNode {
   const mainWidth = useAppControllerStore((state) => state.mainWidth);
-  console.log("🎵 mainWidth hiện tại:", mainWidth);
 
   // State điều khiển modal và ID được chọn
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const navigate = useNavigate()
+  const { refreshTrigger, refresh } = useRefresh(); // Lấy giá trị từ context
 
   // Xử lý click chuột phải
   const handleRightClick = (event: React.MouseEvent) => {
     event.preventDefault(); // Ngăn chặn menu chuột phải mặc định
     setIsModalOpen(true);
     setSelectedId(danh_sach_phat_id);
-    console.log("📌 ID của item được click:", danh_sach_phat_id);
   };
 
   // Hàm gọi API xóa danh sách phát
   const handleDelete = async () => {
     if (selectedId === null) return;
-
     try {
       await axios.delete(`http://127.0.0.1:8000/danhsachphat/xoa/${selectedId}/`);
       console.log(`✅ Xóa danh sách phát thành công: ID ${selectedId}`);
       setIsModalOpen(false); // Đóng modal sau khi xóa thành công
+      refresh()
     } catch (error) {
       console.error("❌ Lỗi khi xóa danh sách phát:", error);
     }

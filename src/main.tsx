@@ -13,6 +13,7 @@ import { CSpinner, useColorModes } from '@coreui/react';
 import { TooltipProvider } from './components/ui/tooltip';
 import { router } from './routes/router';
 import store from './stores/playlist/index';
+import { RefreshProvider } from './contexts/RefreshContext';
 
 // Định nghĩa kiểu cho state của Redux
 interface RootState {
@@ -23,7 +24,7 @@ interface RootState {
 const App = () => {
   // Sử dụng type guard để đảm bảo useColorModes không trả về null
   const colorModes = useColorModes('coreui-free-react-admin-template-theme');
-  const { isColorModeSet, setColorMode } = colorModes || { isColorModeSet: () => false, setColorMode: () => {} };
+  const { isColorModeSet, setColorMode } = colorModes || { isColorModeSet: () => false, setColorMode: () => { } };
 
   // Sử dụng RootState để định kiểu cho state
   const storedTheme = useSelector((state: RootState) => state.theme) || 'default'; // Cung cấp giá trị mặc định nếu theme là null
@@ -44,15 +45,17 @@ const App = () => {
   }, [isColorModeSet, setColorMode, storedTheme]); // Thêm các dependency
 
   return (
-    <Suspense
-      fallback={
-        <div className="pt-3 text-center">
-          <CSpinner color="primary" variant="grow" />
-        </div>
-      }
-    >
-      <RouterProvider router={router} />
-    </Suspense>
+    <RefreshProvider>
+      <Suspense
+        fallback={
+          <div className="pt-3 text-center">
+            <CSpinner color="primary" variant="grow" />
+          </div>
+        }
+      >
+        <RouterProvider router={router} />
+      </Suspense>
+    </RefreshProvider>
   );
 };
 

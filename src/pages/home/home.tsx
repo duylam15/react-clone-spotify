@@ -58,13 +58,12 @@ export default function Home(): React.ReactNode {
 
 
   return (
-  <>
-        // Một div cha có class `flex flex-col px-3`, giúp các phần tử con hiển thị theo chiều dọc (cột) và có padding ngang.
-    <div className="flex flex-col px-3">
-      {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
-      <PlaylistCardsContainer title={"Made for " + nguoidung?.ten_hien_thi} items={danhSachPhat} />
-    </div>
-  </>
+    <>
+      <div className="flex flex-col px-3">
+        {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
+        <PlaylistCardsContainer title={"Made for " + nguoidung?.ten_hien_thi} items={danhSachPhat} />
+      </div>
+    </>
 
   )
 }

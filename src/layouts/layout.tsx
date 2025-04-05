@@ -64,7 +64,7 @@ export default function Layout() {
         <ResizablePanel
           className="flex min-w-[72px] items-start justify-center"
           defaultSize={3} // Chiếm 3% không gian mặc định.
-          maxSize={70} // Kích thước tối đa là 70%.
+          maxSize={3} // Kích thước tối đa là 70%.
           minSize={3} // Kích thước tối thiểu là 3%.
           order={1} // Thứ tự panel trong nhóm.
         >
