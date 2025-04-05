@@ -46,6 +46,7 @@ export default function Header(): React.ReactNode {
         }
     }
     checkLogin()
+    setIsLogin(Number(localStorage.getItem("isLogin")) != null)
   } , [])
 
   return (
