@@ -25,8 +25,11 @@ export default function Login() {
 			{
 				console.log("Đăng nhập thành công:", response);
 				localStorage.setItem("idLogin" , response.idLogin)
+				localStorage.setItem("isStaff" , response.isStaff)
 				alert("chào mừng " + response.ten_hien_thi + " đã quay trời lại");
-				navigate("/");
+				if(response.isStaff)
+					navigate("/admin");
+				else navigate("/")
 			}
 			else {
 				console.log("Đăng nhập thất bại:", response);

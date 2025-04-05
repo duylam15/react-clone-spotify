@@ -17,9 +17,11 @@ import ForgotPassword from '@/pages/forgot-password';
 import ResetPassword from '@/pages/reset-password';
 import Premium from '@/pages/premium';
 
+
 // Import từ file thứ hai (chỉ lấy phần admin)
 import LayoutDefaultAdmin from '../layout/DefaultLayoutAdmin';
 import Chat from '@/components/chat';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 // Lazy-loaded components từ file thứ hai (chỉ lấy phần admin)
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
@@ -52,8 +54,15 @@ export const routes: Route[] = [
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      {/* Routes từ file đầu */}
-      <Route element={<Layout />} path="/">
+      {/* Routes User */}
+      <Route
+        element={
+          <ProtectedRoute requireUser>
+            <Layout />
+          </ProtectedRoute>
+        }
+        path="/"
+      >
         <Route element={<Home />} index />
         <Route element={<Search />} path="search" />
         <Route element={<Lyrics />} path="lyrics" />
@@ -62,27 +71,42 @@ export const router = createBrowserRouter(
         <Route element={<PlayList />} path="playlist/:id" />
         <Route element={<Track />} path="track/:id" />
         <Route element={<Premium />} path="premium" />
-        <Route path="user">
-          <Route element={<UserPage />} path="profile" />
-        </Route>
+        <Route
+          path="user/profile"
+          element={
+            <ProtectedRoute requireProfile>
+              <UserPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
+
+
+
       <Route element={<Login />} path="login" />
       <Route element={<Register />} path="register" />
       <Route element={<ForgotPassword />} path="forgot-password" />
       <Route element={<ResetPassword />} path="reset-password/:uid/:token" />
-      <Route path= "chat" element={<Chat/>}/>
 
-      {/* Routes admin từ file thứ hai */}
-      <Route path="/admin" element={<LayoutDefaultAdmin />}>
+      {/* Routes admin  */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requireStaff>
+            <LayoutDefaultAdmin />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="user" element={<User />} />
-        <Route path="song" element={<Song />} /> {/* Thêm route cho Song */}
-        <Route path="playlist" element={<PlayListAdmin />} /> {/* Thêm route cho PlayList */}
-        <Route path="album" element={<Album />} /> {/* Thêm route cho Album */}
-        <Route path="artist" element={<Artist />} /> {/* Thêm route cho Artist */}
-        <Route path="typesong" element={<TypeSong />} /> {/* Thêm route cho TypeSong */}
+        <Route path="song" element={<Song />} />
+        <Route path="playlist" element={<PlayListAdmin />} />
+        <Route path="album" element={<Album />} />
+        <Route path="artist" element={<Artist />} />
+        <Route path="typesong" element={<TypeSong />} />
       </Route>
+
 
       {/* Catch-all route từ file đầu */}
       <Route element={<div>Not Found</div>} path="*" />

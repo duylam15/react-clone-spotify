@@ -62,6 +62,7 @@ export default function Header(): React.ReactNode {
     try {
       const response = await logoutUser();
       localStorage.removeItem("idLogin")
+      localStorage.removeItem("isStaff")
       console.log("Đăng xuất thành công:", response);
       setIsLogin(false);
     } catch (error: any) {

@@ -42,7 +42,7 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if(localStorage.getItem("idLogin") == null) 
+        if(localStorage.getItem("idLogin") == undefined) 
         {
           handleUnauthorized();
           return ;
