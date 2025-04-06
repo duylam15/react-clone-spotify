@@ -1,3 +1,4 @@
+import AudioRecorder from "@/components/AudioRecorder";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -82,6 +83,7 @@ export default function Search(): React.ReactNode {
         >
           {loading ? "Đang tìm..." : "Tìm kiếm"}
         </button>
+        <AudioRecorder />
       </div>
 
       {error && <p className="text-red-500 mt-3">{error}</p>}
