@@ -148,49 +148,119 @@ const ChatButton = () => {
                         setIsOpen(!isOpen);
                     }
                 }}
-                style={{ padding: "12px", background: "#007bff", color: "white", border: "none", borderRadius: "8px", cursor: "grab", fontSize: "16px" }}
+                style={{
+                    padding: "12px 20px",
+                    background: "#1DB954",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50px",
+                    cursor: "grab",
+                    fontSize: "16px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+                }}
             >
                 💬 Chat
             </button>
+    
             {isOpen && (
-                <div style={{ width: "400px", height: "500px", background: "white", border: "1px solid black", padding: "15px", borderRadius: "8px", marginTop: "10px", color: "black", display: "flex", flexDirection: "column" }}>
+                <div style={{
+                    width: "400px",
+                    height: "500px",
+                    background: "#212121",  // Xám đậm, dễ phân biệt nền Spotify
+                    border: "1px solid #282828",
+                    padding: "15px",
+                    borderRadius: "12px",
+                    marginTop: "10px",
+                    color: "white",
+                    display: "flex",
+                    flexDirection: "column",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)"
+                }}>
+                    {/* Phần danh sách tin nhắn */}
                     <div
                         ref={messagesEndRef}
-                        style={{ flex: 1, overflowY: "auto", borderBottom: "1px solid gray", paddingBottom: "10px", paddingRight: "5px" }}
+                        style={{
+                            flex: 1,
+                            overflowY: "auto",
+                            borderBottom: "1px solid #333",
+                            paddingBottom: "10px",
+                            paddingRight: "5px"
+                        }}
                     >
-                        {messages.length === 0 ? <p style={{ textAlign: "center" }}>Không có tin nhắn nào!</p> : null}
+                        {messages.length === 0 ? (
+                            <p style={{ textAlign: "center", color: "#aaa" }}>Không có tin nhắn nào!</p>
+                        ) : null}
                         {messages.map((msg, index) => (
-                            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px", padding: "5px", borderRadius: "5px", background: "#f1f1f1" }}>
-                                <img src={msg.avatar_url} alt="Avatar" style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }} />
+                            <div key={index} style={{
+                                display: "flex",
+                                alignItems: "center",
+                                marginBottom: "10px",
+                                padding: "5px",
+                                borderRadius: "5px",
+                                background: "#282828"  // Màu tin nhắn
+                            }}>
+                                <img src={msg.avatar_url} alt="Avatar" style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    marginRight: "10px"
+                                }} />
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                        <strong>{msg.username}</strong>
-                                        <span style={{ fontSize: "12px", color: "gray" }}>{new Date(msg.timestamp).toLocaleString()}</span>
+                                    <div style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center"
+                                    }}>
+                                        <strong style={{ color: "white" }}>{msg.username}</strong>
+                                        <span style={{ fontSize: "12px", color: "#bbb" }}>{new Date(msg.timestamp).toLocaleString()}</span>
                                     </div>
-                                    <p style={{ fontSize: "14px", color: "black", margin: "3px 0" }}>{msg.message}</p>
+                                    <p style={{ fontSize: "14px", color: "white", margin: "3px 0" }}>{msg.message}</p>
                                 </div>
                             </div>
-
                         ))}
                     </div>
-
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                        style={{ width: "100%", padding: "10px", fontSize: "16px", borderRadius: "5px", border: "1px solid gray", marginTop: "10px" }}
-                    />
-                    <button
-                        onClick={sendMessage}
-                        style={{ width: "100%", padding: "10px", fontSize: "16px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", marginTop: "10px", cursor: "pointer" }}
-                    >
-                        Gửi
-                    </button>
+    
+                    {/* Phần input + nút gửi */}
+                    <div style={{
+                        display: "flex",
+                        marginTop: "10px"
+                    }}>
+                        <input
+                            type="text"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Nhập tin nhắn..."
+                            style={{
+                                flex: 1,
+                                padding: "10px",
+                                borderRadius: "20px",
+                                border: "none",
+                                background: "#3E3E3E",
+                                color: "white",
+                                marginRight: "10px",
+                                outline: "none"
+                            }}
+                        />
+                        <button
+                            onClick={sendMessage}
+                            style={{
+                                background: "#1DB954",
+                                border: "none",
+                                borderRadius: "20px",
+                                padding: "10px 20px",
+                                color: "white",
+                                fontWeight: "bold",
+                                cursor: "pointer"
+                            }}
+                        >
+                            Gửi
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
     );
+    
 };
 
 export default ChatButton;

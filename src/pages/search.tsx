@@ -64,20 +64,20 @@ export default function Search(): React.ReactNode {
   }
 
   return (
-    <div className="flex flex-col items-center w-full h-full p-6 bg-inherit">
+    <div className="flex flex-col items-center w-full h-full p-6 bg-[#121212]">
       <h2 className="text-2xl font-bold mb-6 text-white">Tìm kiếm bài hát, nghệ sĩ, album</h2>
 
       {/* Thanh tìm kiếm */}
       <div className="w-full flex">
         <input
           type="text"
-          className="flex-grow p-4 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+          className="flex-grow p-4 border border-gray-700 bg-[#212121] text-white placeholder-gray-400 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Nhập từ khóa..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <button
-          className="bg-blue-500 text-white px-6 py-4 rounded-r-lg hover:bg-blue-600 transition duration-300 text-lg"
+          className="text-white px-6 py-4 rounded-r-lg bg-green-500 hover:bg-green-600 transition duration-300 text-lg"
           onClick={handleSearch}
           disabled={loading}
         >
@@ -93,7 +93,7 @@ export default function Search(): React.ReactNode {
         {["all", "nghe_si", "bai_hat", "albums"].map((item) => (
           <button
             key={item}
-            className={`px-4 py-2 rounded-md text-white ${filter === item ? "bg-blue-500" : "bg-gray-700"}`}
+            className={`hover:bg-green-500 px-4 py-2 rounded-md text-white ${filter === item ? "bg-green-500" : "bg-gray-700"}`}
             onClick={() => setFilter(item)}
           >
             {item === "all" ? "Tất cả" : item === "nghe_si" ? "Nghệ sĩ" : item === "bai_hat" ? "Bài hát" : "Album"}
