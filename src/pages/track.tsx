@@ -4,7 +4,8 @@ import { useParams } from "react-router-dom"
 import { getSongById, } from "@/services/playlistAPI"
 import axios from "axios"
 import { setCurrentSong } from "@/stores/playlist/playerSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "@/stores/playlist"
 
 export default function Track(): React.ReactNode {
   const [song, setSong] = useState<any | null>(null)
@@ -25,7 +26,10 @@ export default function Track(): React.ReactNode {
     fetchPlaylist()
   }, [])
 
-  console.log("songsongsong", song)
+
+  console.log("songsongxxxsong", song?.loi_bai_hat)
+
+
 
   const [album, setAlbum] = useState<any>();
   const [nghesi, setNgheSi] = useState<any>();
@@ -80,6 +84,47 @@ export default function Track(): React.ReactNode {
     audioPlayer.play();
   }, [audioPlayer])
 
+  const lyrics = song?.loi_bai_hat || "";
+
+  // Tách theo chữ cái viết hoa mà có chữ thường theo sau — tức là đầu câu mới
+  const splitLyrics = lyrics.split(/(?=[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ])/g).map((s: any) => s.trim());
+  const currentSong: any = useSelector((state: RootState) => state.player.currentSong);
+
+  const downloadAudio = async () => {
+    const audioUrl = currentSong?.duong_dan; // URL của file âm thanh
+    const fileName = currentSong?.ten_bai_hat + ".mp3"; // Thêm phần mở rộng .mp3 vào tên file nếu chưa có
+
+    try {
+      const response = await fetch(audioUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "audio/mp3", // Sử dụng content-type cho âm thanh MP3
+        },
+      });
+
+      if (!response.ok) throw new Error("Lỗi khi tải file");
+
+      const blob = await response.blob(); // Chuyển dữ liệu thành Blob
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Tạo thẻ <a> ẩn để tải file
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", fileName); // Thiết lập tên file tải về
+      document.body.appendChild(link);
+      link.click();
+
+      // Xóa object URL để tiết kiệm bộ nhớ
+      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Tải xuống thất bại", error);
+    } finally {
+    }
+  };
+
+
+
   return (
     <div className="flex flex-col w-full ">
       <div className="w-[100%]  bg-black-500 p-5 flex justify-start items-center gap-6 rounded-t-[10px]">
@@ -114,10 +159,14 @@ export default function Track(): React.ReactNode {
           </svg>
         </div>
       </div>
-      <div className="text-gray-400 flex items-center justify-between p-5">
+      <div className="text-gray-400 flex items-start justify-between p-5">
         <div >
-          <div className="text-white ">Lyric</div>
-          <div className="mt-3">{song?.loi_bai_hat}</div>
+          <div className="text-white">Lyric</div>
+          <div className="mt-3 space-y-1">
+            {splitLyrics.map((line: any, index: any) => (
+              <div key={index}>{line}</div>
+            ))}
+          </div>
         </div>
         <div className="w-[500px] p-4 flex items-center justify-start gap-4">
           <img className="w-[70px] h-[70px] rounded-full" src={nghesi?.anh_dai_dien} alt="" />

@@ -80,7 +80,7 @@ export default function PlayingBar() {
 			const response = await fetch(videoUrl, {
 				method: "GET",
 				headers: {
-					"Content-Type": "video/mp4",
+					"Content-Type": "audio/mp3", // Sử dụng content-type cho âm thanh MP3
 				},
 			});
 
