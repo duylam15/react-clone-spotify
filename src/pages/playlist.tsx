@@ -3,7 +3,7 @@ import axios from "axios"
 import { Artist, Playlist, Song } from "@/types/types"
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 import PlayButton from "@/components/ui/play-button"
-import { getSongById, getSongFromPlayList, getSongAlbum } from "@/services/playlistAPI"
+import { getSongById, getSongFromPlayList, getSongAlbum, getSongBXH } from "@/services/playlistAPI"
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentSong } from "@/stores/playlist/playerSlice"
 import { format, formatDuration } from "date-fns";
@@ -36,6 +36,7 @@ export default function PlayList(): React.ReactNode {
   const searchParams = new URLSearchParams(location.search);
   const danhSachPhatId = searchParams.get('danhsachphatid');
   const albumId = searchParams.get('albumid');
+  const bxh = searchParams.get('bxh');
 
   //-----------------------------------
   console.log(songs)
@@ -80,8 +81,10 @@ export default function PlayList(): React.ReactNode {
   let playlistId: any;
   if (danhSachPhatId) {
     playlistId = Number(danhSachPhatId);
-  } else {
+  } else if(albumId){
     playlistId = Number(albumId);
+  } else {
+    playlistId = bxh;
   }
   useEffect(() => {
     const fetchSongs = async () => {
@@ -91,9 +94,10 @@ export default function PlayList(): React.ReactNode {
         // Lấy danh sách bài hát từ playlist
         if (danhSachPhatId) {
           data = await getSongFromPlayList(playlistId);
-        } else {
+        } else if(albumId){
           data = await getSongAlbum(playlistId);
-          console.error(data)
+        } else {
+          data = await getSongBXH(playlistId);
         }
         const songDetails = await Promise.all(
           data.danh_sach_bai_hat.map(async (item: any) => {
@@ -284,7 +288,7 @@ export default function PlayList(): React.ReactNode {
         if (danhSachPhatId) {
           response = await axios.get(`${API_BASE_URL}/danhsachphat/${playlistId}/`)
           response = response.data
-        } else {
+        } else if(albumId){
           response = await axios.get(`${API_BASE_URL}/album/${playlistId}/`);
           const albumData = response.data;
 
@@ -302,6 +306,11 @@ export default function PlayList(): React.ReactNode {
             tong_thoi_luong: 0, // Chưa tính thời lượng -> set tạm 0 hoặc fetch thêm
           };
           response = playlistData
+        } else {
+          response = await axios.get(`${API_BASE_URL}/bxh/api/get_BXH_theoten/${playlistId}`);
+          const bxhData = response.data;
+          console.log(bxhData)
+          response = bxhData
         }
         setPlaylistItem(response)
       } catch (err: any) {

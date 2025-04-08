@@ -48,6 +48,18 @@ export const getSongAlbum = async (id: number) => {
   }
 };
 
+export const getSongBXH = async (ten: String) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/bxh/api/get_baihat_inBXH/${ten}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching albums', error);
+    throw error;
+  }
+};
+
 export const getSongById = async (id: number) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/baihat/baihat/${id}/`);
@@ -62,6 +74,7 @@ export function convertPlaylistFromBackend(data: any): Playlist {
   return {
     danh_sach_phat_id: data.danh_sach_phat_id.toString(),
     album_id: data.danh_sach_phat_id.toString(), // Chuyển ID thành string
+    bxh_id: data.danh_sach_phat_id.toString(),
     order: data.so_thu_tu || 0, // Nếu không có giá trị thì mặc định 0
     ten_danh_sach: data.ten_danh_sach,
     anh_danh_sach: data.anh_danh_sach,

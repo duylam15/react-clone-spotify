@@ -21,6 +21,7 @@ export default function Home(): React.ReactNode {
 
   const [danhSachPhat, setDanhSachPhat] = useState([])
   const [danhSachAlbum, setDanhSachAlbum] = useState<Playlist[]>([])
+  const [danhSachBXH, setDanhSachBXH] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [nguoidung, setNguoidung] = useState<any>()
@@ -70,6 +71,21 @@ export default function Home(): React.ReactNode {
     fetchDanhSachAlbum()
   }, [])
 
+  useEffect(() => {
+    const fetchDanhSachBXH = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/bxh/api/get_bxh/`)
+        setDanhSachBXH(response.data)
+      } catch (err: any) {
+        setError(err.message)
+        setDanhSachPhat([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDanhSachBXH()
+  }, [])
 
   useEffect(() => {
     const fetchNguoiDung = async () => {
@@ -89,8 +105,9 @@ export default function Home(): React.ReactNode {
     <>
       <div className="flex flex-col px-3">
         {/* Gọi component `PlaylistCardsContainer` để hiển thị các playlist theo danh sách có tiêu đề */}
-        <PlaylistCardsContainer title={"Made for " + nguoidung?.ten_hien_thi} items={danhSachPhat} />
+        <PlaylistCardsContainer title={"Bảng xếp hạng"} items={danhSachBXH} />
         <PlaylistCardsContainer title={"Album hot"} items={danhSachAlbum} />
+        <PlaylistCardsContainer title={"Made for " + nguoidung?.ten_hien_thi} items={danhSachPhat} />
       </div>
     </>
 
