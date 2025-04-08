@@ -122,6 +122,7 @@ export default function PlayList(): React.ReactNode {
               nghe_si_id: artistRes?.data.nghe_si_id,
               nghe_si: artistRes?.data.ten_nghe_si,
               anh_dai_dien: artistRes?.data.anh_dai_dien,
+              so_luot_nghe: item.so_luot_nghe,
             };
           })
         );
@@ -308,7 +309,7 @@ export default function PlayList(): React.ReactNode {
           response = playlistData
         } else {
           response = await axios.get(`${API_BASE_URL}/bxh/api/get_BXH_theoten/${playlistId}`);
-          const bxhData = response.data;
+          const bxhData = response.data.playlistData;
           console.log(bxhData)
           response = bxhData
         }
@@ -390,7 +391,7 @@ export default function PlayList(): React.ReactNode {
           </svg>
         </div>
       </div>
-      <div className="grid grid-cols-[1%_30%_24%_25%_10%] gap-4  text-gray-300 pl-4 pb-2 ml-6 mr-10 mb-3 mt-5 border-b border-gray-600 ">
+      <div className="grid grid-cols-[1%_28%_21%_22%_10%_10%] gap-4  text-gray-300 pl-4 pb-2 ml-6 mr-10 mb-3 mt-5 border-b border-gray-600 ">
         <div className="">#</div>
         <div className="">Title</div>
         <div className="">Album</div>
@@ -399,6 +400,7 @@ export default function PlayList(): React.ReactNode {
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
         </div>
+        <div className="">Views</div>
       </div>
       <div>
         {songs
@@ -408,13 +410,13 @@ export default function PlayList(): React.ReactNode {
               key={song?.bai_hat_id}
               onClick={() => handleClick(song?.bai_hat_id, song)}
               onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
-              className={`grid grid-cols-[1%_30%_24%_24%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
+              className={`grid grid-cols-[1%_28%_21%_22%_10%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
             >
               <div>{index + 1}</div>
               <div className="flex items-center gap-2">
                 <img
                   className="w-[50px] h-[50px] object-cover rounded-lg"
-                  src={song?.anh_dai_dien}
+                  src={playlistItem?.anh_danh_sach}
                   alt=""
                 />
                 <div>
@@ -430,6 +432,7 @@ export default function PlayList(): React.ReactNode {
               <div>{song?.ten_album}</div>
               <div>{song?.ngay_phat_hanh}</div>
               <div>{song?.thoi_luong}</div>
+              <div>{song?.so_luot_nghe}</div>
             </div>
           ))}
 
