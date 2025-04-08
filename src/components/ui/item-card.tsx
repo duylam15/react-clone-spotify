@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom'
 // Định nghĩa kiểu dữ liệu `Properties` cho component `ItemCard`.
 interface Properties {
   danh_sach_phat_id: number
+  album_id: number
+  bxh_id: String
   anh_danh_sach?: string // Ảnh hiển thị trên card (tùy chọn).
   ten_danh_sach: string // Tiêu đề.
   description?: string // Mô tả (tùy chọn).
@@ -43,7 +45,7 @@ const truncateStyle: React.CSSProperties = {
 }
 
 // Component `ItemCard` để hiển thị một mục (có thể là album, playlist, nghệ sĩ...).
-export default function ItemCard({ danh_sach_phat_id, anh_danh_sach, ten_danh_sach, description, isArtist }: Properties): React.ReactNode {
+export default function ItemCard({ danh_sach_phat_id, album_id, bxh_id, anh_danh_sach, ten_danh_sach, description, isArtist }: Properties): React.ReactNode {
   // State lưu trữ kích thước ảnh (dùng để tính toán vị trí nút play).
   const [imageSize, setImageSize] = useState<number>(0)
 
@@ -64,7 +66,15 @@ export default function ItemCard({ danh_sach_phat_id, anh_danh_sach, ten_danh_sa
 
   const navigate = useNavigate()
   const ifSameGoBackElseNavigate = (path: string) => (location.pathname === path ? navigate("/") : navigate(path))
-  const openSong = () => ifSameGoBackElseNavigate(`/playlist/${danh_sach_phat_id}`)
+  const openSong = () => {
+    if (danh_sach_phat_id != null) {
+      ifSameGoBackElseNavigate(`/playlist/?danhsachphatid=${danh_sach_phat_id}`);
+    } else if(album_id!=null){
+      ifSameGoBackElseNavigate(`/playlist/?albumid=${album_id}`);
+    } else {
+      ifSameGoBackElseNavigate(`/playlist/?bxh=${bxh_id}`);
+    }
+  };
 
 
   return (
