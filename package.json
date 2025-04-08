@@ -53,6 +53,7 @@
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.0.19",
     "react-router-dom": "^6.23.0",
+    "recharts": "^2.15.2",
     "redux": "5.0.1",
     "simplebar-react": "^3.3.0",
     "tailwind-merge": "^2.3.0",
