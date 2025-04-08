@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { Artist, Playlist, Song } from "@/types/types"
 import { useNavigate, useParams } from "react-router-dom"
@@ -13,6 +13,7 @@ import { RootState } from "@/stores/playlist"
 import LibraryCard from "@/components/layout/sidebar/library-card/library-card"
 import { useAppControllerStore } from "@/features/appControllerStore"
 import { getUserInfo, handleUnauthorized } from '@/services/user';
+import { useRefresh } from "@/contexts/RefreshContext"
 
 const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
@@ -30,11 +31,11 @@ export default function PlayList(): React.ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [playlists, setPlaylists] = useState([])
-  const userId = 1
-
+  const userId = Number(localStorage.getItem("idLogin"))
   console.log(songs)
-
+  // const { refreshTrigger, refresh } = useRefresh();
   // premium
+
   const [songsPlayedCount, setSongsPlayedCount] = useState(0);
   const [isPlayingAd, setIsPlayingAd] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
@@ -42,18 +43,17 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if(localStorage.getItem("idLogin") == null) 
-        {
+        if (localStorage.getItem("idLogin") == null) {
           handleUnauthorized();
-          return ;
+          return;
         }
         const user = await getUserInfo("");
         console.log("User info:", user);
 
         const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
         setIsPremium(userRes.data.la_premium || false);
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+isPremium)
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+userRes.data.la_premium)
+        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + isPremium)
+        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + userRes.data.la_premium)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin user:", error);
       }
@@ -153,33 +153,11 @@ export default function PlayList(): React.ReactNode {
 
   console.log("songssongssongssongssongssongs", songs)
 
-
-  const [artist, setArtist] = useState<Artist>()
-
-  useEffect(() => {
-    const fetchArtist = async () => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/nghesi/${1}/`)
-        console.log("responseresponseresponseresponseresponse", response)
-        setArtist(response.data)
-      } catch (err: any) {
-        console.error("Error fetching playlist:", err)
-      }
-    }
-
-    fetchArtist()
-  }, [])
-
-  console.log("artistartistartistartist", artist)
-
   const [activeSongId, setActiveSongId] = useState<number | null>(null)
   const [clickCount, setClickCount] = useState(0)
   const dispatch = useDispatch();
 
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
-
-
-
 
   const handleClick = (songId: number, song: Song) => {
     if (isPlayingAd) return; // Nếu đang phát quảng cáo, chặn phát bài khác
@@ -307,26 +285,66 @@ export default function PlayList(): React.ReactNode {
     }
   };
 
+
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [color, setColor] = useState<string>("");
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0, img.width, img.height);
+
+      const imageData: any = ctx?.getImageData(0, 0, img.width, img.height).data;
+      if (!imageData) return;
+
+      let r = 0, g = 0, b = 0, count = 0;
+
+      // Lấy mẫu mỗi 10 pixel để giảm tải
+      for (let i = 0; i < imageData.length; i += 40) {
+        r += imageData[i];
+        g += imageData[i + 1];
+        b += imageData[i + 2];
+        count++;
+      }
+
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
+
+      setColor(`rgb(${r}, ${g}, ${b})`);
+    };
+  }, []);
+
   if (error) return <div className="text-red-500">Lỗi khi tải danh sách phát</div>
 
   return (
     <div className="flex flex-col w-full ">
-      <div className="w-[100%]  bg-black-500 p-5 flex justify-start items-center gap-6 rounded-t-[10px]">
+      <div className="w-[100%] p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
+        style={{ background: `linear-gradient(to bottom, rgba(255,255,255,0.5) 1%, ${color} 99%)` }}>
         <div className=" ">
-          <img className="w-[232px] h-[232px] rounded-lg" src={playlistItem?.anh_danh_sach} alt="" />
+          <img ref={imgRef} className="w-[232px] h-[232px] rounded-lg" src={playlistItem?.anh_danh_sach} alt="" />
         </div>
         <div className="">
           <div className="text-[14px] text-white translate-y-[30px]">Playlist</div>
           <div className="font-black text-[100px] text-white ml-[-4px]">{playlistItem.ten_danh_sach}</div>
-          <div className="text-gray-400 text-[14px]">{playlistItem.mo_ta}</div>
-          <div className="text-gray-400 text-[14px]">
+          <div className="text-white-400 text-[14px]">{playlistItem.mo_ta}</div>
+          <div className="text-white-400 text-[14px]">
             about {formatSecondsToTime(Number(playlistItem?.tong_thoi_luong))}
           </div>
         </div>
       </div>
-      <div className="w-[100%]  bg-black-500 p-5 pb-0 pt-0 rounded-b-[10px] flex justify-between items-center gap-8">
+      <div className="w-[100%]  bg-black-500 p-4 pb-0 mt-4 pt-0 rounded-b-[10px] flex justify-between items-center gap-8">
         <div className="flex justify-start items-center gap-8">
-          <div onClick={() => onClickPlay(songs)} className="bg-green-500 p-3 inline-block rounded-full hover:bg-green-400 transition">
+          <div onClick={() => onClickPlay(songs)} className="bg-green-500 p-3  inline-block rounded-full hover:bg-green-400 transition">
             <img className="w-[20px] h-[20px] object-cover" src="/public/play-button-svgrepo-com.svg" alt="" />
           </div>
           <div className="bg-black-500 rounded-full border-[3px] border-gray-300 inline-block">

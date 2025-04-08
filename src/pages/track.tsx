@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Playlist } from "@/types/types"
 import { useParams } from "react-router-dom"
 import { getSongById, } from "@/services/playlistAPI"
@@ -6,6 +6,7 @@ import axios from "axios"
 import { setCurrentSong } from "@/stores/playlist/playerSlice"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/stores/playlist"
+import { Spin } from 'antd';
 
 export default function Track(): React.ReactNode {
   const [song, setSong] = useState<any | null>(null)
@@ -86,97 +87,166 @@ export default function Track(): React.ReactNode {
 
   const lyrics = song?.loi_bai_hat || "";
 
-  // Tách theo chữ cái viết hoa mà có chữ thường theo sau — tức là đầu câu mới
-  const splitLyrics = lyrics.split(/(?=[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ])/g).map((s: any) => s.trim());
-  const currentSong: any = useSelector((state: RootState) => state.player.currentSong);
+  const formattedLyrics = lyrics
+    .split(/\[\d{2}:\d{2}:\d{2}\]/)  // Tách theo [00:00:00] dạng timestamp
+    .map((line: any) => line.trim())       // Bỏ khoảng trắng đầu cuối
+    .filter((line: any) => line.length > 0); // Bỏ dòng trống
 
-  const downloadAudio = async () => {
-    const audioUrl = currentSong?.duong_dan; // URL của file âm thanh
-    const fileName = currentSong?.ten_bai_hat + ".mp3"; // Thêm phần mở rộng .mp3 vào tên file nếu chưa có
-
-    try {
-      const response = await fetch(audioUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "audio/mp3", // Sử dụng content-type cho âm thanh MP3
-        },
-      });
-
-      if (!response.ok) throw new Error("Lỗi khi tải file");
-
-      const blob = await response.blob(); // Chuyển dữ liệu thành Blob
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      // Tạo thẻ <a> ẩn để tải file
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.setAttribute("download", fileName); // Thiết lập tên file tải về
-      document.body.appendChild(link);
-      link.click();
-
-      // Xóa object URL để tiết kiệm bộ nhớ
-      window.URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Tải xuống thất bại", error);
-    } finally {
-    }
+  type LyricLine = {
+    time: number;     // tính bằng giây
+    text: string;
   };
 
+  const parseLyrics = (rawLyrics: string): LyricLine[] => {
+    const timeTagRegex = /\[(\d{2}):(\d{2}):(\d{2})\]/g;
+    const result: LyricLine[] = [];
 
+    let match;
+    const segments: any = rawLyrics.split(timeTagRegex); // Tách ra từng phần
+
+    // Kết quả sau split sẽ là [text trước], hh, mm, ss, [text], hh, mm, ss, [text], ...
+    // Vậy nên sẽ loop từ 1 đến hết theo từng bộ 4
+
+    for (let i = 1; i < segments.length; i += 4) {
+      const hours = parseInt(segments[i], 10);
+      const minutes = parseInt(segments[i + 1], 10);
+      const seconds = parseInt(segments[i + 2], 10);
+      const text = segments[i + 3]?.trim();
+
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      if (text) {
+        result.push({ time: totalSeconds, text });
+      }
+    }
+
+    return result;
+  };
+
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+    const audio = document.querySelector<HTMLAudioElement>('#audio-player');
+    if (!audio) return;
+
+    const updateTime = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    audio.addEventListener("timeupdate", updateTime);
+    return () => {
+      audio.removeEventListener("timeupdate", updateTime);
+    };
+  }, []);
+  const parsedLyrics = parseLyrics(lyrics);
+
+  const activeIndex = parsedLyrics.findIndex((line, index) => {
+    const next = parsedLyrics[index + 1];
+    return currentTime >= line.time && (!next || currentTime < next.time);
+  });
+
+
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [color, setColor] = useState<string>("");
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0, img.width, img.height);
+
+      const imageData: any = ctx?.getImageData(0, 0, img.width, img.height).data;
+      if (!imageData) return;
+
+      let r = 0, g = 0, b = 0, count = 0;
+
+      // Lấy mẫu mỗi 10 pixel để giảm tải
+      for (let i = 0; i < imageData.length; i += 40) {
+        r += imageData[i];
+        g += imageData[i + 1];
+        b += imageData[i + 2];
+        count++;
+      }
+
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
+
+      setColor(`rgb(${r}, ${g}, ${b})`);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col w-full ">
-      <div className="w-[100%]  bg-black-500 p-5 flex justify-start items-center gap-6 rounded-t-[10px]">
-        <div className=" ">
-          <img className="w-[232px] h-[232px] rounded-lg" src={nghesi?.anh_dai_dien} alt="" />
-        </div>
-        <div className="">
-          <div className="text-[14px] text-white translate-y-[30px]">Song</div>
-          <div className="font-black text-[100px] text-white ml-[-4px]">{song?.ten_bai_hat}</div>
-          <div className="text-gray-400 text-[14px]">{album?.ten_album} {nghesi?.ten_nghe_si}</div>
-        </div>
-      </div>
-      <div className="w-[100%]  bg-black-500 p-5 pt-0 pb-0 rounded-b-[10px] flex justify-between items-center gap-8">
-        <div className="flex justify-start items-center gap-8">
-          <div onClick={() => onClickPlay(song)} className="bg-green-500 p-3 inline-block rounded-full hover:bg-green-400 transition">
-            <img className="w-[20px] h-[20px] object-cover" src="/public/play-button-svgrepo-com.svg" alt="" />
+    <Spin spinning={loading} tip="Đang đồng bộ lời bài hát...">
+      <div className="flex flex-col w-full ">
+        <div className="w-[100%]   p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
+          style={{ background: `linear-gradient(to bottom, rgba(255,255,255,0.5) 1%, ${color} 99%)` }}>
+          <div className=" ">
+            <img
+              ref={imgRef}
+              className="w-[232px] h-[232px] rounded-lg" src={song?.anh_dai_dien} alt="" />
           </div>
-          <div className="bg-black-500 rounded-full border-[3px] border-gray-300 inline-block">
+          <div className="">
+            <div className="text-[14px] text-white translate-y-[30px]">Song</div>
+            <div className="font-black text-[100px] text-white ml-[-4px]">{song?.ten_bai_hat}</div>
+            <div className="text-white-400 text-[14px]">{album?.ten_album} {nghesi?.ten_nghe_si}</div>
+          </div>
+        </div>
+        <div className="w-[100%]  bg-black-500 p-4 mt-4 pt-0 pb-0 rounded-b-[10px] flex justify-between items-center gap-8">
+          <div className="flex justify-start items-center gap-8">
+            <div onClick={() => onClickPlay(song)} className="bg-green-500 p-3 inline-block rounded-full hover:bg-green-400 transition">
+              <img className="w-[20px] h-[20px] object-cover" src="/public/play-button-svgrepo-com.svg" alt="" />
+            </div>
+            <div className="bg-black-500 rounded-full border-[3px] border-gray-300 inline-block">
+              <svg className="w-8 h-8 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5" />
+              </svg>
+            </div>
+            <div className="bg-black-500  inline-block">
+              <svg className="w-26 h-26 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="red" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 12h.01m6 0h.01m5.99 0h.01" />
+              </svg>
+            </div>
+          </div>
+          <div>
             <svg className="w-8 h-8 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5" />
-            </svg>
-          </div>
-          <div className="bg-black-500  inline-block">
-            <svg className="w-26 h-26 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="red" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 12h.01m6 0h.01m5.99 0h.01" />
+              <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
             </svg>
           </div>
         </div>
-        <div>
-          <svg className="w-8 h-8 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
-          </svg>
-        </div>
-      </div>
-      <div className="text-gray-400 flex items-start justify-between p-5">
-        <div >
-          <div className="text-white">Lyric</div>
-          <div className="mt-3 space-y-1">
-            {splitLyrics.map((line: any, index: any) => (
-              <div key={index}>{line}</div>
-            ))}
+        <div className="text-gray-400 flex items-start justify-between p-4">
+          <div >
+            <div className="text-white">Lyric</div>
+            <div className="mt-3 space-y-1 whitespace-pre-line ">
+              {parsedLyrics.map((line, index) => (
+                <div
+                  key={index}
+                  className={`transition-all duration-300 ${index === activeIndex ? "text-green-400 font-bold text-[18px]" : "text-white opacity-60"
+                    }`}
+                >
+                  {line.text}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="w-[500px] p-4 flex items-center justify-start gap-4">
+            <img className="w-[70px] h-[70px] rounded-full" src={nghesi?.anh_dai_dien} alt="" />
+            <div className="text-white ">
+              <div>Artist</div>
+              <div>{nghesi?.ten_nghe_si}</div>
+            </div>
           </div>
         </div>
-        <div className="w-[500px] p-4 flex items-center justify-start gap-4">
-          <img className="w-[70px] h-[70px] rounded-full" src={nghesi?.anh_dai_dien} alt="" />
-          <div className="text-white ">
-            <div>Artist</div>
-            <div>{nghesi?.ten_nghe_si}</div>
-          </div>
-        </div>
       </div>
-    </div>
+    </Spin>
   )
 }
 
