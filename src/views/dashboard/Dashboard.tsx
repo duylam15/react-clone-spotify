@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "antd";
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { UserOutlined, CustomerServiceOutlined, PlayCircleOutlined, ProfileOutlined } from "@ant-design/icons";
+import { getSoLuongBaiHat, getSoLuongDSP, getSoLuongNgheSi, getSoLuongNguoiDung } from "@/services/dashboard";
 const data = [
   { name: "Jan", value: 400 },
   { name: "Feb", value: 300 },
@@ -16,14 +17,41 @@ const data = [
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
 
 
-const stats = [
-  { title: "Users", value: "1,234", icon: <UserOutlined />, color: "text-blue-500" },
-  { title: "Songs", value: "567", icon: <CustomerServiceOutlined />, color: "text-green-500" },
-  { title: "Playlists", value: "89", icon: <ProfileOutlined />, color: "text-purple-500" },
-  { title: "Total Plays", value: "12,345", icon: <PlayCircleOutlined />, color: "text-red-500" },
-];
+
 
 const Dashboard = () => {
+
+  const [stats, setStats] = useState([
+    { title: "Users", value: 0, icon: <UserOutlined />, color: "text-blue-500" },
+    { title: "Songs", value: 0, icon: <CustomerServiceOutlined />, color: "text-green-500" },
+    { title: "Playlists", value: 0, icon: <ProfileOutlined />, color: "text-purple-500" },
+    { title: "Total Plays", value: 0, icon: <PlayCircleOutlined />, color: "text-red-500" },
+  ]);
+  
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [nguoiDung, baiHat, danhSachPhat, ngheSi] = await Promise.all([
+          getSoLuongNguoiDung(),
+          getSoLuongBaiHat(),
+          getSoLuongDSP(),
+          getSoLuongNgheSi()
+        ]);
+  
+        setStats([
+          { title: "Users", value: nguoiDung.so_luong_nguoi_dung, icon: <UserOutlined />, color: "text-blue-500" },
+          { title: "Songs", value: baiHat.so_luong_bai_hat, icon: <CustomerServiceOutlined />, color: "text-green-500" },
+          { title: "Playlists", value: danhSachPhat.so_luong_dsp, icon: <ProfileOutlined />, color: "text-purple-500" },
+          { title: "Artists", value: ngheSi.so_luong_nghe_si, icon: <PlayCircleOutlined />, color: "text-red-500" },
+        ]);
+      } catch (error) {
+        console.error("Lỗi khi fetch dữ liệu thống kê:", error);
+      }
+    };
+  
+    fetchStats();
+  }, []);
+
   return (
     
     <div className="p-6 space-y-6 overflow-auto h-screen pb-52">
