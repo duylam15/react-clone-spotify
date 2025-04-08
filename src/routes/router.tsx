@@ -59,7 +59,7 @@ export const router = createBrowserRouter(
         <Route element={<Lyrics />} path="lyrics" />
         <Route element={<Queue />} path="queue" />
         <Route element={<Feed />} path="feed" />
-        <Route element={<PlayList />} path="playlist/:id" />
+        <Route element={<PlayList />} path="playlist" />
         <Route element={<Track />} path="track/:id" />
         <Route element={<Premium />} path="premium" />
         <Route path="user">

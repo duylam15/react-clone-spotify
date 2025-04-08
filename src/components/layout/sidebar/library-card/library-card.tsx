@@ -64,7 +64,7 @@ export default function LibraryCard({
               <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={mo_ta} />
             }
           >
-            <div className="flex items-center rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-darker" onClick={() => navigate(`/playlist/${danh_sach_phat_id}`)}>
+            <div className="flex items-center rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-darker" onClick={() => navigate(`/playlist/?danhsachphatid=${danh_sach_phat_id}`)}>
               <LibraryCardImage image={anh_danh_sach} />
             </div>
           </TooltipWrapper>

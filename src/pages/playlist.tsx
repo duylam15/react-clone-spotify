@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 import { Artist, Playlist, Song } from "@/types/types"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useLocation } from "react-router-dom"
 import PlayButton from "@/components/ui/play-button"
-import { getSongById, getSongFromPlayList } from "@/services/playlistAPI"
+import { getSongById, getSongFromPlayList, getSongAlbum } from "@/services/playlistAPI"
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentSong } from "@/stores/playlist/playerSlice"
 import { format, formatDuration } from "date-fns";
@@ -18,10 +18,10 @@ const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
 
 export default function PlayList(): React.ReactNode {
   const [error, setError] = useState<string | null>(null)
-  const { id } = useParams() // Lấy giá trị của tham số id từ URL
+  //const { id } = useParams() // Lấy giá trị của tham số id từ URL
   const [songs, setSongs] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const playlistId = id ? Number(id) : Number(id)
+  //const playlistId = id ? Number(id) : Number(id)
   const navigate = useNavigate() // Hook điều hướng
   const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
   const [playlistItem, setPlaylistItem] = useState<any>({})
@@ -31,7 +31,13 @@ export default function PlayList(): React.ReactNode {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [playlists, setPlaylists] = useState([])
   const userId = 1
+  //-------------Phân loại route----------------------
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const danhSachPhatId = searchParams.get('danhsachphatid');
+  const albumId = searchParams.get('albumid');
 
+  //-----------------------------------
   console.log(songs)
 
   // premium
@@ -42,18 +48,15 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if(localStorage.getItem("idLogin") == null) 
-        {
+        if (localStorage.getItem("idLogin") == null) {
           handleUnauthorized();
-          return ;
+          return;
         }
         const user = await getUserInfo("");
         console.log("User info:", user);
 
         const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
         setIsPremium(userRes.data.la_premium || false);
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+isPremium)
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: "+userRes.data.la_premium)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin user:", error);
       }
@@ -74,15 +77,24 @@ export default function PlayList(): React.ReactNode {
     audioPlayer.play();
   }, [audioPlayer])
 
+  let playlistId: any;
+  if (danhSachPhatId) {
+    playlistId = Number(danhSachPhatId);
+  } else {
+    playlistId = Number(albumId);
+  }
   useEffect(() => {
     const fetchSongs = async () => {
       try {
         setLoading(true);
-
+        let data: any;
         // Lấy danh sách bài hát từ playlist
-        const data = await getSongFromPlayList(playlistId);
-        console.log("Danh sách bài hát trong playlist:", data);
-
+        if (danhSachPhatId) {
+          data = await getSongFromPlayList(playlistId);
+        } else {
+          data = await getSongAlbum(playlistId);
+          console.error(data)
+        }
         const songDetails = await Promise.all(
           data.danh_sach_bai_hat.map(async (item: any) => {
             const songId = item.bai_hat;
@@ -267,8 +279,31 @@ export default function PlayList(): React.ReactNode {
   useEffect(() => {
     const fetchPlaylistId = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/danhsachphat/${playlistId}/`)
-        setPlaylistItem(response.data)
+        let response: any
+        let playlistData;
+        if (danhSachPhatId) {
+          response = await axios.get(`${API_BASE_URL}/danhsachphat/${playlistId}/`)
+          response = response.data
+        } else {
+          response = await axios.get(`${API_BASE_URL}/album/${playlistId}/`);
+          const albumData = response.data;
+
+          // Convert từ album -> playlist format
+          playlistData = {
+            anh_danh_sach: albumData.anh_bia,
+            danh_sach_phat_id: albumData.album_id,
+            la_cong_khai: true, // Album public mặc định?
+            mo_ta: `Album ${albumData.ten_album}`, // Tuỳ bạn
+            ngay_tao: albumData.created_at,
+            nguoi_dung_id: albumData.nghe_si, // ID nghệ sĩ
+            so_nguoi_theo_doi: 0, // Album không có follower -> cho 0
+            so_thu_tu: 1, // Tuỳ bạn set
+            ten_danh_sach: albumData.ten_album,
+            tong_thoi_luong: 0, // Chưa tính thời lượng -> set tạm 0 hoặc fetch thêm
+          };
+          response = playlistData
+        }
+        setPlaylistItem(response)
       } catch (err: any) {
         console.error("Error fetching playlist:", err)
       }
