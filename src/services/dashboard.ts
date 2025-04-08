@@ -42,5 +42,25 @@ export const getSoLuongBaiHat = async () => {
         throw error;
     }
 };
- 
- 
+
+
+export const getSoLuongNguoiDungPremium = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/nguoidung/api/nguoidung/thongkepremium/`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching nghe si", error);
+        throw error;
+    }
+};
+
+
+export const thongKeBaiHatGomNhomTheoThangDuaTrenNam = async (year: any) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/baihat/api/thong_ke_bai_hat/?nam=${year}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching nghe si", error);
+        throw error;
+    }
+};
