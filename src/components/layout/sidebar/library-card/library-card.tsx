@@ -3,10 +3,8 @@ import axios from "axios"; // Import axios
 import TooltipWrapper from "@/components/ui/tooltip-wrapper";
 import LibraryCardContent from "./library-card-content";
 import LibraryCardImage from "./library-card-image";
-
 interface Properties {
   isCollapsed?: boolean;
-  isPinned: boolean;
   playlist: {
     anh_danh_sach?: string;
     ten_danh_sach: string;
@@ -16,17 +14,13 @@ interface Properties {
   };
 }
 
-import { useAppControllerStore } from "../../../../features/appControllerStore";
 import { useNavigate } from "react-router-dom";
 import { useRefresh } from "@/contexts/RefreshContext";
 
 export default function LibraryCard({
   isCollapsed = true,
-  isPinned,
   playlist: { anh_danh_sach, ten_danh_sach, so_nguoi_theo_doi, danh_sach_phat_id, mo_ta },
 }: Properties): React.ReactNode {
-  const mainWidth = useAppControllerStore((state) => state.mainWidth);
-
   // State điều khiển modal và ID được chọn
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -61,7 +55,7 @@ export default function LibraryCard({
             side="right"
             sideOffset={12}
             tooltipContent={
-              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={mo_ta} />
+              <LibraryCardContent name={ten_danh_sach} songCount={mo_ta} />
             }
           >
             <div className="flex items-center rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-darker" onClick={() => navigate(`/playlist/?danhsachphatid=${danh_sach_phat_id}`)}>
@@ -73,7 +67,7 @@ export default function LibraryCard({
         <div className="rounded-lg p-2 transition-colors duration-300 hover:bg-s-gray-dark">
           <div className="flex items-center gap-2">
             <div className="flex flex-col">
-              <LibraryCardContent isPinned={isPinned} name={ten_danh_sach} songCount={mo_ta} />
+              <LibraryCardContent name={ten_danh_sach} songCount={mo_ta} />
             </div>
           </div>
         </div>

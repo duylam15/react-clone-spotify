@@ -3,7 +3,6 @@ import { useState } from "react";
 import axios from "axios";
 import IconLink from "./icon-link";
 import TooltipWrapper from "@/components/ui/tooltip-wrapper";
-import getIconSize from "@/utils/get-icon-size";
 import ChatButton from "@/components/chat";
 import { useRefresh } from "@/contexts/RefreshContext";
 import { Spin } from "antd";
@@ -93,7 +92,7 @@ export default function SidebarTop() {
     }
   };
 
-  const iconProperties = getIconSize("l", true);
+  const iconProperties = { size: 26, strokeWidth: 2.5 }
 
 
   return (

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { Artist, Playlist, Song } from "@/types/types"
 import { useNavigate, useParams, useLocation } from "react-router-dom"
-import PlayButton from "@/components/ui/play-button"
 import { getSongById, getSongFromPlayList, getSongAlbum, getSongBXH } from "@/services/playlistAPI"
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentSong } from "@/stores/playlist/playerSlice"

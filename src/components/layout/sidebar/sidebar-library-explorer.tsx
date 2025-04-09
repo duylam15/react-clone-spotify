@@ -1,34 +1,17 @@
-// Import biểu tượng `LibraryBig` từ thư viện `lucide-react` để hiển thị icon thư viện lớn.
-import { LibraryBig } from 'lucide-react'
-
-// Import `ScrollArea` - một component hỗ trợ cuộn nội dung trong UI.
 import { ScrollArea } from '@/components/ui/scroll-area'
-
-// Import `TooltipWrapper` - component hiển thị tooltip khi hover vào phần tử.
-import TooltipWrapper from '@/components/ui/tooltip-wrapper'
-
-// Import hàm `getIconSize` để lấy kích thước icon.
-import getIconSize from '@/utils/get-icon-size'
-
-// Import `LibraryCard` - component hiển thị thông tin một thư viện cụ thể.
 import LibraryCard from './library-card/library-card'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Playlist } from '@/types/types'
-import { useNavigate } from 'react-router-dom'
 import { useRefresh } from '@/contexts/RefreshContext'
-
-// Danh sách các thư viện nhạc có sẵn trong sideba
-
 
 // Định nghĩa component `SidebarLibraryExplorer`, hiển thị thư viện nhạc trong sidebar.
 export default function SidebarLibraryExplorer() {
   const [playlists, setPlaylists] = useState([])
   const API_BASE_URL = "http://127.0.0.1:8000" // Cấu hình API base URL
-  const navigate = useNavigate()
   const { refreshTrigger, refresh } = useRefresh(); // Lấy giá trị từ context
   const userId = Number(localStorage.getItem("idLogin") ?? 0);
   console.log("userIduserIduserIdxxxx", userId)
+
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
@@ -55,7 +38,6 @@ export default function SidebarLibraryExplorer() {
         {playlists?.map((playlist: any) => (
           <div >
             <LibraryCard
-              isPinned={false} // Mặc định thư viện chưa được ghim.
               key={playlist.ten_danh_sach} // Sử dụng `name` làm key để tránh lỗi React.
               playlist={playlist} // Truyền dữ liệu thư viện vào `LibraryCard`.
             />
