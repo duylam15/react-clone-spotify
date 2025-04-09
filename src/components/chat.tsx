@@ -76,14 +76,16 @@ const ChatButton = () => {
             return ;
         }
         if (socket && message.trim()) {
-            const userData = await getUserInfo("");
+            const idUser = JSON.parse(localStorage.getItem('idLogin'))
+            const userData = await getUserInfo(idUser);
             setUserData({
                 username: userData.ten_hien_thi,
                 email: userData.email,
                 avatar_url: userData.avatar_url
             });
+            console.log(userData)
             const dataToSend = {
-                username: userData.username,
+                username: userData.ten_hien_thi,
                 email: userData.email,
                 avatar_url: userData.avatar_url,
                 message: message,
