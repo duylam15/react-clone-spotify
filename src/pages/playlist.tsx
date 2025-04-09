@@ -38,8 +38,8 @@ export default function PlayList(): React.ReactNode {
   const danhSachPhatId = searchParams.get('danhsachphatid');
   const albumId = searchParams.get('albumid');
   const bxh = searchParams.get('bxh');
-  console.log(songs)
-  // const { refreshTrigger, refresh } = useRefresh();
+  console.log("songssongssongssongs", songs)
+  const { refreshTrigger, refresh } = useRefresh();
   // premium
 
   const [songsPlayedCount, setSongsPlayedCount] = useState(0);
@@ -83,7 +83,7 @@ export default function PlayList(): React.ReactNode {
   let playlistId: any;
   if (danhSachPhatId) {
     playlistId = Number(danhSachPhatId);
-  } else if(albumId){
+  } else if (albumId) {
     playlistId = Number(albumId);
   } else {
     playlistId = bxh;
@@ -96,7 +96,7 @@ export default function PlayList(): React.ReactNode {
         // Lấy danh sách bài hát từ playlist
         if (danhSachPhatId) {
           data = await getSongFromPlayList(playlistId);
-        } else if(albumId){
+        } else if (albumId) {
           data = await getSongAlbum(playlistId);
         } else {
           data = await getSongBXH(playlistId);
@@ -259,7 +259,7 @@ export default function PlayList(): React.ReactNode {
       }
     }
     fetchPlaylist()
-  }, [])
+  }, [refreshTrigger])
 
   useEffect(() => {
     const fetchPlaylistId = async () => {
@@ -269,7 +269,7 @@ export default function PlayList(): React.ReactNode {
         if (danhSachPhatId) {
           response = await axios.get(`${API_BASE_URL}/danhsachphat/${playlistId}/`)
           response = response.data
-        } else if(albumId){
+        } else if (albumId) {
           response = await axios.get(`${API_BASE_URL}/album/${playlistId}/`);
           const albumData = response.data;
 
@@ -376,7 +376,10 @@ export default function PlayList(): React.ReactNode {
   return (
     <div className="flex flex-col w-full ">
       <div className="w-[100%] p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
-        style={{ background: `linear-gradient(to bottom, rgba(255,255,255,0.5) 1%, ${color} 99%)` }}>
+        style={{
+          background: `linear-gradient(to bottom, rgba(255,255,255,0.6) 0.5%, ${color} 99%)`,
+        }}
+      >
         <div className=" ">
           <img ref={imgRef} className="w-[232px] h-[232px] rounded-lg" src={playlistItem?.anh_danh_sach} alt="" />
         </div>
@@ -436,7 +439,7 @@ export default function PlayList(): React.ReactNode {
               <div className="flex items-center gap-2">
                 <img
                   className="w-[50px] h-[50px] object-cover rounded-lg"
-                  src={playlistItem?.anh_danh_sach}
+                  src={song?.anh_bia}
                   alt=""
                 />
                 <div>

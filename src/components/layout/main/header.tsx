@@ -90,7 +90,7 @@ export default function Header(): React.ReactNode {
         </button>
       ) : (
         /* Nếu đã đăng nhập, hiển thị nhóm nút bên phải */
-        <div className="flex h-9 flex-row items-center gap-4">
+        <div className="flex h-2 flex-row items-center gap-4">
           <TooltipWrapper tooltipContent="What's New" side="bottom">
             <div className="flex items-center justify-center">
               <button
@@ -105,7 +105,7 @@ export default function Header(): React.ReactNode {
           <TooltipWrapper tooltipContent="What's New" side="bottom">
             <div className="flex items-center justify-center ">
               <button
-                className="flex items-center justify-center rounded-full bg-black/50 text-s-gray-lighter hover:size-9 hover:text-white mr-8"
+                className="flex items-center justify-center rounded-full bg-black/50 text-s-gray-lighter  hover:text-white"
                 onClick={() => navigate('/feed')}
               >
                 <BellIcon strokeWidth={2} size={24} />

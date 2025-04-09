@@ -28,7 +28,7 @@ export default function Track(): React.ReactNode {
   }, [])
 
 
-  console.log("songsongxxxsong", song?.loi_bai_hat)
+  console.log("songsongxxxsong", song)
 
 
 
@@ -69,6 +69,8 @@ export default function Track(): React.ReactNode {
 
     fetchAlbum();
   }, [song]);
+
+  console.log("albumalbumxx", album)
 
   const audioPlayer: HTMLAudioElement | null = document.querySelector<HTMLAudioElement>('#audio-player');
   const dispatch = useDispatch();
@@ -188,11 +190,14 @@ export default function Track(): React.ReactNode {
     <Spin spinning={loading} tip="Đang đồng bộ lời bài hát...">
       <div className="flex flex-col w-full ">
         <div className="w-[100%]   p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
-          style={{ background: `linear-gradient(to bottom, rgba(255,255,255,0.5) 1%, ${color} 99%)` }}>
+          style={{
+            background: `linear-gradient(to bottom, rgba(255,255,255,0.6) 1%, ${color} 99%)`,
+          }}
+        >
           <div className=" ">
             <img
               ref={imgRef}
-              className="w-[232px] h-[232px] rounded-lg" src={song?.anh_dai_dien} alt="" />
+              className="w-[232px] h-[232px] rounded-lg" src={album?.anh_bia} alt="" />
           </div>
           <div className="">
             <div className="text-[14px] text-white translate-y-[30px]">Song</div>

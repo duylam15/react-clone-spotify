@@ -42,7 +42,7 @@ export default function TrackDisplayer({ artist, song, artistName }: TrackDispla
       }
     }
     fetchAlbum()
-  }, [artist])
+  }, [song])
 
   const currentSong = {
     album: album?.ten_album, // Tên album chứa bài hát

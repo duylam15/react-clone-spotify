@@ -48,7 +48,7 @@ export default function ButtonGroup(): React.ReactNode {
   }, [audioPlayer])
 
   const listAudio: any = useSelector((state: RootState) => state.songs.songs);
-
+  console.log("listAudxxxiolistAudiolistAudio", listAudio)
   const [shuffledList, setShuffledList] = useState([...listAudio]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 

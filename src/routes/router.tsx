@@ -20,6 +20,7 @@ import Premium from '@/pages/premium';
 // Import từ file thứ hai (chỉ lấy phần admin)
 import LayoutDefaultAdmin from '../layout/DefaultLayoutAdmin';
 import Chat from '@/components/chat';
+import Showall from '@/pages/showall';
 
 // Lazy-loaded components từ file thứ hai (chỉ lấy phần admin)
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
@@ -55,6 +56,7 @@ export const router = createBrowserRouter(
       {/* Routes từ file đầu */}
       <Route element={<Layout />} path="/">
         <Route element={<Home />} index />
+        <Route element={<Showall />} path="showall" />
         <Route element={<Search />} path="search" />
         <Route element={<Lyrics />} path="lyrics" />
         <Route element={<Queue />} path="queue" />
@@ -70,7 +72,7 @@ export const router = createBrowserRouter(
       <Route element={<Register />} path="register" />
       <Route element={<ForgotPassword />} path="forgot-password" />
       <Route element={<ResetPassword />} path="reset-password/:uid/:token" />
-      <Route path= "chat" element={<Chat/>}/>
+      <Route path="chat" element={<Chat />} />
 
       {/* Routes admin từ file thứ hai */}
       <Route path="/admin" element={<LayoutDefaultAdmin />}>

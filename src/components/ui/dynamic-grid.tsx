@@ -54,7 +54,7 @@ export default function DynamicGrid<T>({
           </button>
         </Link>
         {/* Nút "Show all" để điều hướng đến danh sách đầy đủ */}
-        <Link to={to ?? '/'}>
+        <Link to="/showall" state={{ items }}>
           <button
             type="button"
             className="box-decoration-slice text-sm font-bold text-s-gray-lighter no-underline hover:underline"
@@ -62,6 +62,7 @@ export default function DynamicGrid<T>({
             Show all
           </button>
         </Link>
+
       </div>
 
       {/* Nếu có mô tả thì hiển thị */}
