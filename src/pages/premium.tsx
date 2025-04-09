@@ -50,7 +50,7 @@ const Premium: React.FC = () => {
 
         const { orderurl } = response.data;
         if (orderurl) {
-          window.location.href = orderurl; // Chuyển hướng đến ZaloPay
+          window.open(orderurl, '_blank'); // Chuyển hướng đến ZaloPay
         } else {
           throw new Error("No order URL returned from ZaloPay");
         }
