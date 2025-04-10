@@ -32,6 +32,7 @@ const Dashboard = () => {
           getSoLuongDSP(),
           getSoLuongNgheSi()
         ]);
+        console.log("Raw data:", nguoiDung, baiHat, danhSachPhat, ngheSi);
 
         setStats([
           { title: "Users", value: nguoiDung.so_luong_nguoi_dung, icon: <UserOutlined />, color: "text-blue-500" },

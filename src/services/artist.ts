@@ -58,3 +58,4 @@ export function convertPlaylistFromBackend(data: any): Playlist {
         description: data.mo_ta || "", // Nếu mô tả trống thì mặc định ""
     };
 }
+

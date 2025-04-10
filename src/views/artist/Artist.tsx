@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Pagination, message, Button, Modal, Form, Input, Upload, Tag, Space, Popconfirm } from "antd";
 import { LockOutlined, SearchOutlined, UnlockOutlined, UploadOutlined } from "@ant-design/icons";
-import { getNgheSi, lockNgheSi, unlockNgheSi, updateNgheSi } from "@/services/ngheSi";
+import { addArtist, getNgheSi, lockNgheSi, unlockNgheSi, updateNgheSi } from "@/services/ngheSi";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 
 interface NgheSi {
   nghe_si_id: number;
@@ -26,6 +28,8 @@ const Artist: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState<NgheSi | null>(null);
   const [form] = Form.useForm();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addForm] = Form.useForm();
 
   useEffect(() => {
     fetchArtists(page, size, searchTerm);
@@ -62,6 +66,31 @@ const Artist: React.FC = () => {
     }
   };
 
+  const handleAddArtist = async () => {
+    try {
+      const values = await addForm.validateFields();
+      const imageUrl = addForm.getFieldValue("anh_dai_dien");
+      if (!imageUrl) {
+        message.error("Vui lòng tải ảnh lên!");   
+        return
+      }
+      console.log("Gửi image url", imageUrl);
+      const payload = {
+        ...values,
+        ngay_sinh: values.ngay_sinh.format("YYYY-MM-DD"),
+        anh_dai_dien: imageUrl,
+      };
+      console.log("values add: ", payload) 
+      await addArtist(payload); // hoặc gọi API thêm mới
+      message.success("Thêm nghệ sĩ thành công!");
+      setIsAddModalOpen(false);
+      addForm.resetFields();
+      fetchArtists(page, size, searchTerm);
+    } catch (error) {
+      message.error("Lỗi khi thêm nghệ sĩ!");
+    }
+  };
+
   const handleToggleStatus = async (artist: NgheSi) => {
     try {
       await updateNgheSi({ is_active: !artist.is_active }, artist.nghe_si_id);
@@ -90,11 +119,31 @@ const Artist: React.FC = () => {
       const data = await res.json();
       console.log("data CLOud: ", data)
       const imageUrl = data.secure_url;
+      console.log("imageUrl: ", imageUrl)
       form.setFieldsValue({ anh_dai_dien: imageUrl });
       message.success("Tải ảnh lên thành công!");
     } catch (error) {
-      console.log(error);
-      message.error("Lỗi khi tải ảnh lên Cloudinary!");
+      message.error("Lỗi khi thêm nghệ sĩ!");
+    }
+  };
+
+  const handleAddFormUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_PRESET);
+
+    try {
+      const res = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      console.log("data CLOud: ", data)
+      const imageUrl = data.secure_url;
+      addForm.setFieldsValue({ anh_dai_dien: imageUrl });
+      message.success("Tải ảnh lên thành công!");
+    } catch (error) {
+      message.error("Lỗi khi thêm nghệ sĩ!");
     }
   };
 
@@ -152,12 +201,21 @@ const Artist: React.FC = () => {
   return (
     <div>
       <h2>Danh sách Nghệ Sĩ</h2>
-      <Input
-        placeholder="Tìm kiếm nghệ sĩ..."
-        prefix={<SearchOutlined />} 
-        onChange={(e) => handleSearch(e.target.value)}
-        style={{ marginBottom: 16, width: 300 }}
-      />
+      <div className="flex justify-between items-center">
+        <Input
+          placeholder="Tìm kiếm nghệ sĩ..."
+          prefix={<SearchOutlined />}
+          onChange={(e) => handleSearch(e.target.value)}
+          style={{ marginBottom: 16, width: 300 }}
+        />
+
+        <Button type="primary" onClick={() => setIsAddModalOpen(true)} style={{ marginBottom: 16 }}>
+          + Thêm nghệ sĩ
+        </Button>
+      </div>
+
+
+
       <Table
         columns={columns}
         dataSource={artists}
@@ -217,6 +275,57 @@ const Artist: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Modal thêm nghệ sĩ */}
+      <Modal
+        title="Thêm Nghệ Sĩ"
+        open={isAddModalOpen}
+        onCancel={() => setIsAddModalOpen(false)}
+        onOk={handleAddArtist}
+      >
+        <Form form={addForm} layout="vertical">
+          <Form.Item name="ten_nghe_si" label="Tên nghệ sĩ" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="ngay_sinh"
+            label="Ngày sinh"
+            rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current > dayjs().endOf("day")}
+            />
+          </Form.Item>
+          <Form.Item name="quoc_gia" label="Quốc gia" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="tieu_su" label="Tiểu sử">
+            <Input.TextArea />
+          </Form.Item>
+
+          <Form.Item name="anh_dai_dien" label="Ảnh đại diện">
+            <Upload
+              beforeUpload={(file) => {
+                handleAddFormUpload(file);
+                return false;
+              }}
+              showUploadList={false}
+            >
+              <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+            </Upload>
+            {addForm.getFieldValue("anh_dai_dien") && (
+              <img
+                src={addForm.getFieldValue("anh_dai_dien")}
+                alt="Ảnh đại diện"
+                style={{ width: 80, height: 80, marginTop: 10, borderRadius: "50%" }}
+              />
+            )}
+          </Form.Item>
+        </Form>
+      </Modal>
+
     </div>
   );
 };
