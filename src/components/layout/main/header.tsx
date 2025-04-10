@@ -91,16 +91,18 @@ export default function Header(): React.ReactNode {
       ) : (
         /* Nếu đã đăng nhập, hiển thị nhóm nút bên phải */
         <div className="flex h-2 flex-row items-center gap-4">
-          <TooltipWrapper tooltipContent="Explore Premium" side="bottom">
-            <div className="flex items-center justify-center">
-              <button
-                className="flex items-center justify-center rounded-full bg-green-500 text-white px-3 py-1.5 transition duration-300 ease-in-out transform hover:bg-green-600 hover:scale-105 whitespace-nowrap"
-                onClick={() => navigate('/premium')} // Điều hướng đến trang `premium`
-              >
-                <span className="font-semibold">Explore Premium</span>
-              </button>
-            </div>
-          </TooltipWrapper>
+          {!user?.la_premium && (
+            <TooltipWrapper tooltipContent="Explore Premium" side="bottom">
+              <div className="flex items-center justify-center">
+                <button
+                  className="flex items-center justify-center rounded-full bg-green-500 text-white px-3 py-1.5 transition duration-300 ease-in-out transform hover:bg-green-600 hover:scale-105 whitespace-nowrap"
+                  onClick={() => navigate('/premium')}
+                >
+                  <span className="font-semibold">Explore Premium</span>
+                </button>
+              </div>
+            </TooltipWrapper>
+          )}
 
           <TooltipWrapper tooltipContent="What's New" side="bottom">
             <div className="flex items-center justify-center ">
