@@ -55,10 +55,11 @@ export default function PlayList(): React.ReactNode {
         const user = await getUserInfo("");
         console.log("User info:", user);
 
-        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
-        setIsPremium(userRes.data.la_premium || false);
+        // const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
+        // setIsPremium(userRes.data.la_premium || false);
+        // alert("setIsPremium: "+userRes.data.la_premium + isPremium)
         console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + isPremium)
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + userRes.data.la_premium)
+        // console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + userRes.data.la_premium)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin user:", error);
       }
@@ -144,13 +145,20 @@ export default function PlayList(): React.ReactNode {
           nghe_si: "Quảng cáo",
           anh_dai_dien: null,
         };
+        const user = await getUserInfo("");
+        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
+        const premiumStatus = userRes.data.la_premium || false;
+        setIsPremium(premiumStatus);
 
         const songsWithAds = [];
         for (let i = 0; i < songDetails.length; i++) {
-          if (songDetails[i].is_premium == 1 && !isPremium)
+          // alert(premiumStatus)
+          if (songDetails[i].is_premium == 1 && !premiumStatus)
             songDetails[i].duong_dan = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
           songsWithAds.push(songDetails[i]);
-          if ((i + 1) % 2 === 0 && !isPremium) {
+          // alert("after: "+isPremium)
+          if ((i + 1) % 2 === 0 && !premiumStatus) {
+            // alert("after 2: "+isPremium)
             songsWithAds.push(adSong); // Chèn quảng cáo sau mỗi 2 bài
           }
         }
