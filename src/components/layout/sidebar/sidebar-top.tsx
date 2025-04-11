@@ -1,5 +1,5 @@
-import { HomeIcon, LibraryBig, SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { HomeIcon, LibraryBig, SearchIcon, Disc } from "lucide-react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import IconLink from "./icon-link";
 import TooltipWrapper from "@/components/ui/tooltip-wrapper";
@@ -95,6 +95,83 @@ export default function SidebarTop() {
   const iconProperties = { size: 26, strokeWidth: 2.5 }
 
 
+  // tạo album
+  const [showAlbumInput, setShowAlbumInput] = useState<boolean>(false);
+  const [albumName, setAlbumName] = useState<string>("");
+  const [artistName, setArtistName] = useState<string>("");
+  const [albumImage, setAlbumImage] = useState<File | null>(null);
+  const [albumImagePreview, setAlbumImagePreview] = useState<string>("");
+  const [albumGenre, setAlbumGenre] = useState<string>("");
+  const [theLoais, setTheLoais] = useState<any[]>([]);
+ 
+
+  console.error("userId for album creation", userId);
+  
+ useEffect(() => {
+    const fetchTheLoais = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/loaibaihat/`);
+        setTheLoais(response.data);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách thể loại:", error);
+      }
+    };
+    fetchTheLoais();
+  }, []);
+
+  const handleAlbumSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+  
+    if (!albumName || !albumImage || !albumGenre || !artistName) {
+      alert("Vui lòng điền đầy đủ thông tin cho album!");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("ten_album", albumName);
+    formData.append("the_loai", albumGenre);
+    formData.append("anh_bia", albumImage); // ✅ Gửi đúng file ảnh
+    formData.append("nguoi_dung_id", userId.toString());
+    formData.append("ten_nghe_si", artistName);
+  
+    setLoading(true);
+  
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/album/create/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      alert("Album đã được tạo thành công!");
+      setAlbumName("");
+      setArtistName("");
+      setAlbumImage(null);
+      setAlbumImagePreview("");
+      setAlbumGenre("");
+      setLoading(false);
+      refresh();
+    }  catch (error: any) {
+      const errorMessage = error.response?.data?.error  ;
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleAlbumImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAlbumImage(file);
+      setAlbumImagePreview(URL.createObjectURL(file));
+      console.log("albumImagePreview", albumImagePreview);
+    }
+  };
+
   return (
     <>
       {loading && (
@@ -126,7 +203,7 @@ export default function SidebarTop() {
                 }
 
                 <div className="flex flex-col items-start mt-4">
-                  <label
+                <label
                     htmlFor="upload"
                     className="w-40 h-10 text-white bg-gray-700 rounded-lg p-2 cursor-pointer hover:bg-gray-600 transition duration-200 flex items-center justify-center"
                   >
@@ -183,6 +260,122 @@ export default function SidebarTop() {
           className="ml-[-2px] cursor-pointer "
         >
           <svg fill="#ababab" height="28px" width="30px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490.00 490.00" stroke="#858585" stroke-width="0.0049"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path d="M227.8,174.1v53.7h-53.7c-9.5,0-17.2,7.7-17.2,17.2s7.7,17.2,17.2,17.2h53.7v53.7c0,9.5,7.7,17.2,17.2,17.2 s17.1-7.7,17.1-17.2v-53.7h53.7c9.5,0,17.2-7.7,17.2-17.2s-7.7-17.2-17.2-17.2h-53.7v-53.7c0-9.5-7.7-17.2-17.1-17.2 S227.8,164.6,227.8,174.1z"></path> <path d="M71.7,71.7C25.5,118,0,179.5,0,245s25.5,127,71.8,173.3C118,464.5,179.6,490,245,490s127-25.5,173.3-71.8 C464.5,372,490,310.4,490,245s-25.5-127-71.8-173.3C372,25.5,310.5,0,245,0C179.6,0,118,25.5,71.7,71.7z M455.7,245 c0,56.3-21.9,109.2-61.7,149s-92.7,61.7-149,61.7S135.8,433.8,96,394s-61.7-92.7-61.7-149S56.2,135.8,96,96s92.7-61.7,149-61.7 S354.2,56.2,394,96S455.7,188.7,455.7,245z"></path> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </g> </g></svg>
+        </div>
+
+
+        {/* Form nhập thông tin album */}
+        {showAlbumInput && (
+          <div className="fixed top-20 left-[300px] transform -translate-x-1/2 bg-gray-800 p-4 rounded-lg shadow-lg z-10">
+            <h3 className="text-white text-2xl font-semibold mb-4 text-center">
+              Tạo Album
+            </h3>
+            <div className="flex flex-col md:flex-row justify-center items-start gap-6">
+              {/* Ảnh preview hoặc input ảnh */}
+              <div>
+                {albumImagePreview ? (
+                  <img
+                    src={albumImagePreview}
+                    alt="Ảnh album"
+                    className="w-40 h-40 object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="w-40 h-40 object-cover flex justify-center items-center rounded-lg bg-black text-gray-400">
+                    Ảnh bìa album
+                  </div>
+                )}
+
+                <div className="flex flex-col items-start mt-4">
+                  <label
+                    htmlFor="upload-album"
+                    className="w-40 h-10 text-white bg-gray-700 rounded-lg p-2 cursor-pointer hover:bg-gray-600 transition duration-200 flex items-center justify-center"
+                  >
+                    Chọn ảnh
+                  </label>
+                  <input
+                    id="upload-album"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAlbumImageChange}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+
+              {/* Các input */}
+              <div className="flex flex-col gap-4 w-full max-w-[350px]">
+              <div className="flex flex-col gap-1">
+          
+          <input
+            id="artist-name"
+            type="text"
+            placeholder="Nghệ Danh"
+            value={artistName}
+            onChange={(e) => setArtistName(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-black text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+                <div className="flex flex-col gap-1">
+          
+                  <input
+                    id="album-name"
+                    type="text"
+                    placeholder="Tên album"
+                    value={albumName}
+                    onChange={(e) => setAlbumName(e.target.value)}
+                    className="px-4 py-2 rounded-lg bg-black text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+
+                
+
+                <div className="flex flex-col gap-1">
+                  
+                <select
+  value={albumGenre}
+  onChange={(e) => setAlbumGenre(e.target.value)}
+  className="px-4 py-2 rounded-lg bg-black text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+>
+  <option value="">Chọn thể loại</option>
+  {theLoais.map((tl) => (
+    <option key={tl.loai_bai_hat_id} value={tl.ten_loai}>
+      {tl.ten_loai}
+    </option>
+  ))}
+</select>
+
+                </div>
+
+                <div className="flex justify-end gap-4">
+                  <button
+                    onClick={() => setShowAlbumInput(false)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    onClick={handleAlbumSubmit}
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-400 transition duration-200"
+                  >
+                    Thêm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Nút mở form nhập thông tin album với icon Disc */}
+        <div
+          onClick={() => setShowAlbumInput(!showAlbumInput)}
+          className="ml-[-2px] cursor-pointer"
+        >
+          <TooltipWrapper side="right" tooltipContent="Create Album">
+            <Disc
+              className="text-s-gray-lighter transition-colors duration-300 hover:text-white"
+              {...iconProperties}
+            />
+          </TooltipWrapper>
         </div>
 
         <div className="relative">

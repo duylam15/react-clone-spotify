@@ -46,7 +46,7 @@ export default function LibraryCard({
       console.error("❌ Lỗi khi xóa danh sách phát:", error);
     }
   };
-
+  console.error("Album anh_danh sach:", anh_danh_sach);
   return (
     <div>
       {isCollapsed ? (

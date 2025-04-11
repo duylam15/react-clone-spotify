@@ -23,7 +23,8 @@ interface BaiHat {
   ngay_phat_hanh: string;  // Định dạng YYYY-MM-DD (ISO)
   nghe_si: number;         // ID nghệ sĩ
   album: number;           // ID album
-  is_active: boolean
+  is_active: boolean;
+  trang_thai_duyet: string;
 }
 interface NgheSi {
   nghe_si_id: number;
@@ -116,6 +117,7 @@ const SongAdmin: React.FC = () => {
       ...song,
       the_loai: song.the_loai,
       ngay_phat_hanh: dayjs(song.ngay_phat_hanh),
+      trang_thai_duyet: song.trang_thai_duyet, 
     });
     setIsModalOpen(true);
   };
@@ -203,6 +205,16 @@ const SongAdmin: React.FC = () => {
         </Tag>
       ),
     },
+    {
+      title: "Trạng thái duyệt",
+      dataIndex: "trang_thai_duyet",
+      key: "trang_thai_duyet",
+      render: (value: string) => {
+        const color = value === "approved" ? "green" : value === "pending" ? "gold" : "red";
+        return <Tag color={color} style={{ fontWeight: "bold" }}>{value.toUpperCase()}</Tag>;
+      }
+    },
+    
     {
       title: "Hành động",
       key: "action",
@@ -311,6 +323,19 @@ const SongAdmin: React.FC = () => {
           <Form.Item name="nghe_si" label="ID nghệ sĩ">
             <Input />
           </Form.Item>
+          {editingSong && (
+                <Form.Item
+                  name="trang_thai_duyet"
+                  label="Trạng thái duyệt"
+                  rules={[{ required: true }]}
+                >
+                  <Select>
+                    <Option value="pending">Pending</Option>
+                    <Option value="approved">Approved</Option>
+                    <Option value="rejected">Rejected</Option>
+                  </Select>
+                </Form.Item>
+              )}
           <Form.Item label="Tệp bài hát">
             <Upload
               beforeUpload={(file) => {

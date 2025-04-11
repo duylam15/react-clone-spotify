@@ -30,7 +30,10 @@ export const addBaiHat = async (formData: FormData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+
 };
+
+
 
 
 export const updateBaiHat = async (formData: FormData, id: number) => {

@@ -1,5 +1,6 @@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import LibraryCard from './library-card/library-card'
+import AlbumCard from './library-card/album-card'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRefresh } from '@/contexts/RefreshContext'
@@ -26,6 +27,21 @@ export default function SidebarLibraryExplorer() {
     fetchPlaylist()
   }, [refreshTrigger, userId]) // 🔥 Chỉ chạy một lần khi component mount
 
+  const [albums, setAlbums] = useState([]);
+
+useEffect(() => {
+  const fetchAlbums = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/album/user/${userId}/`);
+      setAlbums(response.data.albums);
+    } catch (err) {
+      console.error("Error fetching albums:", err);
+    }
+  };
+  fetchAlbums();
+}, [refreshTrigger, userId]);
+
+
   console.log("playlistsplxxxaylistsplaylists", playlists)
 
   return (
@@ -43,6 +59,10 @@ export default function SidebarLibraryExplorer() {
             />
           </div>
         ))}
+        {albums?.map((album: any) => (
+  <AlbumCard key={album.albumName} album={album} />
+        ))}
+
       </div >
     </ScrollArea>
   )
