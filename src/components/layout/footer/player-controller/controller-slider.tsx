@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Slider } from '@/components/ui/slider'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/stores/playlist'
 
 
 export default function ControllerSlider(): React.ReactNode {
@@ -9,6 +11,7 @@ export default function ControllerSlider(): React.ReactNode {
 
   const audioPlayer = document.querySelector<HTMLAudioElement>('#audio-player')
   const sliderReference = useRef<HTMLSpanElement>(null)
+  const { currentSong, isPaused } = useSelector((state: RootState) => state.player);
 
   const duration = audioPlayer?.duration ?? 0
 
@@ -28,6 +31,7 @@ export default function ControllerSlider(): React.ReactNode {
 
   return (
     <Slider
+      disabled={currentSong?.the_loai === "Advertisement"}
       ref={sliderReference}
       defaultValue={defaultValue}
       max={duration}

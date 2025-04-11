@@ -167,7 +167,7 @@ export default function PlayList(): React.ReactNode {
         }
         const songsWithAds2 = [];
         for (let j = 0; j < songsWithAds.length; j++) {
-          songsWithAds[j].bai_hat_id=j+1;
+          songsWithAds[j].bai_hat_id = j + 1;
           songsWithAds2.push(songsWithAds[j]);
         }
 
@@ -192,6 +192,9 @@ export default function PlayList(): React.ReactNode {
   const dispatch = useDispatch();
 
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const listAudio: any = useSelector((state: RootState) => state.songs.songs);
+  console.log("currentSongcurrentSongxx", currentSong?.the_loai)
+
 
   const handleClick = (songId: number, song: Song) => {
     // alert("isPlayingAd: "+isPlayingAd)
@@ -218,28 +221,32 @@ export default function PlayList(): React.ReactNode {
       }
     }
 
-    if (activeSongId === songId) {
-      if (clickCount === 1) {
-        activeSong(songId);
-        dispatch(setCurrentSong(song));
-        setClickCount(0);
-        toggleDetails()
-      } else {
-        setClickCount(1);
-        setTimeout(() => setClickCount(0), 300);
-      }
-    } else {
-      setActiveSongId(songId);
-      if (clickCount === 1) {
-        activeSong(songId);
-        dispatch(setCurrentSong(song));
-        setClickCount(0);
-      } else {
-        setClickCount(1);
-        setTimeout(() => setClickCount(0), 300);
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
+    if (currentSong?.the_loai !== "Advertisement") {
+      if (audioPlayer && !audioPlayer.ended) {
+        if (activeSongId === songId) {
+          if (clickCount === 1) {
+            activeSong(songId);
+            dispatch(setCurrentSong(song));
+            setClickCount(0);
+            toggleDetails()
+          } else {
+            setClickCount(1);
+            setTimeout(() => setClickCount(0), 300);
+          }
+        } else {
+          setActiveSongId(songId);
+          if (clickCount === 1) {
+            activeSong(songId);
+            dispatch(setCurrentSong(song));
+            setClickCount(0);
+          } else {
+            setClickCount(1);
+            setTimeout(() => setClickCount(0), 300);
+          }
+        }
       }
     }
-
     setSongsPlayedCount((prev) => prev + 1); // Tăng số bài đã phát
   };
 
@@ -351,6 +358,7 @@ export default function PlayList(): React.ReactNode {
 
   const imgRef = useRef<HTMLImageElement>(null);
   const [color, setColor] = useState<string>("");
+  const [color2, setColor2] = useState<string>("");
 
   useEffect(() => {
     const img = imgRef.current;
@@ -384,6 +392,8 @@ export default function PlayList(): React.ReactNode {
       b = Math.floor(b / count);
 
       setColor(`rgb(${r}, ${g}, ${b})`);
+      const lighten = (value: any, amount = 50) => Math.min(200, value + amount);
+      setColor2(`rgb(${lighten(r)}, ${lighten(g)}, ${lighten(b)})`);
     };
   }, []);
 
@@ -393,7 +403,7 @@ export default function PlayList(): React.ReactNode {
     <div className="flex flex-col w-full ">
       <div className="w-[100%] p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
         style={{
-          background: `linear-gradient(to bottom, rgba(255,255,255,0.6) 0.5%, ${color} 99%)`,
+          background: `linear-gradient(to bottom, ${color2} 10%, ${color} 90%)`,
         }}
       >
         <div className=" ">
@@ -461,7 +471,7 @@ export default function PlayList(): React.ReactNode {
                 <div>
                   <div
                     className="font-semibold text-white cursor-pointer hover:underline"
-                    onClick={() => navigate(`/track/${song?.bai_hat_id}`)}
+                    onClick={() => navigate(`/track/${song?.bai_hat_id_2}`)}
                   >
                     {song?.ten_bai_hat}
                   </div>

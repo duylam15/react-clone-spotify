@@ -150,6 +150,7 @@ export default function Track(): React.ReactNode {
 
   const imgRef = useRef<HTMLImageElement>(null);
   const [color, setColor] = useState<string>("");
+  const [color2, setColor2] = useState<string>("");
 
   useEffect(() => {
     const img = imgRef.current;
@@ -183,6 +184,8 @@ export default function Track(): React.ReactNode {
       b = Math.floor(b / count);
 
       setColor(`rgb(${r}, ${g}, ${b})`);
+      const lighten = (value: any, amount = 50) => Math.min(200, value + amount);
+      setColor2(`rgb(${lighten(r)}, ${lighten(g)}, ${lighten(b)})`);
     };
   }, []);
 
@@ -191,7 +194,7 @@ export default function Track(): React.ReactNode {
       <div className="flex flex-col w-full ">
         <div className="w-[100%]   p-4 flex justify-start items-center gap-6 rounded-t-[10px]"
           style={{
-            background: `linear-gradient(to bottom, rgba(255,255,255,0.6) 1%, ${color} 99%)`,
+            background: `linear-gradient(to bottom, ${color2} 10%, ${color} 90%)`,
           }}
         >
           <div className=" ">
