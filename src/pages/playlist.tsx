@@ -111,6 +111,7 @@ export default function PlayList(): React.ReactNode {
 
             return {
               bai_hat_id: songRes.bai_hat_id,
+              bai_hat_id_2: songRes.bai_hat_id,
               ten_bai_hat: songRes.ten_bai_hat,
               the_loai: songRes.the_loai,
               duong_dan: songRes.duong_dan,
@@ -120,7 +121,7 @@ export default function PlayList(): React.ReactNode {
               ngay_phat_hanh: format(new Date(songRes.ngay_phat_hanh), "MMM dd, yyyy"),
               album_id: albumRes?.data.album_id,
               ten_album: albumRes?.data.ten_album,
-              anh_bia: albumRes?.data.anh_bia,
+              anh_bia: songRes.url_image || albumRes?.data.anh_bia,
               nghe_si_id: artistRes?.data.nghe_si_id,
               nghe_si: artistRes?.data.ten_nghe_si,
               anh_dai_dien: artistRes?.data.anh_dai_dien,
@@ -131,7 +132,8 @@ export default function PlayList(): React.ReactNode {
 
         // Thêm bài quảng cáo vào danh sách
         const adSong = {
-          bai_hat_id: -12, // ID đặc biệt cho quảng cáo
+          bai_hat_id: -12,
+          bai_hat_id_2: -12, // ID đặc biệt cho quảng cáo
           ten_bai_hat: "Quảng cáo - Premium để bỏ quảng cáo",
           the_loai: "Advertisement",
           duong_dan: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
@@ -140,7 +142,7 @@ export default function PlayList(): React.ReactNode {
           ngay_phat_hanh: format(new Date(), "MMM dd, yyyy"),
           album_id: null,
           ten_album: null,
-          anh_bia: "https://picsum.photos/200", // Hình ảnh cho quảng cáo
+          anh_bia: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQthU5peXNotfJ0VXcbXvEXjv4rEzkqtfJWw&s", // Hình ảnh cho quảng cáo
           nghe_si_id: null,
           nghe_si: "Quảng cáo",
           anh_dai_dien: null,
@@ -155,16 +157,22 @@ export default function PlayList(): React.ReactNode {
           // alert(premiumStatus)
           if (songDetails[i].is_premium == 1 && !premiumStatus)
             songDetails[i].duong_dan = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+          // songDetails[i].bai_hat_id=i+1;
           songsWithAds.push(songDetails[i]);
           // alert("after: "+isPremium)
           if ((i + 1) % 2 === 0 && !premiumStatus) {
             // alert("after 2: "+isPremium)
-            songsWithAds.push(adSong); // Chèn quảng cáo sau mỗi 2 bài
+            songsWithAds.push({ ...adSong }); // Chèn quảng cáo sau mỗi 2 bài
           }
         }
+        const songsWithAds2 = [];
+        for (let j = 0; j < songsWithAds.length; j++) {
+          songsWithAds[j].bai_hat_id=j+1;
+          songsWithAds2.push(songsWithAds[j]);
+        }
 
-        setSongs(songsWithAds);
-        dispatch(setReduxSongs(songsWithAds));
+        setSongs(songsWithAds2);
+        dispatch(setReduxSongs(songsWithAds2));
 
       } catch (err) {
         setError("Không thể tải danh sách bài hát.");
@@ -186,6 +194,7 @@ export default function PlayList(): React.ReactNode {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
   const handleClick = (songId: number, song: Song) => {
+    // alert("isPlayingAd: "+isPlayingAd)
     if (isPlayingAd) return; // Nếu đang phát quảng cáo, chặn phát bài khác
 
     if (!isPremium) {
@@ -434,12 +443,12 @@ export default function PlayList(): React.ReactNode {
       </div>
       <div>
         {songs
-          .filter((song) => song?.bai_hat_id !== -12) // Ẩn bài có id = -12
+          .filter((song) => song?.the_loai !== "Advertisement") // Ẩn bài có id = -12
           .map((song: any, index) => (
             <div
               key={song?.bai_hat_id}
-              onClick={() => handleClick(song?.bai_hat_id, song)}
-              onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
+              onClick={() => handleClick(song?.bai_hat_id_2, song)}
+              onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id_2)}
               className={`grid grid-cols-[1%_28%_21%_22%_10%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
             >
               <div>{index + 1}</div>
