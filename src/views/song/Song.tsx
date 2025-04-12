@@ -1,155 +1,355 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, message, Select } from "antd";
 import axios from "axios";
-
+import { Table, Pagination, message, Button, Modal, Form, Input, Upload, Tag, Space, Popconfirm } from "antd";
+import { LockOutlined, SearchOutlined, UnlockOutlined, UploadOutlined } from "@ant-design/icons";
+import { addBaiHat, getBaiHat_PhanTrang, updateBaiHat } from "@/services/songAPI";
+import { Song } from "@/types/types";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
+import { Select } from "antd";
 const { Option } = Select;
+
+
 
 // Định nghĩa kiểu dữ liệu
 interface BaiHat {
   bai_hat_id: number;
   ten_bai_hat: string;
-  nghe_si: number;
+  the_loai: number;
+  file_bai_hat: string;    // URL có thể phát
+  duong_dan: string;       // URL gốc/lưu trữ
+  loi_bai_hat: string;
+  thoi_luong: number;      // Tính bằng giây
+  ngay_phat_hanh: string;  // Định dạng YYYY-MM-DD (ISO)
+  nghe_si: number;         // ID nghệ sĩ
+  album: number;           // ID album
+  is_active: boolean;
+  trang_thai_duyet: string;
 }
-
 interface NgheSi {
   nghe_si_id: number;
   ten_nghe_si: string;
 }
 
+export interface TheLoai {
+  loai_bai_hat_id: number;
+  ten_loai: string;
+  mo_ta: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
 const SongAdmin: React.FC = () => {
   const [songs, setSongs] = useState<BaiHat[]>([]);
-  const [artists, setArtists] = useState<NgheSi[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedSong, setSelectedSong] = useState<BaiHat | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(5);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSong, setEditingSong] = useState<BaiHat | null>(null);
+  const [form] = Form.useForm();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [updating, setUpdating] = useState(false);
+
+  const [theLoais, setTheLoais] = useState<TheLoai[]>([]);
 
   useEffect(() => {
-    fetchSongs();
-    fetchArtists();
-  }, []);
+    fetchSongs(page, size, searchTerm);
+    fetchTheLoais();
+  }, [page, size, searchTerm]);
 
-  // Lấy danh sách bài hát
-  const fetchSongs = async () => {
+  const fetchTheLoais = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/baihat/baihat/");
-      if (Array.isArray(response.data)) {
-        setSongs(response.data);
-      } else {
-        console.error("API không trả về mảng!", response.data);
-        setSongs([]);
-      }
+      const response = await axios.get("http://localhost:8000/loaibaihat/");
+      setTheLoais(response.data);
     } catch (error) {
-      console.error("Lỗi khi tải bài hát:", error);
-      setSongs([]);
+      message.error("Lỗi khi tải danh sách thể loại!");
     }
   };
 
-  // Lấy danh sách nghệ sĩ
-  const fetchArtists = async () => {
+  const fetchSongs = async (page: number, size: number, search: string) => {
+    setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8000/api/nghesi/list/");
-      if (Array.isArray(response.data)) {
-        setArtists(response.data);
-      } else {
-        console.error("API không trả về mảng!", response.data);
-        setArtists([]);
-      }
+      const response = await getBaiHat_PhanTrang(page, size, search);
+      setSongs(response.data);
+      setTotal(response.total_items);
     } catch (error) {
-      console.error("Lỗi khi tải nghệ sĩ:", error);
-      setArtists([]);
+      message.error("Lỗi khi tải danh sách nghệ sĩ!");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getArtistName = (nghe_si_id: string | number) => {
-    const artist = artists.find((a) => a.nghe_si_id === Number(nghe_si_id)); // Chuyển về number
-    return artist ? artist.ten_nghe_si : "Không xác định";
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setPage(0);
   };
 
-  const handleEdit = (record: BaiHat) => {
-    setSelectedSong(record);
-    setIsModalVisible(true);
-  };
+  function formatDuration(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
 
-  const handleDelete = async (bai_hat_id: number) => {
-    try {
-      await axios.delete(`http://localhost:8000/baihat/baihat/${bai_hat_id}/`);
-      message.success("Xóa bài hát thành công!");
-      fetchSongs();
-    } catch (error) {
-      message.error("Lỗi khi xóa bài hát!");
+    let result = [];
+
+    if (hours > 0) {
+      result.push(`${hours} tiếng`);
     }
+    if (minutes > 0) {
+      result.push(`${minutes} phút`);
+    }
+    if (secs > 0 || result.length === 0) {
+      result.push(`${secs} giây`);
+    }
+
+    return result.join(" ");
+  }
+
+
+  console.log("Danh sách bài hát:", songs); // Kiểm tra dữ liệu
+
+  const showEditModal = (song: BaiHat) => {
+    setEditingSong(song);
+    setSelectedFile(null); // reset file mỗi khi mở modal
+    form.setFieldsValue({
+      ...song,
+      the_loai: song.the_loai,
+      ngay_phat_hanh: dayjs(song.ngay_phat_hanh),
+      trang_thai_duyet: song.trang_thai_duyet, 
+    });
+    setIsModalOpen(true);
   };
 
-  const handleUpdate = async (values: BaiHat) => {
-    if (!selectedSong) return;
-    console.log("Giá trị cập nhật:", values); // Kiểm tra dữ liệu
+  const handleSubmit = async () => {
     try {
-      await axios.put(
-        `http://localhost:8000/baihat/baihat/capnhat/${selectedSong.bai_hat_id}/`,
-        { ...values, nghe_si: Number(values.nghe_si) } // Đảm bảo là số
-      );
-      message.success("Cập nhật bài hát thành công!");
-      setIsModalVisible(false);
-      fetchSongs();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật bài hát:", error);
-      message.error("Lỗi khi cập nhật bài hát!");
-    }
-  };
+      const values = await form.validateFields();
   
+      // Kiểm tra ngày
+      const today = dayjs();
+      if (values.ngay_phat_hanh && dayjs(values.ngay_phat_hanh).isAfter(today)) {
+        message.error("Ngày phát hành không được vượt quá hôm nay!");
+        return;
+      }
+  
+      setUpdating(true);
+      const formData = new FormData();
+  
+      for (const key in values) {
+        if (key === "ngay_phat_hanh") {
+          formData.append(key, values[key].format("YYYY-MM-DD"));
+        } else {
+          formData.append(key, values[key]);
+        }
+      }
+  
+      if (selectedFile) {
+        formData.append("file_bai_hat", selectedFile);
+      }
+  
+      if (editingSong) {
+        // 👉 Nếu đang sửa
+        await updateBaiHat(formData, editingSong.bai_hat_id);
+        message.success("Cập nhật bài hát thành công!");
+      } else {
+        // 👉 Nếu đang thêm mới
+        await addBaiHat(formData);
+        message.success("Thêm bài hát thành công!");
+      }
+  
+      setIsModalOpen(false);
+      fetchSongs(page, size, searchTerm);
+      setSelectedFile(null);
+      form.resetFields();
+    } catch (error) {
+      message.error("Lỗi khi gửi bài hát!");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleToggleStatus = async (song: BaiHat) => {
+    try {
+      await updateBaiHat({ is_active: !song.is_active }, song.bai_hat_id);
+      message.success("Cập nhật trạng thái thành công!");
+      fetchSongs(page, size, searchTerm);
+    } catch (error) {
+      message.error("Lỗi khi cập nhaật trạng thái!");
+    }
+  };
+
 
   const columns = [
     { title: "ID", dataIndex: "bai_hat_id", key: "bai_hat_id" },
     { title: "Tên bài hát", dataIndex: "ten_bai_hat", key: "ten_bai_hat" },
     {
-      title: "Nghệ sĩ",
-      dataIndex: "nghe_si",
-      key: "nghe_si",
-      render: (nghe_si: number) => {
-        console.log("ID nghệ sĩ:", nghe_si);
-        return getArtistName(nghe_si);
+      title: "Thể loại", dataIndex: "the_loai", key: "the_loai", render: (_: any, record: BaiHat) => {
+        const loai = theLoais.find((tl) => tl.loai_bai_hat_id == record.the_loai);
+        return loai ? loai.ten_loai : record.the_loai;
       },
     },
+    { title: "Thời lượng", dataIndex: "thoi_luong", key: "thoi_luong", render: (seconds: number) => formatDuration(seconds) },
+    { title: "ID nghệ sĩ", dataIndex: "nghe_si", key: "nghe_si" },
+    {
+      title: "Ngày phát hành", dataIndex: "ngay_phat_hanh", key: "ngay_phat_hanh",
+      render: (text: string) => new Date(text).toLocaleDateString("vi-VN"),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "is_active",
+      key: "is_active",
+      render: (isActive: boolean) => (
+        <Tag color={isActive ? "green" : "red"} style={{ fontWeight: "bold" }}>
+          {isActive ? "Active" : "Inactive"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Trạng thái duyệt",
+      dataIndex: "trang_thai_duyet",
+      key: "trang_thai_duyet",
+      render: (value: string) => {
+        const color = value === "approved" ? "green" : value === "pending" ? "gold" : "red";
+        return <Tag color={color} style={{ fontWeight: "bold" }}>{value.toUpperCase()}</Tag>;
+      }
+    },
+    
     {
       title: "Hành động",
       key: "action",
-      render: (record: BaiHat) => (
-        <>
-          <Button type="primary" onClick={() => handleEdit(record)}>Sửa</Button>
-          <Button type="primary" danger onClick={() => handleDelete(record.bai_hat_id)}>Xóa</Button>
-        </>
+      render: (_, record: BaiHat) => (
+        <div className="action-buttons">
+          <Button type="link" onClick={() => showEditModal(record)} className="edit-button">
+            Sửa
+          </Button>
+          <Popconfirm
+            title={`Bạn có chắc muốn ${record.is_active ? "khóa" : "mở khóa"} bài hát này?`}
+            onConfirm={() => handleToggleStatus(record)}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Button
+              type="link"
+              danger={!record.is_active}
+              className="lock-button"
+              icon={record.is_active ? <LockOutlined /> : <UnlockOutlined />}
+            >
+              {record.is_active ? "Khóa" : "Mở khóa"}
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
 
   return (
     <div>
-      <h2>Quản lý Bài Hát</h2>
-      <Table columns={columns} dataSource={songs} rowKey="bai_hat_id" />
-
-      {/* Modal cập nhật */}
-      <Modal
-        title="Cập nhật bài hát"
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null}
+      <h2>Danh sách bài hát</h2>
+      <div className="flex justify-between items-center ">
+      <Input
+        placeholder="Tìm kiếm bài hát..."
+        prefix={<SearchOutlined />}
+        onChange={(e) => handleSearch(e.target.value)}
+        style={{ marginBottom: 16, width: 300 }}
+      />
+      <Button
+        type="primary"
+        style={{ marginBottom: 16 }}
+        onClick={() => {
+          form.resetFields();
+          setEditingSong(null);
+          setSelectedFile(null);
+          setIsModalOpen(true);
+        }}
       >
-        <Form initialValues={selectedSong!} onFinish={handleUpdate}>
+        Thêm bài hát
+      </Button>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={songs}
+        rowKey="nghe_si_id"
+        loading={loading}
+        pagination={false}
+      />
+      <Pagination
+        current={page + 1}
+        pageSize={size}
+        total={total}
+        onChange={(p) => setPage(p - 1)}
+        showSizeChanger={false}
+        showQuickJumper
+        style={{ marginTop: 16, textAlign: "right" }}
+      />
+
+      {/* Modal chỉnh sửa bài hát */}
+      <Modal
+        title={editingSong ? "Chỉnh sửa bài hát" : "Thêm bài hát"}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleSubmit}
+        confirmLoading={updating} // 👉 hiệu ứng loading
+      >
+        <Form form={form} layout="vertical" encType="multipart/form-data">
           <Form.Item name="ten_bai_hat" label="Tên bài hát" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="nghe_si" label="Nghệ sĩ" rules={[{ required: true }]}>
-            <Select>
-              {artists.map((artist) => (
-                <Option key={artist.nghe_si_id} value={artist.nghe_si_id}>
-                  {artist.ten_nghe_si}
+          <Form.Item
+            name="the_loai"
+            label="Thể loại"
+            rules={[{ required: true, message: "Vui lòng chọn thể loại!" }]}
+          >
+            <Select placeholder="Chọn thể loại">
+              {theLoais.map((tl) => (
+                <Option key={tl.loai_bai_hat_id} value={tl.loai_bai_hat_id}>
+                  {tl.ten_loai}
                 </Option>
               ))}
             </Select>
           </Form.Item>
-          <Button type="primary" htmlType="submit">Lưu</Button>
+
+          <Form.Item
+            name="ngay_phat_hanh"
+            label="Ngày phát hành"
+            rules={[{ required: true, message: "Vui lòng chọn ngày phát hành!" }]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current > dayjs().endOf("day")}
+            />
+          </Form.Item>
+          <Form.Item name="nghe_si" label="ID nghệ sĩ">
+            <Input />
+          </Form.Item>
+          {editingSong && (
+                <Form.Item
+                  name="trang_thai_duyet"
+                  label="Trạng thái duyệt"
+                  rules={[{ required: true }]}
+                >
+                  <Select>
+                    <Option value="pending">Pending</Option>
+                    <Option value="approved">Approved</Option>
+                    <Option value="rejected">Rejected</Option>
+                  </Select>
+                </Form.Item>
+              )}
+          <Form.Item label="Tệp bài hát">
+            <Upload
+              beforeUpload={(file) => {
+                setSelectedFile(file);
+                return false; // Ngăn Ant Design upload tự động
+              }}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Chọn file nhạc</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </div >
   );
 };
 

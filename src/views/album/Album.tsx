@@ -156,6 +156,17 @@ const Album: React.FC = () => {
         </Tag>
       ),
     },
+    {
+      title: "Trạng thái duyệt",
+      dataIndex: "trang_thai_duyet",
+      key: "trang_thai_duyet",
+      render: (status: string) => {
+        let color = status === "pending" ? "orange" : status === "approved" ? "green" : "red";
+        let label = status === "pending" ? "Chờ duyệt" : status === "approved" ? "Đã duyệt" : "Từ chối";
+        return <Tag color={color} style={{ fontWeight: "bold" }}>{label}</Tag>;
+      }
+    },
+    
     // {
     //   title: "Hành động",
     //   key: "action",
@@ -235,6 +246,7 @@ const Album: React.FC = () => {
           <Form.Item name="ngay_phat_hanh" label="Ngày phát hành" rules={[{ required: true }]}>
             <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
           </Form.Item>
+          
           <Form.Item name="anh_bia" label="Ảnh bìa">
             <Upload beforeUpload={(file) => { handleUpload(file); return false; }} showUploadList={false}>
               <Button icon={<UploadOutlined />}>Chọn ảnh</Button>

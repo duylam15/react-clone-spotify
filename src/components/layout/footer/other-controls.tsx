@@ -1,4 +1,4 @@
-import { ListMusicIcon, Mic2Icon, MonitorSpeaker, PlaySquareIcon } from 'lucide-react'
+import { MonitorPlay, Mic2Icon, MonitorSpeaker, PlaySquareIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ControlButton from '@/components/ui/control-button'
 import { useAppControllerStore } from '@/features/appControllerStore'
@@ -18,9 +18,8 @@ export default function OtherControls(): React.ReactNode {
   return (
     <div className="flex w-auto flex-row items-center">
       <ControlButton Icon={PlaySquareIcon} onClick={() => toggleDetails(!isDetailsOpen)} tooltipText="Now Playing View" button />
-      <ControlButton Icon={Mic2Icon} onClick={openLyrics} tooltipText="Lyrics" button />
-      <ControlButton Icon={ListMusicIcon} onClick={openQueue} tooltipText="Queue" button />
-      <ControlButton Icon={MonitorSpeaker} onClick={() => { }} button />
+      {/* <ControlButton Icon={Mic2Icon} onClick={openLyrics} tooltipText="Lyrics" button /> */}
+      <ControlButton Icon={MonitorPlay} onClick={openQueue} tooltipText="Video" button />
       <VolumeController />
     </div>
   )

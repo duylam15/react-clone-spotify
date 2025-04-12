@@ -41,3 +41,15 @@ export const unlockNgheSi = async (idNgheSi: number) => {
     }
 };
 
+
+export const addArtist = async (data: any) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/api/nghesi/`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error add artists", error);
+        throw error;
+    }
+};
+
+

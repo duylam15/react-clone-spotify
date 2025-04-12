@@ -48,11 +48,14 @@ export default function Home(): React.ReactNode {
   useEffect(() => {
     const fetchDanhSachAlbum = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/album/`)
+        const response = await axios.get('http://127.0.0.1:8000/album/');
         const albums: Album[] = response.data;
-
+  
+        // Lọc các album có trang_thai_duyet là 'approved'
+        const approvedAlbums = albums.filter((album) => album.trang_thai_duyet === 'approved');
+  
         // Map từ Album thành Playlist
-        const playlists: any = albums.map((album) => ({
+        const playlists: any = approvedAlbums.map((album) => ({
           danh_sach_phat_id: null, // Hoặc bạn muốn khác thì chỉnh
           album_id: album.album_id,
           ten_danh_sach: album.ten_album,
@@ -61,18 +64,18 @@ export default function Home(): React.ReactNode {
           description: `Phát hành ngày ${album.ngay_phat_hanh}`, // Bạn tự customize
           order: 0, // Hoặc undefined nếu chưa cần
         }));
-
-        setDanhSachAlbum(playlists)
+  
+        setDanhSachAlbum(playlists);
       } catch (err: any) {
-        setError(err.message)
-        setDanhSachAlbum([])
+        setError(err.message);
+        setDanhSachAlbum([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-
-    fetchDanhSachAlbum()
-  }, [])
+    };
+  
+    fetchDanhSachAlbum();
+  }, []);
 
   useEffect(() => {
     const fetchDanhSachBXH = async () => {

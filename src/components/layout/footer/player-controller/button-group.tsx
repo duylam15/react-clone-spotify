@@ -116,10 +116,15 @@ export default function ButtonGroup(): React.ReactNode {
   };
 
   const onPrevious = useCallback((listAudio: any, currentIndex: any) => {
+    if (listAudio[currentIndex].the_loai === "Advertisement") {
+      alert("Không thể next quảng cáo!")
+      return;
+    }
     if (isShuffle) {
       playAudio(currentShuffledId - 1);
       currentShuffledId -= 1;
     } else {
+      // alert(currentIndex)
       playAudioNoShuffle(currentIndex - 1, listAudio);
       setCurrentIndex(currentIndex - 1);
     }
@@ -165,10 +170,19 @@ export default function ButtonGroup(): React.ReactNode {
 
 
   const onNext = useCallback((listAudio: any, currentIndex: any) => {
+    const audioPlayer = document.querySelector<HTMLAudioElement>("#audio-player");
+    if (listAudio[currentIndex].the_loai === "Advertisement") {
+      if (audioPlayer && !audioPlayer.ended) {
+        alert("🔕 Không thể next quảng cáo khi đang phát!");
+        return;
+      }
+    }
+
     if (isShuffle) {
       playAudio(currentShuffledId + 1);
       currentShuffledId += 1;
     } else {
+      console.log(listAudio)
       playAudioNoShuffle(currentIndex + 1, listAudio);
       setCurrentIndex(currentIndex + 1);
     }

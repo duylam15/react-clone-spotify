@@ -106,6 +106,7 @@ export default function Queue() {
   };
 
 
+  if (!currentSong) return <div className='ml-10'>Vui lòng chọn bài hát</div>; // Không render gì nếu chưa có bài hát
 
   return (
     <div className="w-full h-[full]  relative flex flex-col justify-start items-center">
