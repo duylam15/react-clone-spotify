@@ -48,7 +48,7 @@ export default function ButtonGroup(): React.ReactNode {
   }, [audioPlayer])
 
   const listAudio: any = useSelector((state: RootState) => state.songs.songs);
-
+  console.log("listAudxxxiolistAudiolistAudio", listAudio)
   const [shuffledList, setShuffledList] = useState([...listAudio]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -218,23 +218,3 @@ export default function ButtonGroup(): React.ReactNode {
     </div>
   )
 }
-
-
-// Tóm tắt chức năng của từng phần:
-// Quản lý trạng thái trình phát nhạc
-
-// Sử dụng useState để lưu trạng thái phát / dừng nhạc(isPaused).
-// Sử dụng usePlayerControllerStore để lấy trạng thái và thao tác lặp / ngẫu nhiên từ store.
-// Lấy phần tử < audio > từ DOM để điều khiển phát nhạc.
-// Hàm xử lý sự kiện
-
-// onClickPlay: Dừng hoặc phát nhạc khi nhấn nút.
-//   onShuffle: Chuyển đổi chế độ phát ngẫu nhiên.
-//     onRepeat: Chuyển đổi chế độ lặp lại.
-//       onPrevious: Chuyển về bài hát trước.
-//         onNext: Chuyển sang bài hát tiếp theo.
-// Giao diện điều khiển
-
-// Gồm các nút phát / dừng, chuyển bài, chế độ phát ngẫu nhiên, chế độ lặp lại.
-// Các nút được thiết kế bằng các component UI tùy chỉnh(ControlButton, ControlSwitch).
-// 🔥 Tóm lại: Đây là một nhóm nút điều khiển nhạc với tính năng phát / dừng, chuyển bài, lặp lại, phát ngẫu nhiên, sử dụng React hook để quản lý trạng thái và tối ưu hiệu suất. 🚀

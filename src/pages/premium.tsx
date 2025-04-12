@@ -50,7 +50,7 @@ const Premium: React.FC = () => {
 
         const { orderurl } = response.data;
         if (orderurl) {
-          window.location.href = orderurl; // Chuyển hướng đến ZaloPay
+          window.open(orderurl, '_blank'); // Chuyển hướng đến ZaloPay
         } else {
           throw new Error("No order URL returned from ZaloPay");
         }
@@ -188,7 +188,7 @@ const Premium: React.FC = () => {
               <li>Cancel anytime</li>
               <li>Subscribe or one-time payment</li>
             </ul>
-            <button className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-300">
+            <button className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-300" onClick={handleGetStarted}>
               Try free for 2 months
             </button>
           </div>

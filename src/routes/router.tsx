@@ -22,6 +22,8 @@ import Premium from '@/pages/premium';
 import LayoutDefaultAdmin from '../layout/DefaultLayoutAdmin';
 import Chat from '@/components/chat';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Showall from '@/pages/showall';
+import PublicRoute from '@/components/PublicRoute';
 
 // Lazy-loaded components từ file thứ hai (chỉ lấy phần admin)
 const Dashboard = React.lazy(() => import('../views/dashboard/Dashboard'));
@@ -64,11 +66,12 @@ export const router = createBrowserRouter(
         path="/"
       >
         <Route element={<Home />} index />
+        <Route element={<Showall />} path="showall" />
         <Route element={<Search />} path="search" />
         <Route element={<Lyrics />} path="lyrics" />
         <Route element={<Queue />} path="queue" />
         <Route element={<Feed />} path="feed" />
-        <Route element={<PlayList />} path="playlist/:id" />
+        <Route element={<PlayList />} path="playlist" />
         <Route element={<Track />} path="track/:id" />
         <Route element={<Premium />} path="premium" />
         <Route
@@ -83,10 +86,10 @@ export const router = createBrowserRouter(
 
 
 
-      <Route element={<Login />} path="login" />
-      <Route element={<Register />} path="register" />
-      <Route element={<ForgotPassword />} path="forgot-password" />
-      <Route element={<ResetPassword />} path="reset-password/:uid/:token" />
+      <Route element={<PublicRoute><Login /></PublicRoute>} path="login" />
+      <Route element={<PublicRoute><Register /></PublicRoute>} path="register" />
+      <Route element={<PublicRoute><ForgotPassword /></PublicRoute>} path="forgot-password" />
+      <Route element={<PublicRoute><ResetPassword /></PublicRoute>} path="reset-password/:uid/:token" />
 
       {/* Routes admin  */}
       <Route
