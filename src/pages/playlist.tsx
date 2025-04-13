@@ -40,12 +40,12 @@ export default function PlayList(): React.ReactNode {
   const userId = Number(localStorage.getItem("idLogin"))
 
   const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false);
-const [form] = Form.useForm();
-const [selectedFile, setSelectedFile] = useState<File | null>(null);
-const [updating, setUpdating] = useState(false);
-const [theLoais, setTheLoais] = useState<any[]>([]);
+  const [form] = Form.useForm();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const [theLoais, setTheLoais] = useState<any[]>([]);
 
-const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
+  const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
   //-------------Phân loại route----------------------
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -60,8 +60,8 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
   const [isPlayingAd, setIsPlayingAd] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
 
-   //Fetch danh sách thể loại
-   useEffect(() => {
+  //Fetch danh sách thể loại
+  useEffect(() => {
     const fetchTheLoais = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/loaibaihat/`);
@@ -83,10 +83,10 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         console.error("Lỗi khi fetch album pending:", error);
       }
     };
-  
+
     fetchPendingAlbums();
   }, []);
-  
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -98,10 +98,10 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         const user = await getUserInfo("");
         console.log("User info:", user);
 
-        const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
-        setIsPremium(userRes.data.la_premium || false);
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + isPremium)
-        console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + userRes.data.la_premium)
+        // const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
+        // setIsPremium(userRes.data.la_premium || false);
+        // console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + isPremium)
+        // console.log("Aaaaaaaaaaaaaaaaaaaaaaa: " + userRes.data.la_premium)
       } catch (error) {
         console.error("Lỗi khi lấy thông tin user:", error);
       }
@@ -154,6 +154,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
 
           return {
             bai_hat_id: songRes.bai_hat_id,
+            bai_hat_id_2: songRes.bai_hat_id,
             ten_bai_hat: songRes.ten_bai_hat,
             the_loai: songRes.the_loai,
             duong_dan: songRes.duong_dan,
@@ -163,7 +164,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
             ngay_phat_hanh: format(new Date(songRes.ngay_phat_hanh), "MMM dd, yyyy"),
             album_id: albumRes?.data.album_id,
             ten_album: albumRes?.data.ten_album,
-            anh_bia: albumRes?.data.anh_bia,
+            anh_bia: songRes.url_image || albumRes?.data.anh_bia,
             nghe_si_id: artistRes?.data.nghe_si_id,
             nghe_si: artistRes?.data.ten_nghe_si,
             anh_dai_dien: artistRes?.data.anh_dai_dien,
@@ -175,6 +176,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
       // Thêm bài quảng cáo vào danh sách
       const adSong = {
         bai_hat_id: -12, // ID đặc biệt cho quảng cáo
+        bai_hat_id_2: -12,
         ten_bai_hat: "Quảng cáo - Premium để bỏ quảng cáo",
         the_loai: "Advertisement",
         duong_dan: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
@@ -183,24 +185,33 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         ngay_phat_hanh: format(new Date(), "MMM dd, yyyy"),
         album_id: null,
         ten_album: null,
-        anh_bia: "https://picsum.photos/200", // Hình ảnh cho quảng cáo
+        anh_bia: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQthU5peXNotfJ0VXcbXvEXjv4rEzkqtfJWw&s", // Hình ảnh cho quảng cáo
         nghe_si_id: null,
         nghe_si: "Quảng cáo",
         anh_dai_dien: null,
       };
+      const user = await getUserInfo("");
+      const userRes = await axios.get(`http://127.0.0.1:8000/nguoidung/api/chi-tiet-nguoi-dung/${user.id}`);
+      const premiumStatus = userRes.data.la_premium || false;
 
       const songsWithAds = [];
       for (let i = 0; i < songDetails.length; i++) {
-        if (songDetails[i].is_premium == 1 && !isPremium)
+        // alert("isPremium2: "+premiumStatus)
+        if (songDetails[i].is_premium == 1 && !premiumStatus)
           songDetails[i].duong_dan = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
         songsWithAds.push(songDetails[i]);
-        if ((i + 1) % 2 === 0 && !isPremium) {
+        if ((i + 1) % 2 === 0 && !premiumStatus) {
           songsWithAds.push(adSong); // Chèn quảng cáo sau mỗi 2 bài
         }
       }
+      const songsWithAds2 = [];
+      for (let j = 0; j < songsWithAds.length; j++) {
+        songsWithAds[j].bai_hat_id = j + 1;
+        songsWithAds2.push(songsWithAds[j]);
+      }
 
-      setSongs(songsWithAds);
-      dispatch(setReduxSongs(songsWithAds));
+      setSongs(songsWithAds2);
+      dispatch(setReduxSongs(songsWithAds2));
 
     } catch (err) {
       setError("Không thể tải danh sách bài hát.");
@@ -209,7 +220,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
     }
   };
   useEffect(() => {
-    
+
 
     fetchSongs();
   }, [playlistId]);
@@ -306,7 +317,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
     fetchPlaylist()
   }, [refreshTrigger])
 
-  
+
 
   useEffect(() => {
     const fetchPlaylistId = async () => {
@@ -320,7 +331,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
           response = await axios.get(`${API_BASE_URL}/album/${playlistId}/`);
           const albumData = response.data;
           const artistResponse = await axios.get(`${API_BASE_URL}/api/nghesi/${albumData.nghe_si}`);
-          
+
           // Convert từ album -> playlist format
           playlistData = {
             anh_danh_sach: albumData.anh_bia,
@@ -453,17 +464,17 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
       }
       const response = await addBaiHat(formData);
       const newSongId = response.data.bai_hat_id;
-  
+
       if (danhSachPhatId) {
         await handleAddSongToPlaylist(newSongId, playlistId);
       }
-  
+
       message.success("Thêm bài hát thành công!");
       setIsAddSongModalOpen(false);
       setSelectedFile(null);
       form.resetFields();
       refresh();
-      fetchSongs(); 
+      fetchSongs();
     } catch (error) {
       message.error("Lỗi khi thêm bài hát!");
       console.error("Error adding song:", error);
@@ -483,18 +494,18 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
           <img ref={imgRef} className="w-[232px] h-[232px] rounded-lg" src={playlistItem?.anh_danh_sach} alt="" />
         </div>
         <div className="">
-        <div className="text-[14px] text-white translate-y-[30px]">
-          {albumId ? "Album" : "Playlist"}
-        </div>
-        <div className="font-black text-[100px] text-white ml-[-4px]">
-          {playlistItem.ten_danh_sach}
-        </div>
-        <div className="text-white-400 text-[14px]">{playlistItem.mo_ta}</div>
-        <div className="text-white-400 text-[14px]">
-          {albumId
-            ? `${playlistItem.ten_nghe_si || "Unknown Artist"} • ${playlistItem.the_loai || "Unknown Genre"}`
-            : `about ${formatSecondsToTime(Number(playlistItem?.tong_thoi_luong))}`}
-        </div>
+          <div className="text-[14px] text-white translate-y-[30px]">
+            {albumId ? "Album" : "Playlist"}
+          </div>
+          <div className="font-black text-[100px] text-white ml-[-4px]">
+            {playlistItem.ten_danh_sach}
+          </div>
+          <div className="text-white-400 text-[14px]">{playlistItem.mo_ta}</div>
+          <div className="text-white-400 text-[14px]">
+            {albumId
+              ? `${playlistItem.ten_nghe_si || "Unknown Artist"} • ${playlistItem.the_loai || "Unknown Genre"}`
+              : `about ${formatSecondsToTime(Number(playlistItem?.tong_thoi_luong))}`}
+          </div>
         </div>
       </div>
       <div className="w-[100%]  bg-black-500 p-4 pb-0 mt-4 pt-0 rounded-b-[10px] flex justify-between items-center gap-8">
@@ -513,7 +524,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
             </svg>
           </div>
         </div>
-        
+
         <div>
           <svg className="w-8 h-8 text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5" />
@@ -521,21 +532,21 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         </div>
       </div>
       <div className="flex justify-end items-center gap-8">
-  {( (albumId && pendingAlbumIds.includes(Number(albumId)))) && (
-    <Button
-      type="primary"
-      onClick={() => {
-        form.resetFields();
-        setSelectedFile(null);
-        setIsAddSongModalOpen(true);
-      }}
-    >
-      Thêm bài hát
-    </Button>
-  )}
-</div>
+        {((albumId && pendingAlbumIds.includes(Number(albumId)))) && (
+          <Button
+            type="primary"
+            onClick={() => {
+              form.resetFields();
+              setSelectedFile(null);
+              setIsAddSongModalOpen(true);
+            }}
+          >
+            Thêm bài hát
+          </Button>
+        )}
+      </div>
 
-      
+
       <div className="grid grid-cols-[1%_28%_21%_22%_10%_10%] gap-4  text-gray-300 pl-4 pb-2 ml-6 mr-10 mb-3 mt-5 border-b border-gray-600 ">
         <div className="">#</div>
         <div className="">Title</div>
@@ -549,12 +560,12 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
       </div>
       <div>
         {songs
-          .filter((song) => song?.bai_hat_id !== -12) // Ẩn bài có id = -12
+          .filter((song) => song?.the_loai !== "Advertisement") // Ẩn bài có id = -12
           .map((song: any, index) => (
             <div
               key={song?.bai_hat_id}
-              onClick={() => handleClick(song?.bai_hat_id, song)}
-              onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id)}
+              onClick={() => handleClick(song?.bai_hat_id_2, song)}
+              onContextMenu={(e) => handleRightClick(e, song?.bai_hat_id_2)}
               className={`grid grid-cols-[1%_28%_21%_22%_10%_10%] items-center gap-4 text-gray-300 pl-4 ml-6 mr-10 mb-3 pt-1 pb-1 transition rounded-[10px] ${currentSong?.bai_hat_id === song?.bai_hat_id ? "bg-gray-600" : "hover:bg-gray-800"}`}
             >
               <div>{index + 1}</div>
@@ -612,49 +623,49 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         </div>
       )}
       <Modal
-  title="Thêm bài hát"
-  open={isAddSongModalOpen}
-  onCancel={() => setIsAddSongModalOpen(false)}
-  onOk={handleSubmitSong}
-  confirmLoading={updating}
->
-  <Form form={form} layout="vertical" encType="multipart/form-data">
-    <Form.Item name="ten_bai_hat" label="Tên bài hát" rules={[{ required: true, message: "Vui lòng nhập tên bài hát!" }]}>
-      <Input />
-    </Form.Item>
-    <Form.Item name="the_loai" label="Thể loại" rules={[{ required: true, message: "Vui lòng chọn thể loại!" }]}>
-      <Select placeholder="Chọn thể loại">
-        {theLoais.map((tl) => (
-          <Select.Option key={tl.loai_bai_hat_id} value={tl.loai_bai_hat_id}>
-            {tl.ten_loai}
-          </Select.Option>
-        ))}
-      </Select>
-    </Form.Item>
-    <Form.Item name="ngay_phat_hanh" label="Ngày phát hành" rules={[{ required: true, message: "Vui lòng chọn ngày phát hành!" }]}>
-      <DatePicker
-        style={{ width: "100%" }}
-        format="YYYY-MM-DD"
-        disabledDate={(current) => current && current > dayjs().endOf("day")}
-      />
-    </Form.Item>
-    <Form.Item name="nghe_si" initialValue={Number(playlistItem?.id_nghe_si)} hidden>
-  <Input />
-</Form.Item>
-
-    <Form.Item label="Tệp bài hát" rules={[{ required: true, message: "Vui lòng chọn file nhạc!" }]}>
-      <Upload
-        beforeUpload={(file) => {
-          setSelectedFile(file);
-          return false;
-        }}
-        maxCount={1}
+        title="Thêm bài hát"
+        open={isAddSongModalOpen}
+        onCancel={() => setIsAddSongModalOpen(false)}
+        onOk={handleSubmitSong}
+        confirmLoading={updating}
       >
-        <Button icon={<UploadOutlined />}>Chọn file nhạc</Button>
-      </Upload>
-    </Form.Item>
-  </Form>
-</Modal>
+        <Form form={form} layout="vertical" encType="multipart/form-data">
+          <Form.Item name="ten_bai_hat" label="Tên bài hát" rules={[{ required: true, message: "Vui lòng nhập tên bài hát!" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="the_loai" label="Thể loại" rules={[{ required: true, message: "Vui lòng chọn thể loại!" }]}>
+            <Select placeholder="Chọn thể loại">
+              {theLoais.map((tl) => (
+                <Select.Option key={tl.loai_bai_hat_id} value={tl.loai_bai_hat_id}>
+                  {tl.ten_loai}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="ngay_phat_hanh" label="Ngày phát hành" rules={[{ required: true, message: "Vui lòng chọn ngày phát hành!" }]}>
+            <DatePicker
+              style={{ width: "100%" }}
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current > dayjs().endOf("day")}
+            />
+          </Form.Item>
+          <Form.Item name="nghe_si" initialValue={Number(playlistItem?.id_nghe_si)} hidden>
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Tệp bài hát" rules={[{ required: true, message: "Vui lòng chọn file nhạc!" }]}>
+            <Upload
+              beforeUpload={(file) => {
+                setSelectedFile(file);
+                return false;
+              }}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Chọn file nhạc</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div >
   )
 }
