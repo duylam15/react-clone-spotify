@@ -76,7 +76,7 @@ const ChatButton = () => {
             return ;
         }
         if (socket && message.trim()) {
-            const idUser = JSON.parse(localStorage.getItem('idLogin'))
+            const idUser = Number(localStorage.getItem('idLogin'))
             const userData = await getUserInfo(idUser);
             setUserData({
                 username: userData.ten_hien_thi,
