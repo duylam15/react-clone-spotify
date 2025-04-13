@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { taoThanhToanPayPal } from "@/services/paypal";
+import { FaPaypal, FaCreditCard } from "react-icons/fa";
+import { SiZalo } from "react-icons/si";
 import { message } from 'antd'; // Import thông báo từ Ant Design
 const Premium: React.FC = () => {
   const plansRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +25,7 @@ const Premium: React.FC = () => {
     if (success === 'true' && !hasShownMessage) {
       // Hiển thị thông báo thành công của Ant Design
       message.success('Đăng kí Premium thành công');
-      
+
       // Cập nhật state để tránh hiển thị thông báo nữa
       setHasShownMessage(true);
 
@@ -62,7 +64,6 @@ const Premium: React.FC = () => {
       // Placeholder cho VNPay
       alert("VNPay integration not implemented yet.");
     } else if (method === "paypal") {
-      alert("PayPal ok");
 
       const userId = localStorage.getItem("idLogin") || 7;
       const data = {
@@ -89,7 +90,7 @@ const Premium: React.FC = () => {
         console.error("PayPal error:", error);
       }
 
-      
+
 
     }
 
@@ -132,25 +133,27 @@ const Premium: React.FC = () => {
                 <h2 className="text-xl font-bold mb-4 text-center">Chọn phương thức thanh toán</h2>
                 <div className="flex flex-col space-y-3">
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    className="flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                     onClick={() => handlePaymentMethod("zalopay")}
                     disabled={loading}
                   >
-                    ZaloPay
+                    <SiZalo size={20} /> ZaloPay
                   </button>
+
                   <button
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                    className="flex items-center justify-center gap-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
                     onClick={() => handlePaymentMethod("vnpay")}
                     disabled={loading}
                   >
-                    VNPay
+                    <FaCreditCard size={20} /> VNPay
                   </button>
+
                   <button
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                    className="flex items-center justify-center gap-3 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
                     onClick={() => handlePaymentMethod("paypal")}
                     disabled={loading}
                   >
-                    PayPal
+                    <FaPaypal size={20} /> PayPal
                   </button>
                 </div>
                 <button

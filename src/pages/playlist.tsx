@@ -522,7 +522,7 @@ const [pendingAlbumIds, setPendingAlbumIds] = useState<number[]>([]);
         </div>
       </div>
       <div className="flex justify-end items-center gap-8">
-  {(danhSachPhatId || (albumId && pendingAlbumIds.includes(Number(albumId)))) && (
+  {( (albumId && pendingAlbumIds.includes(Number(albumId)))) && (
     <Button
       type="primary"
       onClick={() => {
