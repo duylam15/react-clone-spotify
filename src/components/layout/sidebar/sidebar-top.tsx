@@ -180,16 +180,16 @@ export default function SidebarTop() {
 
   const moodImages:  { [key: number]: string[] } =  {
     1: ["../.../../../../../public/joy.jpg", "../.../../../../../public/joy2.jpg", "../.../../../../../public/joy3.jpg"],  // Các ảnh cho cảm xúc vui
-    2: ["../.../../../../../public/sad1.jpg", "../.../../../../../public/sad2.jpg", "../.../../../../../public/sad3.jpg"],    // Các ảnh cho cảm xúc buồn
+    2: ["../.../../../../../public/sad.jpg", "../.../../../../../public/sad2.jpg", "../.../../../../../public/sad3.jpg"],    // Các ảnh cho cảm xúc buồn
     3: ["../.../../../../../public/relax.jpg", "../.../../../../../public/relax2.jpg", "../.../../../../../public/relax3.jpg"],   // Các ảnh cho cảm xúc thư giãn
     4: ["../.../../../../../public/vibrant.jpg", "../.../../../../../public/vibrant2.jpg", "../.../../../../../public/vibrant3.jpg"], // Các ảnh cho cảm xúc sôi động
   };
 
   const moodStrings: { [key: number]: string } = {
     1: "vui",
-    2: "buồn",
-    3: "thư giãn",
-    4: "sôi động",
+    2: "buon",
+    3: "thu gian",
+    4: "soi dong",
   };
 
   const handleMoodSelect = (mood: number) => {
