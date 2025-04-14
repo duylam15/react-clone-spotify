@@ -180,7 +180,7 @@ export default function PlayList(): React.ReactNode {
         bai_hat_id_2: -12,
         ten_bai_hat: "Quảng cáo - Premium để bỏ quảng cáo",
         the_loai: "Advertisement",
-        duong_dan: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        duong_dan: "https://spotifycloud.s3.ap-southeast-2.amazonaws.com/songs/Nghe+G%E1%BA%A7n+H%C6%A1n+(mp3cut.net).mp3",
         loi_bai_hat: "Nâng cấp lên Premium để tận hưởng âm nhạc không gián đoạn.",
         thoi_luong: "0:30",
         ngay_phat_hanh: format(new Date(), "MMM dd, yyyy"),
@@ -199,7 +199,7 @@ export default function PlayList(): React.ReactNode {
       for (let i = 0; i < songDetails.length; i++) {
         // alert("isPremium2: "+premiumStatus)
         if (songDetails[i].is_premium == 1 && !premiumStatus)
-          songDetails[i].duong_dan = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+          songDetails[i].duong_dan = "https://spotifycloud.s3.ap-southeast-2.amazonaws.com/songs/Nghe+G%E1%BA%A7n+H%C6%A1n+(mp3cut.net).mp3";
         songsWithAds.push(songDetails[i]);
         if ((i + 1) % 2 === 0 && !premiumStatus) {
           songsWithAds.push(adSong); // Chèn quảng cáo sau mỗi 2 bài

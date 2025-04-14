@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { taoThanhToanPayPal } from "@/services/paypal";
-// import { FaPaypal, FaCreditCard } from "react-icons/fa";
-// import { SiZalo } from "react-icons/si";
+import { FaPaypal, FaCreditCard } from "react-icons/fa";
+import { SiZalo } from "react-icons/si";
 import { message } from 'antd'; // Import thông báo từ Ant Design
 const Premium: React.FC = () => {
   const plansRef = useRef<HTMLDivElement | null>(null);
