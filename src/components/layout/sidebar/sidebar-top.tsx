@@ -1,11 +1,11 @@
-import { HomeIcon, LibraryBig, SearchIcon, Disc } from "lucide-react";
+import { HomeIcon, LibraryBig, SearchIcon, Disc, Cloud, Smile, Frown, Zap, Headphones } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import IconLink from "./icon-link";
 import TooltipWrapper from "@/components/ui/tooltip-wrapper";
 import ChatButton from "@/components/chat";
 import { useRefresh } from "@/contexts/RefreshContext";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 
 export default function SidebarTop() {
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -172,6 +172,89 @@ export default function SidebarTop() {
     }
   };
 
+  //tạo playlist theo icon cảm xúc
+  const [showMood, setShowMood] = useState<boolean>(false);
+  const [selectedMood, setSelectedMood] = useState<number | null>(null); // Lưu trữ cảm xúc bằng số
+  const [moodImage, setMoodImage] = useState<string>(""); // Lưu trữ ảnh đại diện cho playlist
+  const [activeMood, setActiveMood] = useState<number | null>(null); // Trạng thái của mood đã chọn
+
+  const moodImages:  { [key: number]: string[] } =  {
+    1: ["../.../../../../../public/joy.jpg", "../.../../../../../public/joy2.jpg", "../.../../../../../public/joy3.jpg"],  // Các ảnh cho cảm xúc vui
+    2: ["../.../../../../../public/sad1.jpg", "../.../../../../../public/sad2.jpg", "../.../../../../../public/sad3.jpg"],    // Các ảnh cho cảm xúc buồn
+    3: ["../.../../../../../public/relax.jpg", "../.../../../../../public/relax2.jpg", "../.../../../../../public/relax3.jpg"],   // Các ảnh cho cảm xúc thư giãn
+    4: ["../.../../../../../public/vibrant.jpg", "../.../../../../../public/vibrant2.jpg", "../.../../../../../public/vibrant3.jpg"], // Các ảnh cho cảm xúc sôi động
+  };
+
+  const moodStrings: { [key: number]: string } = {
+    1: "vui",
+    2: "buồn",
+    3: "thư giãn",
+    4: "sôi động",
+  };
+
+  const handleMoodSelect = (mood: number) => {
+    setSelectedMood(mood);
+    setActiveMood(mood);
+  
+    // Lấy ngẫu nhiên một ảnh từ mảng ảnh ứng với cảm xúc
+    const images = moodImages[mood];
+  
+    // Kiểm tra nếu images tồn tại và có ít nhất 1 ảnh
+    if (images && images.length > 0) {
+      const randomImage = images[Math.floor(Math.random() * images.length)] || "";
+      setMoodImage(randomImage);  // Đảm bảo randomImage luôn có giá trị hợp lệ
+    } else {
+      setMoodImage("");  // Nếu không có ảnh, set một giá trị mặc định (ví dụ: chuỗi rỗng)
+      console.error("Không tìm thấy ảnh cho cảm xúc này");
+    }
+  };
+  
+  const handleCreatePlaylist = async () => {
+    if (selectedMood === null || !moodImage) {
+      message.error("Vui lòng chọn cảm xúc!");
+      return;
+    }
+  
+    
+      // Tải ảnh từ URL và chuyển thành Blob
+      const responseImg = await fetch(moodImage);
+      const blob = await responseImg.blob();
+  
+      // Chuyển Blob thành đối tượng File
+      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+  
+      // Chuyển số cảm xúc thành string
+      const moodString = moodStrings[selectedMood] || "";
+    console.error("hình ảnh", file);
+    
+      // Tạo FormData và append các trường vào
+      const formData = new FormData();
+      formData.append("cam_xuc", moodString);  // Gửi cảm xúc dưới dạng string
+      formData.append("nguoi_dung_id", userId.toString());
+      formData.append("anh_danh_sach", file);  // Gửi file hình ảnh
+  
+      setLoading(true);
+      try {
+      // Gửi FormData qua API
+      const response = await axios.post("http://127.0.0.1:8000/danhsachphat/them_theo_cam_xuc/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      if (response.status === 201) {
+        message.success(`Playlist theo cảm xúc ${moodString} đã được tạo!`);
+        refresh(); // Refresh danh sách playlist
+      }
+    } catch (error) {
+      alert("Có lỗi xảy ra khi tạo playlist!");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const iconProperty = { size: 30, strokeWidth: 2.5 };
   return (
     <>
       {loading && (
@@ -269,6 +352,7 @@ export default function SidebarTop() {
             <h3 className="text-white text-2xl font-semibold mb-4 text-center">
               Tạo Album
             </h3>
+            
             <div className="flex flex-col md:flex-row justify-center items-start gap-6">
               {/* Ảnh preview hoặc input ảnh */}
               <div>
@@ -370,6 +454,7 @@ export default function SidebarTop() {
           onClick={() => setShowAlbumInput(!showAlbumInput)}
           className="ml-[-2px] cursor-pointer"
         >
+          
           <TooltipWrapper side="right" tooltipContent="Create Album">
             <Disc
               className="text-s-gray-lighter transition-colors duration-300 hover:text-white"
@@ -377,6 +462,84 @@ export default function SidebarTop() {
             />
           </TooltipWrapper>
         </div>
+
+
+{/* Form nhập thông tin danh sách phát */}
+{showMood && (
+          <div className="fixed top-20 left-[300px] transform -translate-x-1/2 bg-gray-800 p-4 rounded-lg shadow-lg z-10">
+          <h3 className="text-white text-2xl font-semibold mb-4 text-center">
+            Bạn muốn nghe nhạc nào
+          </h3>
+          <div className="flex flex-col md:flex-row justify-center items-start gap-6">
+            {/* Icon và label với hiệu ứng shadow khi nhấn */}
+            <div
+              onClick={() => handleMoodSelect(1)}
+              className={`flex flex-col items-center ${activeMood === 1 ? "shadow-lg p-2 rounded-lg" : ""}`}
+            >
+              <Smile size={iconProperty.size} color="yellow" />
+              
+              <label className="text-white mt-2">Vui </label>
+            </div>
+    
+            <div
+              onClick={() => handleMoodSelect(2)}
+              className={`flex flex-col items-center ${activeMood === 2 ? "shadow-lg p-2 rounded-lg" : ""}`}
+            >
+              <Frown size={iconProperty.size} color="blue" />
+              
+              <label className="text-white mt-2">Buồn</label>
+            </div>
+    
+            <div
+              onClick={() => handleMoodSelect(3)}
+              className={`flex flex-col items-center ${activeMood === 3 ? "shadow-lg p-2 rounded-lg" : ""}`}
+            >
+              <Cloud size={iconProperty.size} color="white" />
+              <label className="text-white mt-2">Thư giãn</label>
+            </div>
+    
+            <div
+              onClick={() => handleMoodSelect(4)}
+              className={`flex flex-col items-center ${activeMood === 4 ? "shadow-lg p-2 rounded-lg" : ""}`}
+            >
+              <Zap size={iconProperty.size} color="orange" />
+              <label className="text-white mt-2">Sôi động</label>
+            </div>
+          </div>
+        
+  
+          <div className="mt-4 flex justify-between">
+          <button
+                    onClick={() => setShowMood(false)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+                  >
+                    Hủy
+                  </button>
+            <button
+              onClick={handleCreatePlaylist}
+              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-400  transition duration-200"
+            >
+              Tạo Playlist
+            </button>
+          </div>
+        </div>
+        
+        )}
+
+        {/* Nút mở form nhập thông tin danh sách phát */}
+        <div
+          onClick={() => setShowMood(!showMood)}
+          className="ml-[-2px] cursor-pointer "
+        >
+          <TooltipWrapper side="right" tooltipContent="Create Emotion Playlist">
+            <Headphones
+              className="text-s-gray-lighter transition-colors duration-300 hover:text-white"
+              {...iconProperties}
+            />
+          </TooltipWrapper>
+          
+        </div>
+        
 
         <div className="relative">
           <TooltipWrapper side="right" tooltipContent="Expand Your Library">
