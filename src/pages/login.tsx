@@ -32,6 +32,7 @@ export default function Login() {
 				else navigate("/")
 			}
 			else {
+				alert("Đăng nhập thất bại");
 				console.log("Đăng nhập thất bại:", response);
 				setErrors(response);
 			}

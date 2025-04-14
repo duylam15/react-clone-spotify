@@ -55,9 +55,10 @@ export default function Header(): React.ReactNode {
       const dataresponse = await getUserInfo(idUser);
       console.log("dataresponsedataresponse", dataresponse)
       setUser(dataresponse)
+      
     };
     fetchUser()
-  }, [])
+  }, [refreshTrigger])
 
 
   const handleLogout = async () => {

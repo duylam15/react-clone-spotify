@@ -24,34 +24,47 @@ export default function UserPage() {
   const [user, setUser] = useState<any>();
   const navigate = useNavigate()
 
-
-  useEffect(() => {
-
-    const fetchUser = async () => {
-      if (localStorage.getItem("idLogin") == undefined)
-        return;
-      const dataresponse = await getUserInfo(id);
-      console.log(dataresponse)
-      console.log("id---------------------------------" + id)
-      setName(dataresponse?.ten_hien_thi);
-      setUser(dataresponse)
-    };
-    fetchUser()
-  }, [])
-
-  console.log("useruseruser", user)
-  const userInfo = {
+  const [userInfo , setUserInfor] = useState({
     avatar_url: user?.avatar_url,
     email: user?.email,
     gioi_tinh: user?.gioi_tinh,
     ngay_sinh: user?.ngay_sinh,
     ten_hien_thi: user?.ten_hien_thi,
-  }
+  })
+
+  const fetchUser = async () => {
+    if (localStorage.getItem("idLogin") == undefined)
+      return;
+    const dataresponse = await getUserInfo(id);
+    console.log(dataresponse)
+    console.log("id---------------------------------" + id)
+    setName(dataresponse?.ten_hien_thi);
+    setUser(dataresponse)
+    setUserInfor({
+      avatar_url: dataresponse?.avatar_url,
+      email: dataresponse?.email,
+      gioi_tinh: dataresponse?.gioi_tinh,
+      ngay_sinh: dataresponse?.ngay_sinh,
+      ten_hien_thi: dataresponse?.ten_hien_thi,
+    })
+  };
+
+
+  useEffect(() => {
+
+    fetchUser()
+  }, [])
+
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+
+    fetchUser()
+  }, [loading])
+
 
 
 
   const [danhSachPhat, setDanhSachPhat] = useState([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const userId = Number(localStorage.getItem("idLogin"))
   console.log("danhSachPhatdanhSachPhatdanhSachPhat", danhSachPhat)
@@ -77,7 +90,7 @@ export default function UserPage() {
     <div className="flex flex-col pt-4 *:w-full">
 
       {/* Hiển thị header của user với thông tin từ `data.user` */}
-      <UserHeader {...userInfo} />
+      <UserHeader {...userInfo }/>
 
       {/* Container chứa các phần danh sách nghệ sĩ và playlist */}
       <div className="flex flex-col px-1">

@@ -68,3 +68,23 @@ export const forgotPassword = async (sendData: any) => {
     }
 };
 
+export const updateUser = async (data : any) => {
+    try {
+        const response = await axios.put(
+            `http://localhost:8000/nguoidung/api/cap-nhat-nguoi-dung`,
+            data ,
+            {
+                // headers: {
+                //     "Content-Type": "application/json",
+                // },
+                withCredentials: true, // 🚀 Quan trọng để gửi và nhận cookie
+            }
+        );
+
+        return response.data; // Trả về dữ liệu từ server
+    } catch (error) {
+        console.error("update thất bại:", error);
+        return error
+    }
+}
+
